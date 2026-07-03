@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>API Gateway & Edge Layer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .cap-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--border); }
+    .cap-item:last-child { border-bottom: none; }
+    .cap-num { flex-shrink:0; width:26px; height:26px; border-radius:6px; background: rgba(0,212,255,0.10); border:1px solid rgba(0,212,255,0.30); color: var(--primary); display:flex; align-items:center; justify-content:center; font-family: var(--font-num); font-weight:700; font-size:12px; }
+    .cap-title { font-family: var(--font-heading); font-weight:700; font-size:14px; color: var(--text); margin-bottom:2px; }
+    .cap-desc { font-size:11.5px; line-height:1.45; color: var(--text-dim); }
+    .comp-card { display:flex; flex-direction:column; gap:8px; padding:14px; border-radius:10px; background: var(--bg-card-2); border:1px solid var(--border-soft); border-left:3px solid var(--accent); }
+    .comp-card .name { display:flex; align-items:center; gap:8px; font-family: var(--font-heading); font-weight:700; font-size:14px; color: var(--text); }
+    .comp-card .name .material-icons { font-size:18px; color: var(--accent); }
+    .comp-card .desc { font-size:11.5px; line-height:1.45; color: var(--text-dim); }
+    .col-h { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+    .col-h .material-icons { color: var(--primary); font-size:20px; }
+    .col-h h2 { font-family: var(--font-heading); font-weight:800; font-size:18px; color: var(--text); }
+    .col-h .ar { font-family: var(--font-cn); font-size:13px; color: var(--text-dim); margin-right:6px; }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>04 — MICROSERVICES BREAKDOWN</span>
+    </div>
+    <div class="page-num">19 / 50</div>
+  </header>
+
+  <div class="mb-4">
+    <span class="section-kicker">EDGE</span>
+    <h1 class="slide-title">API Gateway &amp; Edge Layer <span class="text-dim font-ar" style="font-weight:600;">/ بوابة الـ API وطبقة الحافة</span></h1>
+    <p class="slide-subtitle">Single entry point for all 7 client apps — handling auth, rate limiting, routing, and TLS.</p>
+  </div>
+
+  <div class="grid-2" style="flex:1; align-content:start;">
+    <!-- LEFT — Capabilities -->
+    <div class="card-glow" style="padding:16px 18px;">
+      <div class="col-h">
+        <span class="material-icons">tune</span>
+        <h2>Capabilities</h2><span class="ar rtl">/ القدرات</span>
+      </div>
+
+      <div class="cap-item">
+        <div class="cap-num">1</div>
+        <div>
+          <div class="cap-title">Authentication &amp; Authorization</div>
+          <div class="cap-desc">Validates JWT on every request, injects user_id and roles into upstream headers. Supports API keys for restaurant-to-platform integrations.</div>
+        </div>
+      </div>
+
+      <div class="cap-item">
+        <div class="cap-num">2</div>
+        <div>
+          <div class="cap-title">Rate Limiting</div>
+          <div class="cap-desc">Per-IP and per-user limits — 100 RPS default, 1000 RPS for restaurant API keys. Burst capacity for peak hours. Backed by Redis token bucket.</div>
+        </div>
+      </div>
+
+      <div class="cap-item">
+        <div class="cap-num">3</div>
+        <div>
+          <div class="cap-title">Routing &amp; Versioning</div>
+          <div class="cap-desc">Path-based routing to 12 backend services. Supports /v1/, /v2/ versioning for backwards compatibility. Canary deployments via weighted routing.</div>
+        </div>
+      </div>
+
+      <div class="cap-item">
+        <div class="cap-num">4</div>
+        <div>
+          <div class="cap-title">TLS Termination &amp; WAF</div>
+          <div class="cap-desc">TLS 1.3 termination at the edge. Cloudflare WAF rules for OWASP top 10. Bot detection for fake order attempts.</div>
+        </div>
+      </div>
+
+      <div class="cap-item">
+        <div class="cap-num">5</div>
+        <div>
+          <div class="cap-title">Request Aggregation</div>
+          <div class="cap-desc">BFF (Backend-For-Frontend) pattern — Customer App's /home endpoint aggregates restaurant list + promotions + user profile in one call. Reduces client round trips from 5 to 1.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT — Components -->
+    <div class="card-glow" style="padding:16px 18px;">
+      <div class="col-h">
+        <span class="material-icons">memory</span>
+        <h2>Components</h2><span class="ar rtl">/ المكونات</span>
+      </div>
+
+      <div class="comp-card">
+        <div class="name"><span class="material-icons">api</span>Kong API Gateway <span class="text-mute font-num text-xs">(or APISIX)</span></div>
+        <div class="desc">Open-source, Lua plugins for custom logic, 30K RPS per node. Deployed as 3-node HA cluster behind NLB.</div>
+      </div>
+
+      <div class="comp-card" style="border-left-color: var(--primary);">
+        <div class="name"><span class="material-icons" style="color: var(--primary);">hub</span>WebSocket Gateway <span class="text-mute font-num text-xs">(custom Go service)</span></div>
+        <div class="desc">Standalone service for persistent connections. 100K concurrent connections per pod. Redis pub/sub for cross-pod message fan-out.</div>
+      </div>
+
+      <div class="comp-card" style="border-left-color: var(--success);">
+        <div class="name"><span class="material-icons" style="color: var(--success);">cloud</span>Cloudflare CDN</div>
+        <div class="desc">Static assets (React bundles, images), DDoS protection, edge caching of restaurant images and menus. Reduces origin load by 70%.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - Edge layer is the single chokepoint — every capability lives here.
+    - 5 capabilities: auth, rate limit, routing, TLS/WAF, BFF aggregation.
+    - 3 components: Kong, custom WS Gateway, Cloudflare CDN.
+    - BFF pattern is the unsung hero — cuts client round trips from 5 to 1.
+    - Cloudflare slashes origin load by 70%.
+  </aside>
+</body>
+</html>

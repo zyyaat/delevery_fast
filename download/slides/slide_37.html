@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>12-Month Execution Roadmap</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .timeline { display:grid; grid-template-columns: repeat(4, 1fr); gap:14px; flex:1; align-content:start; position:relative; }
+    .phase { display:flex; flex-direction:column; padding:14px 14px 12px; border-radius:12px; background: var(--bg-card); border:1px solid var(--border); position:relative; overflow:hidden; }
+    .phase::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; }
+    .phase.p1::before { background: var(--primary); box-shadow: 0 0 16px rgba(0,212,255,0.5); }
+    .phase.p2::before { background: var(--accent); box-shadow: 0 0 16px rgba(177,78,255,0.5); }
+    .phase.p3::before { background: var(--success); box-shadow: 0 0 16px rgba(0,229,138,0.5); }
+    .phase.p4::before { background: var(--gold); box-shadow: 0 0 16px rgba(255,209,102,0.5); }
+
+    .phase .ph { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .phase .ph .num { font-family: var(--font-num); font-weight:800; font-size:11px; letter-spacing:1px; }
+    .phase.p1 .ph .num { color: var(--primary); }
+    .phase.p2 .ph .num { color: var(--accent); }
+    .phase.p3 .ph .num { color: var(--success); }
+    .phase.p4 .ph .num { color: var(--gold); }
+    .phase .ph .months { font-family: var(--font-num); font-size:10px; color: var(--text-mute); }
+    .phase .ttl { font-family: var(--font-heading); font-weight:800; font-size:16px; color: var(--text); line-height:1.1; margin-bottom:6px; }
+    .phase .goal { font-size:10.5px; line-height:1.4; color: var(--text-dim); padding:6px 8px; background: var(--bg-elev); border-radius:6px; border-left:2px solid; margin-bottom:8px; }
+    .phase.p1 .goal { border-left-color: var(--primary); }
+    .phase.p2 .goal { border-left-color: var(--accent); }
+    .phase.p3 .goal { border-left-color: var(--success); }
+    .phase.p4 .goal { border-left-color: var(--gold); }
+
+    .phase .sec-h { font-family: var(--font-num); font-weight:700; font-size:9.5px; color: var(--text-mute); letter-spacing:1px; text-transform:uppercase; margin:6px 0 4px; }
+    .phase ul { list-style:none; padding:0; margin:0 0 6px; }
+    .phase li { font-size:10px; line-height:1.4; color: var(--text-dim); padding-left:10px; position:relative; margin-bottom:2px; }
+    .phase li::before { content:'›'; position:absolute; left:0; color: var(--text-mute); }
+    .phase .meta-row { display:flex; justify-content:space-between; padding:5px 8px; background: var(--bg-elev); border-radius:5px; font-size:10px; margin-bottom:4px; }
+    .phase .meta-row .lbl { color: var(--text-mute); }
+    .phase .meta-row .val { color: var(--text); font-family: var(--font-num); font-weight:600; }
+    .phase .exit { margin-top:auto; padding:6px 8px; border-radius:6px; font-size:10px; line-height:1.4; }
+    .phase.p1 .exit { background: rgba(0,212,255,0.07); border:1px solid rgba(0,212,255,0.25); color: var(--primary); }
+    .phase.p2 .exit { background: rgba(177,78,255,0.07); border:1px solid rgba(177,78,255,0.25); color: var(--accent); }
+    .phase.p3 .exit { background: rgba(0,229,138,0.07); border:1px solid rgba(0,229,138,0.25); color: var(--success); }
+    .phase.p4 .exit { background: rgba(255,209,102,0.07); border:1px solid rgba(255,209,102,0.25); color: var(--gold); }
+    .phase .exit .lbl { font-family: var(--font-num); font-size:9px; letter-spacing:1px; opacity:0.8; display:block; margin-bottom:2px; }
+
+    .timeline-axis { position:absolute; left:0; right:0; top:0; height:2px; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 33%, var(--success) 66%, var(--gold) 100%); opacity:0.4; border-radius:1px; }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>08 — ROADMAP &amp; DEVOPS</span>
+    </div>
+    <div class="page-num">37 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">PHASES</span>
+    <h1 class="slide-title">12-Month Execution Roadmap <span class="text-dim font-ar" style="font-weight:600;">/ خطة التنفيذ 12 شهر</span></h1>
+    <p class="slide-subtitle">Four phases — each ending with a measurable milestone and a go/no-go decision point.</p>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-axis" data-decor></div>
+
+    <!-- PHASE 1 -->
+    <div class="phase p1">
+      <div class="ph">
+        <span class="num">PHASE 1</span>
+        <span class="months">MONTHS 1-3 · MVP</span>
+      </div>
+      <div class="ttl">MVP</div>
+      <div class="goal">Prove the core loop in Cairo with 50 restaurants and 500 orders/day.</div>
+
+      <div class="sec-h">Deliverables</div>
+      <ul>
+        <li>Customer App (mobile) — browse, order, track, pay</li>
+        <li>Restaurant App — receive orders, update status</li>
+        <li>Driver App — accept, navigate, deliver</li>
+        <li>Core backend: Auth, Catalog, Menu, Order, Payment (Vodafone Cash only), Notification</li>
+        <li>PostgreSQL + Redis + Kafka foundation</li>
+        <li>Manual restaurant onboarding (no self-serve yet)</li>
+      </ul>
+
+      <div class="meta-row"><span class="lbl">Team size</span><span class="val">8 engineers</span></div>
+      <div class="exit">
+        <span class="lbl">EXIT CRITERIA</span>
+        500 orders/day, 50 restaurants live, p95 &lt;3s
+      </div>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="phase p2">
+      <div class="ph">
+        <span class="num">PHASE 2</span>
+        <span class="months">MONTHS 4-6 · GROWTH</span>
+      </div>
+      <div class="ttl">Growth</div>
+      <div class="goal">Scale to 5K orders/day, add Giza, launch self-serve onboarding.</div>
+
+      <div class="sec-h">Deliverables</div>
+      <ul>
+        <li>Support App (web) — ticket management, refunds</li>
+        <li>Command Center (web) — live ops dashboard</li>
+        <li>Delivery Matching algorithm v2 (geospatial + scoring)</li>
+        <li>Fraud Detection service (rule-based v1)</li>
+        <li>InstaPay + Card payments added</li>
+        <li>Restaurant self-serve onboarding portal</li>
+        <li>CI/CD pipeline + automated testing</li>
+      </ul>
+
+      <div class="meta-row"><span class="lbl">Team size</span><span class="val">18 engineers</span></div>
+      <div class="exit">
+        <span class="lbl">EXIT CRITERIA</span>
+        5K orders/day, 300 restaurants, 2 cities
+      </div>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="phase p3">
+      <div class="ph">
+        <span class="num">PHASE 3</span>
+        <span class="months">MONTHS 7-9 · SCALE</span>
+      </div>
+      <div class="ttl">Scale</div>
+      <div class="goal">Reach 20K orders/day, expand to Alexandria, launch loyalty program.</div>
+
+      <div class="sec-h">Deliverables</div>
+      <ul>
+        <li>Employee Portal (web) with biometric auth + audit log</li>
+        <li>Field Supervisor App (mobile)</li>
+        <li>Fraud Detection v2 (ML model)</li>
+        <li>Promo &amp; Loyalty service</li>
+        <li>Analytics service (ClickHouse)</li>
+        <li>Order partitioning + read replicas</li>
+        <li>Multi-city shard readiness</li>
+      </ul>
+
+      <div class="meta-row"><span class="lbl">Team size</span><span class="val">28 engineers</span></div>
+      <div class="exit">
+        <span class="lbl">EXIT CRITERIA</span>
+        20K orders/day, 1K restaurants, 3 cities
+      </div>
+    </div>
+
+    <!-- PHASE 4 -->
+    <div class="phase p4">
+      <div class="ph">
+        <span class="num">PHASE 4</span>
+        <span class="months">MONTHS 10-12 · OPTIMIZE</span>
+      </div>
+      <div class="ttl">Optimize</div>
+      <div class="goal">Hit 50K orders/day, optimize unit economics, prepare for Series A.</div>
+
+      <div class="sec-h">Deliverables</div>
+      <ul>
+        <li>Recommendations engine (AI)</li>
+        <li>Dynamic pricing (surge, weather, demand)</li>
+        <li>Multi-vendor orders (one delivery, multiple restaurants)</li>
+        <li>B2B partnerships (corporate accounts)</li>
+        <li>Full observability (tracing, SLOs, error budgets)</li>
+        <li>Cost optimization pass (FinOps review)</li>
+      </ul>
+
+      <div class="meta-row"><span class="lbl">Team size</span><span class="val">35 engineers</span></div>
+      <div class="exit">
+        <span class="lbl">EXIT CRITERIA</span>
+        50K orders/day, 2.5K restaurants, 4 cities, breakeven contribution margin
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - 4 phases over 12 months: MVP → Growth → Scale → Optimize.
+    - Phase 1 (M1-3): Cairo MVP, 500 orders/day, 8 engineers.
+    - Phase 2 (M4-6): Giza expansion, 5K orders/day, 18 engineers.
+    - Phase 3 (M7-9): Alexandria, 20K orders/day, 28 engineers.
+    - Phase 4 (M10-12): 50K orders/day, breakeven margin, 35 engineers.
+  </aside>
+</body>
+</html>

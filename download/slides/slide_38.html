@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Phase 1 — MVP Detail</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .col-card { padding:14px 16px; border-radius:12px; background: var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; gap:8px; }
+    .col-h { display:flex; align-items:center; gap:8px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+    .col-h .material-icons { color: var(--primary); font-size:18px; }
+    .col-h h2 { font-family: var(--font-heading); font-weight:800; font-size:15px; color: var(--text); }
+    .col-h .ar { font-family: var(--font-cn); font-size:11px; color: var(--text-dim); }
+    .sub-h { font-family: var(--font-num); font-weight:700; font-size:9.5px; color: var(--text-mute); letter-spacing:1px; text-transform:uppercase; margin-top:6px; margin-bottom:3px; }
+    .col-card ul { list-style:none; padding:0; margin:0; }
+    .col-card li { font-size:10.5px; line-height:1.4; color: var(--text-dim); padding-left:12px; position:relative; margin-bottom:2px; }
+    .col-card li::before { content:'▸'; position:absolute; left:0; color: var(--primary); font-size:9px; top:1px; }
+    .col-card .bullet strong { color: var(--text); font-weight:600; }
+    .col-card .burn-row { display:flex; justify-content:space-between; padding:5px 9px; background: var(--bg-elev); border-radius:5px; font-size:10.5px; margin-bottom:3px; }
+    .col-card .burn-row .lbl { color: var(--text-mute); }
+    .col-card .burn-row .val { color: var(--text); font-family: var(--font-num); font-weight:600; }
+    .total-pill { display:inline-block; padding:5px 11px; background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(177,78,255,0.15)); border:1px solid rgba(0,212,255,0.3); border-radius:6px; font-family: var(--font-num); font-weight:700; font-size:12px; color: var(--primary); }
+    .gate-note { margin-top:auto; padding:8px 10px; background: rgba(255,184,0,0.07); border:1px solid rgba(255,184,0,0.25); border-radius:6px; font-size:10px; line-height:1.4; color: var(--warning); display:flex; gap:6px; }
+    .gate-note .material-icons { font-size:14px; flex-shrink:0; margin-top:1px; }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>08 — ROADMAP &amp; DEVOPS</span>
+    </div>
+    <div class="page-num">38 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">MONTHS 1-3</span>
+    <h1 class="slide-title">Phase 1 — MVP Detail <span class="text-dim font-ar" style="font-weight:600;">/ تفاصيل مرحلة MVP</span></h1>
+    <p class="slide-subtitle">The minimum viable slice that proves the core loop end-to-end.</p>
+  </div>
+
+  <div class="grid-3" style="flex:1; align-content:start; gap:14px;">
+    <!-- COL 1 — Build Scope -->
+    <div class="col-card">
+      <div class="col-h">
+        <span class="material-icons">build</span>
+        <h2>Build Scope</h2><span class="ar rtl">/ نطاق البناء</span>
+      </div>
+
+      <div class="sub-h">Apps</div>
+      <ul>
+        <li><strong>Customer App</strong> (React Native) — restaurant browse, cart, checkout, order tracking</li>
+        <li><strong>Restaurant App</strong> (React Native) — incoming order alerts, accept/reject, status update</li>
+        <li><strong>Driver App</strong> (React Native) — order alerts, accept, navigation, mark delivered</li>
+      </ul>
+
+      <div class="sub-h">Services</div>
+      <ul>
+        <li>Auth Service (phone+OTP, JWT)</li>
+        <li>Restaurant Catalog (50 hand-onboarded)</li>
+        <li>Menu Service (static menus, no modifiers v1)</li>
+        <li>Order Service (state machine, 6 statuses)</li>
+        <li>Payment Service (Vodafone Cash only)</li>
+        <li>Notification Service (push + SMS)</li>
+      </ul>
+
+      <div class="sub-h">Infra</div>
+      <ul>
+        <li>Single PostgreSQL instance (1 primary + 1 replica)</li>
+        <li>Redis (cache + sessions)</li>
+        <li>Kafka (3 brokers, basic topics)</li>
+        <li>EKS cluster (3 nodes)</li>
+        <li>Cloudflare CDN</li>
+      </ul>
+    </div>
+
+    <!-- COL 2 — Team & Cost -->
+    <div class="col-card">
+      <div class="col-h">
+        <span class="material-icons">groups</span>
+        <h2>Team &amp; Cost</h2><span class="ar rtl">/ الفريق والتكلفة</span>
+      </div>
+
+      <div class="sub-h">Team (8 people)</div>
+      <ul>
+        <li>1 Tech Lead (Go + architecture)</li>
+        <li>3 Backend Engineers (Go)</li>
+        <li>2 Mobile Engineers (React Native)</li>
+        <li>1 Frontend Engineer (React, for web tools)</li>
+        <li>1 DevOps Engineer (part-time)</li>
+      </ul>
+
+      <div class="sub-h">Monthly burn: ~$45K</div>
+      <div class="burn-row"><span class="lbl">Salaries</span><span class="val">$38K</span></div>
+      <div class="burn-row"><span class="lbl">Infra (AWS + 3rd party)</span><span class="val">$4K</span></div>
+      <div class="burn-row"><span class="lbl">Tools (Sentry, Datadog, etc.)</span><span class="val">$2K</span></div>
+      <div class="burn-row"><span class="lbl">Misc</span><span class="val">$1K</span></div>
+
+      <div style="margin-top:8px; text-align:center;">
+        <div class="total-pill">3-month total: ~$135K</div>
+      </div>
+    </div>
+
+    <!-- COL 3 — Exit Criteria -->
+    <div class="col-card">
+      <div class="col-h">
+        <span class="material-icons">flag</span>
+        <h2>Exit Criteria</h2><span class="ar rtl">/ معايير الانتقال</span>
+      </div>
+
+      <div class="sub-h">Metrics</div>
+      <ul>
+        <li>500 orders/day average (last 7 days)</li>
+        <li>50 restaurants live and active</li>
+        <li>p95 API latency &lt;3s</li>
+        <li>99% uptime (excluding planned maintenance)</li>
+        <li>Payment success rate &gt;95%</li>
+        <li>Order completion rate &gt;90% (not cancelled)</li>
+      </ul>
+
+      <div class="sub-h">Soft gates</div>
+      <ul>
+        <li>Restaurant NPS &gt;30</li>
+        <li>Customer repeat rate &gt;25% (orders from returning users)</li>
+        <li>Driver retention &gt;70% (week-over-week)</li>
+        <li>No P0 bugs open for &gt;48h</li>
+      </ul>
+
+      <div class="gate-note">
+        <span class="material-icons">timer</span>
+        <span>If exit criteria not met → 2-week extension before Phase 2 kickoff.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - MVP scope: 3 apps + 6 services + minimal infra.
+    - Team of 8 with $45K/month burn → $135K for 3 months.
+    - Hard metrics: 500 orders/day, p95 <3s, 99% uptime, >95% payment success.
+    - Soft gates: NPS >30, repeat rate >25%, driver retention >70%.
+    - Failure mode: 2-week extension before Phase 2.
+  </aside>
+</body>
+</html>

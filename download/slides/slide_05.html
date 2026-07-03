@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Goals &amp; Non-Goals — Food Delivery Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="global.css">
+<style>
+  .scope-card {
+    border-radius: 14px;
+    padding: 22px 22px 20px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #131A2E 0%, #0F1424 100%);
+    border: 1px solid #1E2A4A;
+    display: flex;
+    flex-direction: column;
+  }
+  .scope-card.goals { border-color: rgba(0,229,138,0.35); }
+  .scope-card.nongoals { border-color: rgba(255,184,0,0.35); }
+
+  .scope-card .ribbon {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .scope-card.goals .ribbon { background: linear-gradient(90deg, #00E58A, transparent); }
+  .scope-card.nongoals .ribbon { background: linear-gradient(90deg, #FFB800, transparent); }
+
+  .scope-card .head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .scope-card .head .icn {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .scope-card.goals .icn { background: rgba(0,229,138,0.12); color: #00E58A; border:1px solid rgba(0,229,138,0.3); }
+  .scope-card.nongoals .icn { background: rgba(255,184,0,0.12); color: #FFB800; border:1px solid rgba(255,184,0,0.3); }
+  .scope-card .head h2 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 19px;
+    color: #EAF0FF;
+    line-height: 1.1;
+  }
+  .scope-card .head .ar {
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    color: #9BA8C7;
+    direction: rtl;
+  }
+
+  .scope-list { display: flex; flex-direction: column; gap: 8px; }
+  .scope-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #C7D0E6;
+  }
+  .scope-item .bullet {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 11px;
+    margin-top: 1px;
+  }
+  .goals .bullet { background: rgba(0,229,138,0.15); color: #00E58A; }
+  .nongoals .bullet { background: rgba(255,184,0,0.15); color: #FFB800; }
+</style>
+</head>
+<body class="slide">
+
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>01 — PROJECT OVERVIEW</span>
+      <span style="color:#2A3656;">/</span>
+      <span>SCOPE</span>
+    </div>
+    <div class="page-num">05 / 50</div>
+  </header>
+
+  <div class="mb-5">
+    <span class="section-kicker">SCOPE</span>
+    <h1 class="slide-title">Goals &amp; Non-Goals <span style="color:#5C6B8E; font-weight:400;">/</span> <span class="font-ar" dir="rtl">الأهداف والحدود</span></h1>
+  </div>
+
+  <div class="grid grid-cols-2 gap-5 flex-1">
+
+    <!-- GOALS -->
+    <div class="scope-card goals">
+      <div class="ribbon" data-decor></div>
+      <div class="head">
+        <div class="icn"><span class="material-icons" style="font-size:20px;">check_circle</span></div>
+        <div>
+          <h2>Goals <span style="color:#5C6B8E; font-weight:400;">/</span> <span class="ar">الأهداف</span></h2>
+        </div>
+      </div>
+      <div class="scope-list">
+        <div class="scope-item"><span class="bullet">+</span><span>Build production-grade platform serving 7 user types through dedicated apps</span></div>
+        <div class="scope-item"><span class="bullet">+</span><span>Handle 50K+ orders/day with horizontal scaling from day one</span></div>
+        <div class="scope-item"><span class="bullet">+</span><span>Sub-2-second API response time at p95 under peak load</span></div>
+        <div class="scope-item"><span class="bullet">+</span><span>Local payments integration (Vodafone Cash, InstaPay, Fawry, card)</span></div>
+        <div class="scope-item"><span class="bullet">+</span><span>Real-time driver matching in under 10 seconds average</span></div>
+        <div class="scope-item"><span class="bullet">+</span><span>Built-in anti-fraud layer covering fake orders, promo abuse, driver collusion</span></div>
+        <div class="scope-item"><span class="bullet">+</span><span>Internal employee portal with biometric auth and audit logging to prevent internal fraud</span></div>
+        <div class="scope-item"><span class="bullet">+</span><span>Multi-city rollout ready (Cairo → Giza → Alexandria → Mansoura)</span></div>
+      </div>
+    </div>
+
+    <!-- NON-GOALS -->
+    <div class="scope-card nongoals">
+      <div class="ribbon" data-decor></div>
+      <div class="head">
+        <div class="icn"><span class="material-icons" style="font-size:20px;">do_not_disturb_on</span></div>
+        <div>
+          <h2>Non-Goals <span style="color:#5C6B8E; font-weight:400;">/</span> <span class="ar">خارج النطاق</span></h2>
+        </div>
+      </div>
+      <div class="scope-list">
+        <div class="scope-item"><span class="bullet">–</span><span>Not building a B2B SaaS for other food brands in v1 (white-label deferred to v2)</span></div>
+        <div class="scope-item"><span class="bullet">–</span><span>Not supporting grocery / pharmacy in v1 (food only — expansion in Phase 4)</span></div>
+        <div class="scope-item"><span class="bullet">–</span><span>Not building proprietary POS hardware (integrate with existing POS via API)</span></div>
+        <div class="scope-item"><span class="bullet">–</span><span>Not building own mapping/routing (use Google Maps + OSRM)</span></div>
+        <div class="scope-item"><span class="bullet">–</span><span>Not building drone/robot delivery (research-only, not in roadmap)</span></div>
+        <div class="scope-item"><span class="bullet">–</span><span>Not supporting crypto payments in v1 (regulatory unclear in Egypt)</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>01 — PROJECT OVERVIEW</span></div>
+    <div>05 / 50</div>
+  </footer>
+
+  <aside data-notes class="hidden">
+    - Goals list: emphasize 7 apps, 50K orders, sub-2s latency, biometric portal.
+    - Non-goals: draw a hard line — no grocery, no drone, no crypto in v1.
+    - Why POS-as-API: integrate, don't reinvent.
+    - Multi-city rollout is a goal — Cairo, Giza, Alex, Mansoura.
+    - Anti-fraud is BOTH customer + employee — important distinction.
+  </aside>
+</body>
+</html>

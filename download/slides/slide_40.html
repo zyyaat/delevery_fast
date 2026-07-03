@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scaling Strategy — Peak Load Handling</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .col-h { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+    .col-h .material-icons { color: var(--primary); font-size:20px; }
+    .col-h h2 { font-family: var(--font-heading); font-weight:800; font-size:17px; color: var(--text); }
+    .col-h .ar { font-family: var(--font-cn); font-size:12px; color: var(--text-dim); }
+
+    .bar-chart { display:flex; flex-direction:column; gap:5px; padding:12px 14px; background: var(--bg-elev); border:1px solid var(--border); border-radius:10px; }
+    .bar-row { display:grid; grid-template-columns: 42px 1fr 38px; align-items:center; gap:8px; font-family: var(--font-num); font-size:10.5px; }
+    .bar-row .hr { color: var(--text-mute); font-weight:600; }
+    .bar-row .bar { height:11px; border-radius:3px; background: linear-gradient(90deg, var(--primary), rgba(0,212,255,0.4)); }
+    .bar-row .bar.peak { background: linear-gradient(90deg, var(--accent), var(--primary)); box-shadow: 0 0 8px rgba(177,78,255,0.5); }
+    .bar-row .pct { color: var(--text-dim); text-align:right; }
+    .bar-row .pct.peak { color: var(--accent); font-weight:700; }
+
+    .peak-note { display:flex; gap:8px; align-items:flex-start; padding:9px 12px; border-radius:8px; background: rgba(255,184,0,0.06); border:1px solid rgba(255,184,0,0.25); margin-top:10px; }
+    .peak-note .material-icons { color: var(--warning); font-size:16px; flex-shrink:0; margin-top:1px; }
+    .peak-note span { font-size:10.5px; line-height:1.4; color: var(--text-dim); }
+    .peak-note strong { color: var(--warning); }
+
+    .tactic-card { padding:9px 12px; border-radius:8px; background: var(--bg-card); border:1px solid var(--border); border-left:3px solid var(--primary); }
+    .tactic-card + .tactic-card { margin-top:7px; }
+    .tactic-card .num { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:5px; background: rgba(0,212,255,0.12); border:1px solid rgba(0,212,255,0.3); color: var(--primary); font-family: var(--font-num); font-weight:700; font-size:10px; margin-right:8px; }
+    .tactic-card .ttl { font-family: var(--font-heading); font-weight:700; font-size:12.5px; color: var(--text); display:inline; }
+    .tactic-card ul { list-style:none; padding:0; margin:5px 0 0; }
+    .tactic-card li { font-size:10px; line-height:1.4; color: var(--text-dim); padding-left:11px; position:relative; margin-bottom:2px; }
+    .tactic-card li::before { content:'›'; position:absolute; left:0; color: var(--text-mute); }
+    .tactic-card:nth-child(2) { border-left-color: var(--accent); }
+    .tactic-card:nth-child(2) .num { background: rgba(177,78,255,0.12); border-color: rgba(177,78,255,0.3); color: var(--accent); }
+    .tactic-card:nth-child(3) { border-left-color: var(--success); }
+    .tactic-card:nth-child(3) .num { background: rgba(0,229,138,0.12); border-color: rgba(0,229,138,0.3); color: var(--success); }
+    .tactic-card:nth-child(4) { border-left-color: var(--warning); }
+    .tactic-card:nth-child(4) .num { background: rgba(255,184,0,0.12); border-color: rgba(255,184,0,0.3); color: var(--warning); }
+    .tactic-card:nth-child(5) { border-left-color: var(--gold); }
+    .tactic-card:nth-child(5) .num { background: rgba(255,209,102,0.12); border-color: rgba(255,209,102,0.3); color: var(--gold); }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>08 — ROADMAP &amp; DEVOPS</span>
+    </div>
+    <div class="page-num">40 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">SCALE</span>
+    <h1 class="slide-title">Scaling Strategy — Peak Load Handling <span class="text-dim font-ar" style="font-weight:600;">/ استراتيجية التوسع</span></h1>
+    <p class="slide-subtitle">How the platform handles 5x spikes during lunch/dinner peaks without degradation.</p>
+  </div>
+
+  <div class="grid-2" style="flex:1; align-content:start; gap:16px;">
+    <!-- LEFT — Peak Profile -->
+    <div class="card-glow" style="padding:14px 16px;">
+      <div class="col-h">
+        <span class="material-icons">bar_chart</span>
+        <h2>Peak Profile</h2><span class="ar rtl">/ ملف الذروة</span>
+      </div>
+
+      <div class="bar-chart">
+        <div class="bar-row"><span class="hr">12pm</span><div class="bar peak" style="width:100%;"></div><span class="pct peak">100%</span></div>
+        <div class="bar-row"><span class="hr">1pm</span><div class="bar" style="width:85%;"></div><span class="pct">85%</span></div>
+        <div class="bar-row"><span class="hr">2pm</span><div class="bar" style="width:50%;"></div><span class="pct">50%</span></div>
+        <div class="bar-row"><span class="hr">3pm</span><div class="bar" style="width:20%;"></div><span class="pct">20%</span></div>
+        <div class="bar-row"><span class="hr">7pm</span><div class="bar" style="width:85%;"></div><span class="pct">85%</span></div>
+        <div class="bar-row"><span class="hr">8pm</span><div class="bar peak" style="width:100%;"></div><span class="pct peak">100%</span></div>
+        <div class="bar-row"><span class="hr">9pm</span><div class="bar" style="width:75%;"></div><span class="pct">75%</span></div>
+        <div class="bar-row"><span class="hr">10pm</span><div class="bar" style="width:50%;"></div><span class="pct">50%</span></div>
+        <div class="bar-row"><span class="hr">11pm</span><div class="bar" style="width:30%;"></div><span class="pct">30%</span></div>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:8px; font-family: var(--font-num); font-size:9.5px; align-items:center; padding:5px 0;">
+        <span class="text-mute" style="letter-spacing:0.5px;">LEGEND:</span>
+        <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:6px; background: linear-gradient(90deg, var(--accent), var(--primary)); border-radius:2px;"></span><span class="text-dim">PEAK</span></span>
+        <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:6px; background: var(--primary); border-radius:2px;"></span><span class="text-dim">NORMAL</span></span>
+      </div>
+
+      <div class="peak-note">
+        <span class="material-icons">local_fire_department</span>
+        <span>Lunch and dinner peaks carry <strong>70% of daily volume</strong>. Provisioning for peak = provisioning for ~3x average.</span>
+      </div>
+    </div>
+
+    <!-- RIGHT — Scaling Tactics -->
+    <div class="card-glow" style="padding:14px 16px;">
+      <div class="col-h">
+        <span class="material-icons">trending_up</span>
+        <h2>Scaling Tactics</h2><span class="ar rtl">/ تكتيكات التوسع</span>
+      </div>
+
+      <div class="tactic-card">
+        <span class="num">1</span><span class="ttl">Horizontal Pod Autoscaling (HPA)</span>
+        <ul>
+          <li>Scale on CPU &gt;70% AND RPS &gt;threshold per service</li>
+          <li>Min replicas: 3 (HA); Max: 50 per service</li>
+          <li>Scale-up fast (&lt;30s); scale-down slow (10min grace)</li>
+        </ul>
+      </div>
+
+      <div class="tactic-card">
+        <span class="num">2</span><span class="ttl">KEDA Event-Driven Autoscaling</span>
+        <ul>
+          <li>Kafka lag-based scaling for Notification, Analytics</li>
+          <li>If consumer lag &gt;1000 → add pods</li>
+          <li>Critical for handling burst order events</li>
+        </ul>
+      </div>
+
+      <div class="tactic-card">
+        <span class="num">3</span><span class="ttl">Read Replicas</span>
+        <ul>
+          <li>Read traffic split: 80% to replicas, 20% to primary</li>
+          <li>PgBouncer pools connections per service</li>
+          <li>Replica lag monitored; alerts if &gt;5s</li>
+        </ul>
+      </div>
+
+      <div class="tactic-card">
+        <span class="num">4</span><span class="ttl">Caching Strategy</span>
+        <ul>
+          <li>Redis for hot reads: restaurant list, menu items, promos</li>
+          <li>TTL: 60s restaurant list, 300s menus, 30s promos</li>
+          <li>Cache invalidation on Kafka events (MenuUpdated, PromoCreated)</li>
+          <li>Hit rate target: &gt;85%</li>
+        </ul>
+      </div>
+
+      <div class="tactic-card">
+        <span class="num">5</span><span class="ttl">Pre-Scaled Capacity</span>
+        <ul>
+          <li>Pre-scale Order + Payment 15 min before expected peak (cron-triggered)</li>
+          <li>Based on historical data + day-of-week + weather</li>
+          <li>Avoids cold-start latency during the first wave of orders</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - Lunch (12pm) and dinner (8pm) carry 100% peak each; 70% of daily volume.
+    - 5 scaling tactics: HPA, KEDA, read replicas, caching, pre-scaled capacity.
+    - HPA: CPU >70% AND RPS threshold; min 3, max 50 per service.
+    - KEDA scales on Kafka consumer lag >1000.
+    - Pre-scale Order + Payment 15 min before peak to avoid cold-start latency.
+  </aside>
+</body>
+</html>

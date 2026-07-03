@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Service Communication Patterns</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .pattern-card { display: flex; flex-direction: column; gap: 14px; }
+    .pattern-card .head { display:flex; align-items:center; gap:12px; }
+    .pattern-card .icon-box { width:42px; height:42px; }
+    .pattern-card .icon-box .material-icons { font-size:22px; }
+    .pattern-card h3 { font-family: var(--font-heading); font-weight:800; font-size:18px; line-height:1.2; color:var(--text); }
+    .pattern-card .ar { font-family: var(--font-cn); font-size:13px; color:var(--text-dim); }
+    .pattern-card .label { font-family: var(--font-num); font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--text-mute); margin-bottom:6px; }
+    .pattern-card ul { list-style: none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; }
+    .pattern-card ul li { font-size:12.5px; line-height:1.45; color:var(--text); padding-left:14px; position:relative; }
+    .pattern-card ul li::before { content:'▸'; position:absolute; left:0; color:var(--primary); }
+    .pattern-card .properties, .pattern-card .failure { font-size:12px; line-height:1.5; color:var(--text-dim); padding:10px 12px; border-radius:8px; background: rgba(255,255,255,0.02); border:1px solid var(--border); }
+    .pattern-card .failure .lbl { color:var(--accent-2); font-weight:700; }
+    .cyan { border-top:3px solid var(--primary); }
+    .purple { border-top:3px solid var(--accent); }
+    .green { border-top:3px solid var(--success); }
+    .cyan .icon-box { background: rgba(0,212,255,0.10); color:var(--primary); border-color: rgba(0,212,255,0.25); }
+    .purple .icon-box { background: rgba(177,78,255,0.10); color:var(--accent); border-color: rgba(177,78,255,0.25); }
+    .green .icon-box { background: rgba(0,229,138,0.10); color:var(--success); border-color: rgba(0,229,138,0.25); }
+    .decision-bar { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:10px; background: linear-gradient(90deg, rgba(0,212,255,0.06), rgba(177,78,255,0.06)); border:1px solid var(--border-soft); }
+    .decision-bar .material-icons { color: var(--accent); font-size:20px; }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>04 — MICROSERVICES BREAKDOWN</span>
+    </div>
+    <div class="page-num">18 / 50</div>
+  </header>
+
+  <div class="flex items-end justify-between mb-4">
+    <div>
+      <span class="section-kicker">SYNC vs ASYNC</span>
+      <h1 class="slide-title">Communication Patterns <span class="text-dim font-ar" style="font-weight:600;">/ أنماط التواصل</span></h1>
+      <p class="slide-subtitle">When to use gRPC vs Kafka vs WebSocket — picked per use case, not as a religion.</p>
+    </div>
+  </div>
+
+  <div class="grid-3" style="flex:1; align-content:start;">
+    <!-- Card 1 -->
+    <div class="card pattern-card cyan">
+      <div class="head">
+        <div class="icon-box"><span class="material-icons">bolt</span></div>
+        <div>
+          <h3>Synchronous · gRPC</h3>
+          <div class="ar rtl">المتزامن</div>
+        </div>
+      </div>
+      <div>
+        <div class="label">Use cases</div>
+        <ul>
+          <li>Order Service → Fraud Service (need risk score before confirming)</li>
+          <li>Order Service → Payment Service (need confirmation before notifying restaurant)</li>
+          <li>Customer App → API Gateway → any read query</li>
+        </ul>
+      </div>
+      <div class="properties"><span class="text-primary font-num" style="font-weight:700;">Properties:</span> Low latency (&lt;100ms p99), circuit breakers via go-resiliency, retries with jitter, timeouts at 2s.</div>
+      <div class="failure"><span class="lbl">Failure mode:</span> Caller fails fast — no cascading blocking.</div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card pattern-card purple">
+      <div class="head">
+        <div class="icon-box"><span class="material-icons">stream</span></div>
+        <div>
+          <h3>Asynchronous · Kafka</h3>
+          <div class="ar rtl">غير المتزامن</div>
+        </div>
+      </div>
+      <div>
+        <div class="label">Use cases</div>
+        <ul>
+          <li>OrderCreated → Notification, Analytics, Loyalty (fan-out)</li>
+          <li>DriverLocation → Geo Service, Command Center (high-volume stream)</li>
+          <li>MenuUpdated → Catalog, Search (eventual consistency OK)</li>
+        </ul>
+      </div>
+      <div class="properties"><span class="text-accent font-num" style="font-weight:700;">Properties:</span> Throughput 50K+ msgs/sec, retention 7–30 days, Avro schemas, exactly-once for payments.</div>
+      <div class="failure"><span class="lbl">Failure mode:</span> Consumer lag — alert if &gt;1000 msgs behind.</div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card pattern-card green">
+      <div class="head">
+        <div class="icon-box"><span class="material-icons">wifi_tethering</span></div>
+        <div>
+          <h3>Real-time · WebSocket</h3>
+          <div class="ar rtl">الوقت الحقيقي</div>
+        </div>
+      </div>
+      <div>
+        <div class="label">Use cases</div>
+        <ul>
+          <li>Customer App — order tracking (driver location every 5s)</li>
+          <li>Driver App — new order pushes (sub-second)</li>
+          <li>Command Center — live ops dashboard</li>
+        </ul>
+      </div>
+      <div class="properties"><span class="text-success font-num" style="font-weight:700;">Properties:</span> WS Gateway service, 100K concurrent connections per pod, horizontal scaling via Redis pub/sub.</div>
+      <div class="failure"><span class="lbl">Failure mode:</span> Client auto-reconnects with exponential backoff; missed events fetched via REST.</div>
+    </div>
+  </div>
+
+  <div class="decision-bar mt-4">
+    <span class="material-icons">rule</span>
+    <div class="text-xs" style="line-height:1.5;">
+      <span class="font-num text-primary" style="font-weight:700; letter-spacing:0.5px;">DECISION RULE:</span>
+      <span class="text-dim">if the caller NEEDS the result to proceed →</span> <span class="text-primary font-num">gRPC</span><span class="text-dim">. If the caller just announces something happened →</span> <span class="text-accent font-num">Kafka</span><span class="text-dim">. If clients need push →</span> <span class="text-success font-num">WebSocket</span><span class="text-dim">.</span>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - Three patterns, three different problems — never default to one.
+    - gRPC for need-it-now dependencies (Fraud, Payment, reads).
+    - Kafka for fan-out and high-volume streams (events, location).
+    - WebSocket for client push (tracking, dispatch, dashboards).
+    - Decision rule at the bottom is the takeaway — print it on the wall.
+  </aside>
+</body>
+</html>

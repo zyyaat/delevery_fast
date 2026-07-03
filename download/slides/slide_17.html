@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>12 Domain Services — Food Delivery Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="global.css">
+<style>
+  .svc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 9px;
+    flex: 1;
+  }
+  .svc {
+    background: linear-gradient(180deg, #131A2E 0%, #0F1424 100%);
+    border: 1px solid #1E2A4A;
+    border-radius: 10px;
+    padding: 10px 11px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .svc::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--c);
+  }
+  .svc::after {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--c) 18%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .svc .head {
+    display: flex; align-items: flex-start; gap: 6px;
+    justify-content: space-between;
+  }
+  .svc .head .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 9px;
+    color: var(--c);
+    letter-spacing: 1px;
+    padding: 2px 5px;
+    border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--c) 8%, transparent);
+    line-height: 1;
+  }
+  .svc .head .go-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 8.5px;
+    color: #0A0E1A;
+    background: linear-gradient(135deg, #00D4FF, #B14EFF);
+    padding: 2px 5px;
+    border-radius: 3px;
+    line-height: 1;
+  }
+  .svc .name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 12.5px;
+    color: #EAF0FF;
+    line-height: 1.15;
+    letter-spacing: 0.2px;
+  }
+  .svc .resp {
+    font-size: 10px;
+    color: #C7D0E6;
+    line-height: 1.35;
+    flex: 1;
+  }
+  .svc .meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    line-height: 1.3;
+    margin-top: 4px;
+    padding-top: 5px;
+    border-top: 1px dashed #2A3656;
+  }
+  .svc .meta .lbl { color: #5C6B8E; }
+  .svc .meta .val { color: #9BA8C7; }
+  .svc .meta .val.db { color: var(--c); font-weight: 700; }
+  .svc .meta .val.rps { color: #00E58A; font-weight: 700; }
+</style>
+</head>
+<body class="slide">
+
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>04 — MICROSERVICES BREAKDOWN</span>
+      <span style="color:#2A3656;">/</span>
+      <span>DOMAIN GRID</span>
+    </div>
+    <div class="page-num">17 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">DOMAIN-ORIENTED ARCHITECTURE</span>
+    <h1 class="slide-title" style="font-size:28px;">12 Domain Services <span style="color:#5C6B8E; font-weight:400;">/</span> <span class="font-ar" dir="rtl">12 خدمة مصممة حسب النطاق</span></h1>
+    <p class="slide-subtitle" style="font-size:12.5px; margin-top:2px;">Inspired by Uber's Domain-Oriented Microservice Architecture — each service owns its data and contracts.</p>
+  </div>
+
+  <div class="svc-grid">
+
+    <!-- 1. Auth -->
+    <div class="svc" style="--c:#00D4FF;">
+      <div class="head">
+        <span class="num">01</span>
+        <span class="go-pill">Go</span>
+      </div>
+      <div class="name">Auth Service</div>
+      <div class="resp">JWT issuance, OAuth2, MFA, session management</div>
+      <div class="meta">
+        <span class="lbl">DB:</span><span class="val db">auth_db</span>
+        <span class="lbl">Tech:</span><span class="val">Go + Redis</span>
+        <span class="lbl">RPS:</span><span class="val rps">500</span>
+      </div>
+    </div>
+
+    <!-- 2. Restaurant Catalog -->
+    <div class="svc" style="--c:#B14EFF;">
+      <div class="head">
+        <span class="num">02</span>
+        <span class="go-pill">Go</span>
+      </div>
+      <div class="name">Restaurant Catalog</div>
+      <div class="resp">Restaurant master data, hours, service areas</div>
+      <div class="meta">
+        <span class="lbl">DB:</span><span class="val db">restaurants_db</span>
+        <span class="lbl">Tech:</span><span class="val">Go + PostGIS</span>
+        <span class="lbl">Read:</span><span class="val rps">2K RPS</span>
+      </div>
+    </div>
+
+    <!-- 3. Menu -->
+    <div class="svc" style="--c:#FF3E8F;">
+      <div class="head">
+        <span class="num">03</span>
+        <span class="go-pill">Go</span>
+      </div>
+      <div class="name">Menu Service</div>
+      <div class="resp">Menu items, pricing, modifiers, availability</div>
+      <div class="meta">
+        <span class="lbl">DB:</span><span class="val db">menus_db</span>
+        <span class="lbl">Tech:</span><span class="val">Go + Postgres</span>
+        <span class="lbl">Read:</span><span class="val rps">3K RPS</span>
+      </div>
+    </div>
+
+    <!-- 4. Order -->
+    <div class="svc" style="--c:#00E58A;">
+      <div class="head">
+        <span class="num">04</span>
+        <span class="go-pill">Go</span>
+      </div>
+      <div class="name">Order Service</div>
+      <div class="resp">Order lifecycle, state machine, validation</div>
+      <div class="meta">
+        <span class="lbl">DB:</span><span class="val db">orders_db</span>
+        <span class="lbl">Tech:</span><span class="val">Go + Kafka producer</span>
+        <span class="lbl">Write:</span><span class="val rps">1K RPS</span>
+      </div>
+    </div>
+
+    <!-- 5. Payment -->
+    <div class="svc" style="--c:#FFB800;">
+      <div class="head">
+        <span class="num">05</span>
+        <span class="go-pill">Go</span>
+      </div>
+      <div class="name">Payment Service</div>
+      <div class="resp">Vodafone Cash, InstaPay, card, refunds</div>
+      <div class="meta">
+        <span class="lbl">DB:</span><span class="val db">payments_db</span>
+        <span class="lbl">Tech:</span><span class="val">Go + vault</span>
+        <span class="lbl">RPS:</span><span class="val rps">500</span>
+      </div>
+    </div>
+
+    <!-- 6. Delivery Matching -->
+    <div class="svc" style="--c:#FFD166;">
+      <div class="head">
+        <span class="num">06</span>
+        <span class="go-pill">Go</span>
+      </div>
+      <div class="name">Delivery Matching</div>
+      <div class="resp">Driver-customer matching, dispatch algorithm</div>
+      <div class="meta">
+        <span class="lbl">DB:</span><span class="val db">dispatch_db</span>
+        <span class="lbl">Tech:</span><span class="val">Go + Redis GEO</span>
+        <span class="lbl">RPS:</span><span class="val rps">200</span>
+      </div>
+    </div>
+
+    <!-- 7. Driver Management -->
+    <div class="svc" style="--c:#5B9BFF;">
+      <div class="head">
+        <span class="num">07</span>
+        <span class="go-pill">Go</span>
+      </div>
+      <div class="name">Driver Management</div>
+      <div class="resp">Driver profiles, KYC, vehicle, earnings</div>
+      <div class="meta">
+        <span class="lbl">DB:</span><span class="val db">drivers_db</span>
+        <span class="lbl">Tech:</span><span class="val">Go + Postgres</span>
+        <span class="lbl">RPS:</span><span class="val rps">300</span>
+      </div>
+    </div>
+
+    <!-- 8. Geo/Tracking -->
+    <div class="svc" style="--c:#00D4FF;">
+      <div class="head">
+        <span class="num">08</span>
+        <span class="go-pill">Go</span>
+      </div>
+      <div class="name">Geo / Tracking</div>
+      <div class="resp">Real-time GPS ingestion, ETA computation</div>
+      <div class="meta">
+        <span class="lbl">DB:</span><span class="val db">Redis only</span>
+        <span class="lbl">Tech:</span><span class="val">Go + Redis GEO</span>
+        <span class="lbl">Upd:</span><span class="val rps">50K/sec</span>
+      </div>
+    </div>
+
+    <!-- 9. Notification -->
+    <div class="svc" style="--c:#B14EFF;">
+      <div class="head">
+        <span class="num">09</span>
+        <span class="go-pill">Go</span>
+      </div>
+      <div class="name">Notification</div>
+      <div class="resp">Push, SMS, email, in-app</div>
+      <div class="meta">
+        <span class="lbl">DB:</span><span class="val db">notifications_db</span>
+        <span class="lbl">Tech:</span><span class="val">Go + Kafka consumer</span>
+        <span class="lbl">RPS:</span><span class="val rps">1K</span>
+      </div>
+    </div>
+
+    <!-- 10. Fraud Detection -->
+    <div class="svc" style="--c:#FF4757;">
+      <div class="head">
+        <span class="num">10</span>
+        <span class="go-pill">Go</span>
+      </div>
+      <div class="name">Fraud Detection</div>
+      <div class="resp">ML scoring, rule engine, manual review queue</div>
+      <div class="meta">
+        <span class="lbl">DB:</span><span class="val db">fraud_db</span>
+        <span class="lbl">Tech:</span><span class="val">Go + Python ML sidecar</span>
+        <span class="lbl">Sync:</span><span class="val rps">500 RPS</span>
+      </div>
+    </div>
+
+    <!-- 11. Promo/Loyalty -->
+    <div class="svc" style="--c:#FF3E8F;">
+      <div class="head">
+        <span class="num">11</span>
+        <span class="go-pill">Go</span>
+      </div>
+      <div class="name">Promo / Loyalty</div>
+      <div class="resp">Coupons, campaigns, points, cashback</div>
+      <div class="meta">
+        <span class="lbl">DB:</span><span class="val db">promos_db</span>
+        <span class="lbl">Tech:</span><span class="val">Go + Postgres</span>
+        <span class="lbl">RPS:</span><span class="val rps">200</span>
+      </div>
+    </div>
+
+    <!-- 12. Analytics/Reporting -->
+    <div class="svc" style="--c:#00E58A;">
+      <div class="head">
+        <span class="num">12</span>
+        <span class="go-pill">Go</span>
+      </div>
+      <div class="name">Analytics / Reporting</div>
+      <div class="resp">Aggregations, dashboards, exports</div>
+      <div class="meta">
+        <span class="lbl">DB:</span><span class="val db">analytics_db (ClickHouse)</span>
+        <span class="lbl">Tech:</span><span class="val">Go + Flink</span>
+        <span class="lbl">Mode:</span><span class="val rps">Async</span>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>04 — MICROSERVICES BREAKDOWN</span></div>
+    <div>17 / 50</div>
+  </footer>
+
+  <aside data-notes class="hidden">
+    - 12 services — each owns its DB. No shared tables.
+    - Geo/Tracking is the throughput king — 50K updates/sec.
+    - Fraud Detection uses Python ML sidecar via gRPC.
+    - Analytics uses ClickHouse for OLAP, Go + Flink pipeline.
+    - All Go backend — single language for the team.
+  </aside>
+</body>
+</html>

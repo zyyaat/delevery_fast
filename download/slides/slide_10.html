@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Strategic Differentiators — Food Delivery Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="global.css">
+<style>
+  .pillar {
+    background: linear-gradient(180deg, #131A2E 0%, #0F1424 100%);
+    border: 1px solid #1E2A4A;
+    border-radius: 14px;
+    padding: 18px 18px 16px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .pillar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--c);
+    box-shadow: 0 0 12px var(--c);
+  }
+  .pillar .glow {
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--c) 22%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .pillar .icon-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--c) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+    color: var(--c);
+    margin-bottom: 14px;
+  }
+  .pillar .icon-circle .material-icons { font-size: 30px; }
+  .pillar .pillar-num {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 11px;
+    color: var(--c);
+    letter-spacing: 1px;
+  }
+  .pillar .pillar-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--c);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .pillar h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+    color: #EAF0FF;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .pillar .body {
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: #9BA8C7;
+    flex: 1;
+  }
+  .pillar .metric-tag {
+    margin-top: 12px;
+    padding: 8px 10px;
+    background: color-mix(in srgb, var(--c) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c) 25%, transparent);
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--c);
+    line-height: 1.4;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .pillar .metric-tag .material-icons {
+    font-size: 14px;
+    margin-top: 1px;
+  }
+</style>
+</head>
+<body class="slide">
+
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>02 — COMPETITIVE LANDSCAPE</span>
+      <span style="color:#2A3656;">/</span>
+      <span>DIFFERENTIATORS</span>
+    </div>
+    <div class="page-num">10 / 50</div>
+  </header>
+
+  <div class="mb-4">
+    <span class="section-kicker">WHY WE WIN</span>
+    <h1 class="slide-title">Strategic Differentiators <span style="color:#5C6B8E; font-weight:400;">/</span> <span class="font-ar" dir="rtl">الميزات التنافسية</span></h1>
+    <p class="slide-subtitle" style="font-size:14px; margin-top:4px;">Three moats that compound over time — driver economics, lower merchant cost, and trust through anti-fraud.</p>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4 flex-1">
+
+    <!-- PILLAR 1 -->
+    <div class="pillar" style="--c:#00D4FF;">
+      <div class="glow" data-decor></div>
+      <div class="pillar-num">01</div>
+      <div class="icon-circle"><span class="material-icons">two_wheeler</span></div>
+      <div class="pillar-tag">PILLAR · DRIVER ECONOMICS</div>
+      <h3>Lower Commission, Higher Driver Take-Home</h3>
+      <p class="body">We charge restaurants 12-15% commission vs Talabat's 20-25% — freeing 5-8 points of margin that we redirect to drivers as higher per-order payouts and instant-cashout features. Drivers see transparent earnings breakdowns in real-time. This creates a sticky driver supply, which compounds into faster delivery times and better customer experience.</p>
+      <div class="metric-tag">
+        <span class="material-icons">trending_up</span>
+        <span>Driver payout: <strong style="color:#EAF0FF;">75% of commission</strong> vs 55% industry</span>
+      </div>
+    </div>
+
+    <!-- PILLAR 2 -->
+    <div class="pillar" style="--c:#B14EFF;">
+      <div class="glow" data-decor></div>
+      <div class="pillar-num">02</div>
+      <div class="icon-circle"><span class="material-icons">store</span></div>
+      <div class="pillar-tag">PILLAR · LOWER MERCHANT COST</div>
+      <h3>SME-Friendly Onboarding &amp; Pricing</h3>
+      <p class="body">Restaurants pay zero onboarding fees, zero monthly subscription, and a flat 12-15% per-order commission. We provide a free tablet + POS integration kit. Menu updates are self-serve through the Restaurant Web App. SME restaurants (the long tail of Egyptian food) get the same treatment as chains — a category Talabat largely ignores.</p>
+      <div class="metric-tag">
+        <span class="material-icons">schedule</span>
+        <span>Onboarding time: <strong style="color:#EAF0FF;">&lt;48 hours</strong> vs 2-3 weeks</span>
+      </div>
+    </div>
+
+    <!-- PILLAR 3 -->
+    <div class="pillar" style="--c:#00E58A;">
+      <div class="glow" data-decor></div>
+      <div class="pillar-num">03</div>
+      <div class="icon-circle"><span class="material-icons">shield</span></div>
+      <div class="pillar-tag">PILLAR · TRUST LAYER</div>
+      <h3>Native Anti-Fraud &amp; Employee Accountability</h3>
+      <p class="body">Every order passes through an ML fraud-scoring layer before confirmation. The internal Employee Portal requires biometric auth (fingerprint/face) and writes an immutable audit log for every action — preventing the internal fraud patterns that plague large delivery ops. Customers see a Trust Score on every restaurant.</p>
+      <div class="metric-tag">
+        <span class="material-icons">verified_user</span>
+        <span>Target fraud rate: <strong style="color:#EAF0FF;">&lt;0.3% of GMV</strong></span>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>02 — COMPETITIVE LANDSCAPE</span></div>
+    <div>10 / 50</div>
+  </footer>
+
+  <aside data-notes class="hidden">
+    - Three moats — each compounds: drivers → speed → customers → restaurants → drivers.
+    - Pillar 1: 75% to drivers vs 55% industry — huge driver-stickiness lever.
+    - Pillar 2: <48h onboarding unlocks the SME long tail Talabat ignores.
+    - Pillar 3: biometric + audit log is rare — internal fraud is a real ops tax.
+    - Reinforce: these are moats, not features.
+  </aside>
+</body>
+</html>

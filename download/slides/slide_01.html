@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cover — Food Delivery Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="global.css">
+<style>
+  .cover-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://sfile.chatglm.cn/images-ppt/c64bffd4c2d5.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.18;
+    z-index: 0;
+    filter: grayscale(20%) contrast(1.1);
+  }
+  .cover-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 80% 20%, rgba(0,212,255,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 10% 90%, rgba(177,78,255,0.16) 0%, transparent 55%),
+      linear-gradient(135deg, rgba(10,14,26,0.92) 0%, rgba(10,14,26,0.72) 50%, rgba(10,14,26,0.92) 100%);
+    z-index: 1;
+  }
+  .grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .hero-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 96px;
+    line-height: 0.95;
+    letter-spacing: -3.5px;
+    background: linear-gradient(135deg, #00D4FF 0%, #B14EFF 55%, #FF3E8F 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 60px rgba(0,212,255,0.15);
+  }
+  .neon-line {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00D4FF, #B14EFF, transparent);
+    box-shadow: 0 0 12px rgba(0,212,255,0.6);
+  }
+  .corner-mark {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-color: #00D4FF;
+  }
+</style>
+</head>
+<body class="slide" style="padding:0;">
+  <div class="cover-bg" data-decor></div>
+  <div class="cover-overlay" data-decor></div>
+  <div class="grid-lines" data-decor></div>
+
+  <!-- Corner marks -->
+  <div class="corner-mark" data-decor style="top:32px; left:32px; border-top:2px solid; border-left:2px solid;"></div>
+  <div class="corner-mark" data-decor style="top:32px; right:32px; border-top:2px solid; border-right:2px solid;"></div>
+  <div class="corner-mark" data-decor style="bottom:32px; left:32px; border-bottom:2px solid; border-left:2px solid;"></div>
+  <div class="corner-mark" data-decor style="bottom:32px; right:32px; border-bottom:2px solid; border-right:2px solid;"></div>
+
+  <div class="relative z-10 w-full h-full flex flex-col justify-between" style="padding:60px 72px;">
+
+    <!-- Top row: kicker + brand mark -->
+    <div class="flex items-start justify-between">
+      <div class="flex items-center gap-3">
+        <span class="inline-block w-2 h-2 rounded-full" style="background:#00D4FF; box-shadow:0 0 12px #00D4FF;"></span>
+        <span class="font-num font-semibold tracking-[2px] text-xs px-3 py-1.5 rounded-full"
+              style="background:rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.35); color:#00D4FF;">
+          TECHNICAL BLUEPRINT v1.0
+        </span>
+      </div>
+      <div class="flex items-center gap-2 font-num text-xs" style="color:#5C6B8E;">
+        <span class="material-icons" style="font-size:16px; color:#00D4FF;">bolt</span>
+        <span class="tracking-[2px]">FOOD · TECH · EGYPT</span>
+      </div>
+    </div>
+
+    <!-- Center hero -->
+    <div class="flex-1 flex flex-col justify-center" style="margin-top:-20px;">
+      <div class="font-num text-xs tracking-[6px] mb-4" style="color:#00D4FF;">— ARCHITECTURE DECK</div>
+      <h1 class="hero-title">Food Delivery<br>Platform</h1>
+
+      <div class="neon-line my-6" style="width:520px;" data-decor></div>
+
+      <p class="font-ar text-2xl mb-2" dir="rtl" style="color:#EAF0FF; font-weight:600;">
+        منصة توصيل طعام متكاملة — معمارية تقنية وخطة تنفيذ
+      </p>
+      <p class="font-en text-lg tracking-wide" style="color:#9BA8C7;">
+        Technical Architecture &amp; Execution Roadmap
+      </p>
+    </div>
+
+    <!-- Bottom row: stack tags + meta block -->
+    <div class="flex items-end justify-between">
+      <div>
+        <div class="font-num text-[10px] tracking-[3px] mb-3" style="color:#5C6B8E;">STACK</div>
+        <div class="flex items-center gap-2">
+          <span class="tag tag-primary"><span class="material-icons" style="font-size:12px;">memory</span>Go Backend</span>
+          <span class="tag tag-accent"><span class="material-icons" style="font-size:12px;">devices</span>React Apps</span>
+          <span class="tag tag-success"><span class="material-icons" style="font-size:12px;">storage</span>PostgreSQL</span>
+        </div>
+      </div>
+
+      <div class="text-right font-num text-xs" style="color:#9BA8C7;">
+        <div class="grid grid-cols-[auto_auto] gap-x-6 gap-y-1.5">
+          <span style="color:#5C6B8E;">Target Market:</span><span style="color:#EAF0FF;">Egypt</span>
+          <span style="color:#5C6B8E;">Scale Target:</span><span style="color:#00D4FF;">50K+ orders/day</span>
+          <span style="color:#5C6B8E;">Audience:</span><span style="color:#EAF0FF;">Internal Engineering</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <aside data-notes class="hidden">
+    - Open with the scope: full technical architecture + execution roadmap.
+    - Highlight scale target 50K orders/day and Egypt market focus.
+    - Mention this is the internal engineering blueprint, v1.0.
+    - Three-stack: Go backend, React apps, PostgreSQL — set expectation.
+    - 50 slides ahead across 8 chapters.
+  </aside>
+</body>
+</html>

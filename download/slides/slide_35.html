@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Audit Trail &amp; Compliance</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .comp-card { padding:14px 16px; border-radius:12px; background: var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; gap:8px; }
+    .comp-card .head { display:flex; align-items:center; gap:10px; }
+    .comp-card .icon { width:32px; height:32px; border-radius:8px; background: rgba(0,212,255,0.10); border:1px solid rgba(0,212,255,0.25); color: var(--primary); display:flex; align-items:center; justify-content:center; }
+    .comp-card .icon .material-icons { font-size:18px; }
+    .comp-card .title-en { font-family: var(--font-heading); font-weight:700; font-size:13.5px; color: var(--text); line-height:1.15; }
+    .comp-card .title-ar { font-family: var(--font-cn); font-size:11px; color: var(--text-dim); }
+    .comp-card ul { list-style:none; padding:0; margin:0; }
+    .comp-card li { font-size:10.5px; line-height:1.45; color: var(--text-dim); padding-left:14px; position:relative; margin-bottom:4px; }
+    .comp-card li::before { content:'▸'; position:absolute; left:0; color: var(--primary); font-size:9px; top:1px; }
+    .comp-card .status { margin-top:auto; padding:6px 10px; border-radius:6px; background: rgba(0,229,138,0.08); border:1px solid rgba(0,229,138,0.25); font-size:10px; line-height:1.35; color: var(--success); display:flex; gap:6px; align-items:flex-start; }
+    .comp-card .status .material-icons { font-size:13px; flex-shrink:0; margin-top:1px; }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>07 — SECURITY &amp; ANTI-FRAUD</span>
+    </div>
+    <div class="page-num">35 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">COMPLIANCE</span>
+    <h1 class="slide-title">Audit Trail &amp; Compliance <span class="text-dim font-ar" style="font-weight:600;">/ سجل التدقيق والامتثال</span></h1>
+    <p class="slide-subtitle">Egyptian regulations, PCI-DSS for payments, GDPR-equivalent for customer data.</p>
+  </div>
+
+  <div class="grid-2" style="flex:1; align-content:start; gap:14px;">
+    <!-- CARD 1 — Egyptian Regulatory -->
+    <div class="comp-card" style="border-left:3px solid var(--accent);">
+      <div class="head">
+        <div class="icon" style="background: rgba(177,78,255,0.12); border-color: rgba(177,78,255,0.30); color: var(--accent);"><span class="material-icons">gavel</span></div>
+        <div>
+          <div class="title-en">Egyptian Regulatory Compliance</div>
+          <div class="title-ar rtl">الامتثال للأنظمة المصرية</div>
+        </div>
+      </div>
+      <ul>
+        <li>Consumer Protection Law 67/2006 — clear pricing, refund policies, no misleading ads</li>
+        <li>Cybercrime Law 175/2018 — data breach notification within 72h, internal fraud prosecution</li>
+        <li>Central Bank of Egypt (CBE) guidelines for payment intermediaries</li>
+        <li>NTRA regulations for SMS notifications</li>
+        <li>Annual compliance audit by external firm</li>
+      </ul>
+      <div class="status"><span class="material-icons">check_circle</span><span>All flows implemented from day one; legal review at each phase gate.</span></div>
+    </div>
+
+    <!-- CARD 2 — PCI-DSS -->
+    <div class="comp-card" style="border-left:3px solid var(--primary);">
+      <div class="head">
+        <div class="icon"><span class="material-icons">credit_card</span></div>
+        <div>
+          <div class="title-en">PCI-DSS for Card Payments</div>
+          <div class="title-ar rtl">أمن بطاقات الدفع</div>
+        </div>
+      </div>
+      <ul>
+        <li>Never store full PAN (card number) — only last 4 digits + token</li>
+        <li>Payment tokenization via provider (Stripe/Paymob)</li>
+        <li>All card input fields rendered in provider's iframe (out of our scope)</li>
+        <li>Quarterly ASV scans, annual SAQ-A submission</li>
+        <li>Network segmentation: payment subnet isolated</li>
+      </ul>
+      <div class="status"><span class="material-icons">check_circle</span><span>PCI-DSS SAQ-A — lowest validation tier because we never touch raw card data.</span></div>
+    </div>
+
+    <!-- CARD 3 — Customer Data Protection -->
+    <div class="comp-card" style="border-left:3px solid var(--success);">
+      <div class="head">
+        <div class="icon" style="background: rgba(0,229,138,0.10); border-color: rgba(0,229,138,0.25); color: var(--success);"><span class="material-icons">privacy_tip</span></div>
+        <div>
+          <div class="title-en">Customer Data Protection</div>
+          <div class="title-ar rtl">حماية بيانات العملاء</div>
+        </div>
+      </div>
+      <ul>
+        <li>PII encryption at rest (column-level for phone, email, address)</li>
+        <li>Data retention: 7 years for financial records (tax law), 3 years for orders, 90 days for driver GPS</li>
+        <li>Right to deletion: customer can request account deletion via Support</li>
+        <li>Data export: GDPR-style data portability (JSON export within 30 days)</li>
+        <li>No PII shared with third parties without explicit consent</li>
+      </ul>
+      <div class="status"><span class="material-icons">check_circle</span><span>Privacy policy published; consent flows implemented at signup.</span></div>
+    </div>
+
+    <!-- CARD 4 — Audit Log Retention -->
+    <div class="comp-card" style="border-left:3px solid var(--warning);">
+      <div class="head">
+        <div class="icon" style="background: rgba(255,184,0,0.10); border-color: rgba(255,184,0,0.25); color: var(--warning);"><span class="material-icons">history</span></div>
+        <div>
+          <div class="title-en">Audit Log Retention</div>
+          <div class="title-ar rtl">احتفاظ بسجل التدقيق</div>
+        </div>
+      </div>
+      <ul>
+        <li>Hot tier: 90 days in PostgreSQL (fast query)</li>
+        <li>Warm tier: 1 year in S3 + Parquet (queryable via Athena)</li>
+        <li>Cold tier: 7 years in S3 Glacier (compliance retention)</li>
+        <li>Hash chain validated nightly — alerts on tampering</li>
+        <li>Logs immutable — even super_admin cannot modify</li>
+      </ul>
+      <div class="status"><span class="material-icons">check_circle</span><span>Retention policy enforced via automated lifecycle rules; legal hold capability for active investigations.</span></div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - 4 compliance pillars: Egyptian law, PCI-DSS, customer data, audit retention.
+    - Consumer Protection 67/2006, Cybercrime 175/2018, CBE + NTRA oversight.
+    - PCI-DSS SAQ-A — never touch raw card data, tokenization via Stripe/Paymob.
+    - 3-tier audit retention: hot 90d, warm 1y, cold 7y.
+    - Logs immutable; even super_admin cannot modify records.
+  </aside>
+</body>
+</html>

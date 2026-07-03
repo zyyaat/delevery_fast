@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Data Flow — Order Placement</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="global.css">
+<style>
+  .flow-row {
+    display: grid;
+    grid-template-columns: 1fr 12px 1fr 12px 1fr 12px 1fr;
+    gap: 0;
+    align-items: stretch;
+  }
+  .stage {
+    background: linear-gradient(180deg, #131A2E 0%, #0F1424 100%);
+    border: 1px solid #1E2A4A;
+    border-radius: 10px;
+    padding: 10px 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+  }
+  .stage::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--c);
+    box-shadow: 0 0 8px var(--c);
+  }
+  .stage .step-num {
+    position: absolute;
+    top: 6px; right: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 9px;
+    color: var(--c);
+    letter-spacing: 1px;
+  }
+  .stage .icn-row {
+    display: flex; align-items: center; gap: 5px;
+    margin-top: 4px;
+  }
+  .stage .icn {
+    width: 22px; height: 22px;
+    border-radius: 5px;
+    background: color-mix(in srgb, var(--c) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+    color: var(--c);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .stage .icn .material-icons { font-size: 13px; }
+  .stage .name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 10.5px;
+    color: #EAF0FF;
+    line-height: 1.15;
+    letter-spacing: 0.3px;
+  }
+  .stage .name .sub {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    color: var(--c);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-top: 1px;
+  }
+  .stage .body {
+    font-size: 9.5px;
+    color: #C7D0E6;
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+  .stage .body .bullet {
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+    margin-top: 2px;
+  }
+  .stage .body .bullet::before {
+    content: '•';
+    color: var(--c);
+    flex-shrink: 0;
+  }
+  .stage .flow-tag {
+    margin-top: auto;
+    padding: 3px 5px;
+    background: rgba(15,20,36,0.6);
+    border: 1px dashed #2A3656;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    color: var(--c);
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+  }
+  .arrow-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00D4FF;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 18px;
+    text-shadow: 0 0 8px rgba(0,212,255,0.6);
+  }
+  .row-2 {
+    display: grid;
+    grid-template-columns: 1fr 12px 1fr;
+    gap: 0;
+    margin-top: 10px;
+  }
+  .latency-note {
+    background: linear-gradient(90deg, rgba(0,212,255,0.08), rgba(177,78,255,0.08));
+    border: 1px solid rgba(0,212,255,0.25);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .latency-note .material-icons { color: #00D4FF; font-size: 18px; }
+  .latency-note .text {
+    font-size: 11px;
+    color: #C7D0E6;
+    line-height: 1.4;
+  }
+  .latency-note .text strong { color: #00D4FF; font-weight: 700; }
+</style>
+</head>
+<body class="slide">
+
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>03 — SYSTEM ARCHITECTURE</span>
+      <span style="color:#2A3656;">/</span>
+      <span>ORDER FLOW</span>
+    </div>
+    <div class="page-num">14 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">REQUEST LIFECYCLE</span>
+    <h1 class="slide-title" style="font-size:28px;">Data Flow — Order Placement <span style="color:#5C6B8E; font-weight:400;">/</span> <span class="font-ar" dir="rtl">تدفق البيانات — إنشاء الطلب</span></h1>
+    <p class="slide-subtitle" style="font-size:12.5px; margin-top:2px;">From customer tap to order confirmed — the synchronous path under 2 seconds.</p>
+  </div>
+
+  <div class="flex-1 flex flex-col justify-center">
+
+    <!-- Row 1: stages 1-4 -->
+    <div class="flow-row">
+
+      <div class="stage" style="--c:#00D4FF;">
+        <div class="step-num">01</div>
+        <div class="icn-row">
+          <div class="icn"><span class="material-icons">person</span></div>
+          <div class="name">CUSTOMER APP<span class="sub">User tap</span></div>
+        </div>
+        <div class="body">
+          User taps 'Place Order'
+        </div>
+        <div class="flow-tag">→ POST /orders</div>
+      </div>
+
+      <div class="arrow-cell" data-decor>→</div>
+
+      <div class="stage" style="--c:#5B9BFF;">
+        <div class="step-num">02</div>
+        <div class="icn-row">
+          <div class="icn"><span class="material-icons">router</span></div>
+          <div class="name">API GATEWAY<span class="sub">Edge</span></div>
+        </div>
+        <div class="body">
+          Validates JWT, rate-limits, routes
+        </div>
+        <div class="flow-tag">→ forwards to Order Service</div>
+      </div>
+
+      <div class="arrow-cell" data-decor>→</div>
+
+      <div class="stage" style="--c:#B14EFF;">
+        <div class="step-num">03</div>
+        <div class="icn-row">
+          <div class="icn"><span class="material-icons">memory</span></div>
+          <div class="name">ORDER SERVICE<span class="sub">Go</span></div>
+        </div>
+        <div class="body">
+          <div class="bullet">Validates cart + pricing</div>
+          <div class="bullet">Checks inventory via Restaurant Catalog</div>
+          <div class="bullet">Calls Fraud Service (sync, &lt;100ms)</div>
+          <div class="bullet">Creates Order (status: PENDING)</div>
+        </div>
+        <div class="flow-tag">→ publishes OrderCreated to Kafka</div>
+      </div>
+
+      <div class="arrow-cell" data-decor>→</div>
+
+      <div class="stage" style="--c:#FF3E8F;">
+        <div class="step-num">04</div>
+        <div class="icn-row">
+          <div class="icn"><span class="material-icons">shield</span></div>
+          <div class="name">FRAUD SERVICE<span class="sub">Risk score</span></div>
+        </div>
+        <div class="body">
+          Returns risk score 0-100
+          <div class="bullet">&gt;80 → blocks, refund</div>
+          <div class="bullet">50-80 → manual review queue</div>
+          <div class="bullet">&lt;50 → proceed</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Row 2: stages 5-7 -->
+    <div class="row-2">
+
+      <div class="stage" style="--c:#00E58A;">
+        <div class="step-num">05</div>
+        <div class="icn-row">
+          <div class="icn"><span class="material-icons">payments</span></div>
+          <div class="name">PAYMENT SERVICE<span class="sub">Capture</span></div>
+        </div>
+        <div class="body">
+          <div class="bullet">Calls Vodafone Cash / InstaPay API</div>
+          <div class="bullet">Holds payment for 30s</div>
+          <div class="bullet">On success → publishes PaymentCaptured</div>
+        </div>
+      </div>
+
+      <div class="arrow-cell" data-decor>→</div>
+
+      <div class="grid grid-cols-2 gap-2.5">
+        <div class="stage" style="--c:#FFB800;">
+          <div class="step-num">06 · ASYNC</div>
+          <div class="icn-row">
+            <div class="icn"><span class="material-icons">notifications</span></div>
+            <div class="name">NOTIFICATION<span class="sub">Restaurant push</span></div>
+          </div>
+          <div class="body">
+            <div class="bullet">Pushes to Restaurant App</div>
+            <div class="bullet">Restaurant accepts → RestaurantAccepted event</div>
+          </div>
+        </div>
+
+        <div class="stage" style="--c:#FFD166;">
+          <div class="step-num">07 · ASYNC</div>
+          <div class="icn-row">
+            <div class="icn"><span class="material-icons">two_wheeler</span></div>
+            <div class="name">DELIVERY MATCHING<span class="sub">Driver dispatch</span></div>
+          </div>
+          <div class="body">
+            <div class="bullet">Subscribes to RestaurantAccepted</div>
+            <div class="bullet">Finds nearest driver via Redis GEO</div>
+            <div class="bullet">Driver accepts → OrderConfirmed</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="latency-note">
+      <span class="material-icons">timer</span>
+      <div class="text">
+        <strong>Total p95 latency target:</strong> &lt;2s for steps 1-5; steps 6-7 happen async in &lt;10s.
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>03 — SYSTEM ARCHITECTURE</span></div>
+    <div>14 / 50</div>
+  </footer>
+
+  <aside data-notes class="hidden">
+    - Walk left-to-right; synchronous chain breaks at stage 6.
+    - Fraud check is synchronous, must complete in <100ms.
+    - Payment hold = 30s, then release on success.
+    - Stages 6-7 are async — restaurant + driver push.
+    - Total p95 target: <2s sync + <10s async end-to-end.
+  </aside>
+</body>
+</html>

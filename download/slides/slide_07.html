@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Market &amp; Scale Targets — Food Delivery Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="global.css">
+<style>
+  .big-stat {
+    background: linear-gradient(180deg, #131A2E 0%, #0F1424 100%);
+    border: 1px solid #1E2A4A;
+    border-radius: 14px;
+    padding: 14px 16px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .big-stat::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--c1, #00D4FF), transparent);
+  }
+  .big-stat .val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--c1, #00D4FF) 0%, var(--c2, #B14EFF) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+  }
+  .big-stat .lbl {
+    font-size: 11px;
+    color: #9BA8C7;
+    margin-top: 6px;
+    line-height: 1.35;
+  }
+  .big-stat .sub {
+    font-size: 10px;
+    color: #5C6B8E;
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .phase-bar {
+    background: linear-gradient(180deg, #131A2E 0%, #0F1424 100%);
+    border: 1px solid #1E2A4A;
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .phase {
+    flex: 1;
+    padding: 0 10px;
+    border-right: 1px solid #1E2A4A;
+  }
+  .phase:last-child { border-right: none; }
+  .phase .ph-head {
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #00D4FF;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .phase .ph-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 18px;
+    color: #EAF0FF;
+    line-height: 1;
+  }
+  .phase .ph-desc {
+    font-size: 10.5px;
+    color: #9BA8C7;
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+  .phase-bar-track {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.04);
+    overflow: hidden;
+    margin-bottom: 10px;
+    display: flex;
+  }
+  .phase-bar-track > div {
+    height: 100%;
+  }
+  .note-card {
+    background: rgba(19,26,46,0.6);
+    border: 1px solid #1E2A4A;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .note-card .icn {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    color: #00D4FF;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .note-card .icn .material-icons { font-size: 14px; }
+  .note-card .txt {
+    font-size: 11px;
+    color: #C7D0E6;
+    line-height: 1.4;
+  }
+  .note-card .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: #00D4FF;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+</style>
+</head>
+<body class="slide">
+
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>01 — PROJECT OVERVIEW</span>
+      <span style="color:#2A3656;">/</span>
+      <span>MARKET &amp; SCALE</span>
+    </div>
+    <div class="page-num">07 / 50</div>
+  </header>
+
+  <div class="mb-4">
+    <span class="section-kicker">EGYPT FOOD DELIVERY</span>
+    <h1 class="slide-title">Market &amp; Scale Targets <span style="color:#5C6B8E; font-weight:400;">/</span> <span class="font-ar" dir="rtl">السوق والأهداف</span></h1>
+  </div>
+
+  <!-- Top: 4 stat cards -->
+  <div class="grid grid-cols-4 gap-3 mb-3">
+    <div class="big-stat" style="--c1:#00D4FF; --c2:#00D4FF;">
+      <div class="val">$1.7B</div>
+      <div class="lbl">Egyptian food delivery market by 2027</div>
+      <div class="sub">12% YoY growth</div>
+    </div>
+    <div class="big-stat" style="--c1:#B14EFF; --c2:#FF3E8F;">
+      <div class="val">50K+</div>
+      <div class="lbl">Daily orders target (Year 1)</div>
+      <div class="sub">END OF MONTH 12</div>
+    </div>
+    <div class="big-stat" style="--c1:#00E58A; --c2:#00D4FF;">
+      <div class="val">2,500+</div>
+      <div class="lbl">Restaurants onboarded by month 12</div>
+      <div class="sub">CURATED, NOT LONG-TAIL</div>
+    </div>
+    <div class="big-stat" style="--c1:#FFB800; --c2:#FF3E8F;">
+      <div class="val">15K+</div>
+      <div class="lbl">Active drivers on the platform</div>
+      <div class="sub">PEAK-HOUR READY</div>
+    </div>
+  </div>
+
+  <!-- Middle: 4-phase growth bar -->
+  <div class="phase-bar mb-3">
+    <div class="flex items-center justify-between mb-2">
+      <div class="font-num text-[11px] tracking-[1.5px]" style="color:#9BA8C7;">12-MONTH GROWTH TRAJECTORY</div>
+      <div class="font-num text-[10px] tracking-[1px]" style="color:#5C6B8E;">ORDERS / DAY · CITIES · RESTAURANTS</div>
+    </div>
+
+    <div class="phase-bar-track">
+      <div style="width:1%; background:#00D4FF;" data-decor></div>
+      <div style="width:10%; background:#00D4FF;" data-decor></div>
+      <div style="width:30%; background:#B14EFF;" data-decor></div>
+      <div style="width:59%; background:linear-gradient(90deg,#B14EFF,#FF3E8F);" data-decor></div>
+    </div>
+
+    <div class="flex">
+      <div class="phase">
+        <div class="ph-head"><span>PHASE 1</span><span style="color:#5C6B8E;">· M1-M3</span></div>
+        <div class="ph-num">500</div>
+        <div class="ph-desc">orders/day · Cairo only · 50 restaurants · MVP</div>
+      </div>
+      <div class="phase">
+        <div class="ph-head"><span>PHASE 2</span><span style="color:#5C6B8E;">· M4-M6</span></div>
+        <div class="ph-num">5,000</div>
+        <div class="ph-desc">orders/day · Cairo + Giza · 300 restaurants</div>
+      </div>
+      <div class="phase">
+        <div class="ph-head"><span>PHASE 3</span><span style="color:#5C6B8E;">· M7-M9</span></div>
+        <div class="ph-num">20,000</div>
+        <div class="ph-desc">orders/day · +Alexandria · 1,000 restaurants</div>
+      </div>
+      <div class="phase">
+        <div class="ph-head"><span>PHASE 4</span><span style="color:#5C6B8E;">· M10-M12</span></div>
+        <div class="ph-num">50,000</div>
+        <div class="ph-desc">orders/day · 4 cities · 2,500 restaurants</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom: 3 note cards -->
+  <div class="grid grid-cols-3 gap-3">
+    <div class="note-card">
+      <div class="icn"><span class="material-icons">payments</span></div>
+      <div>
+        <div class="lbl">PAYMENT MIX TARGET</div>
+        <div class="txt">45% Vodafone Cash · 25% InstaPay · 20% Card · 10% COD</div>
+      </div>
+    </div>
+    <div class="note-card">
+      <div class="icn"><span class="material-icons">schedule</span></div>
+      <div>
+        <div class="lbl">PEAK HOURS</div>
+        <div class="txt">12-3pm (lunch) + 7-11pm (dinner) carry 70% of daily volume</div>
+      </div>
+    </div>
+    <div class="note-card">
+      <div class="icn"><span class="material-icons">attach_money</span></div>
+      <div>
+        <div class="lbl">AVG ORDER VALUE TARGET</div>
+        <div class="txt">EGP 180 (≈ $5.8)</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>01 — PROJECT OVERVIEW</span></div>
+    <div>07 / 50</div>
+  </footer>
+
+  <aside data-notes class="hidden">
+    - Anchor with $1.7B market by 2027 — that's the prize.
+    - 50K orders/day by month 12 — ambitious but staged.
+    - Walk the phase bar: 500 → 5K → 20K → 50K over 12 months.
+    - Payment mix shows local-payment-first strategy.
+    - Peak hours = 70% volume — auto-scaling must handle spikes.
+  </aside>
+</body>
+</html>

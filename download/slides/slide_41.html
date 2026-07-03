@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Monitoring &amp; SLOs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .sec-h { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .sec-h .material-icons { color: var(--primary); font-size:18px; }
+    .sec-h h2 { font-family: var(--font-heading); font-weight:800; font-size:15px; color: var(--text); }
+    .sec-h .ar { font-family: var(--font-cn); font-size:11px; color: var(--text-dim); }
+
+    .slo-tbl { width:100%; border-collapse:collapse; font-size:11px; }
+    .slo-tbl th { font-family: var(--font-num); font-weight:700; font-size:9.5px; color: var(--text-mute); letter-spacing:1px; text-transform:uppercase; text-align:left; padding:7px 10px; border-bottom:1px solid var(--border-soft); background: var(--bg-elev); }
+    .slo-tbl td { padding:8px 10px; border-bottom:1px solid var(--border); color: var(--text-dim); vertical-align:middle; }
+    .slo-tbl tr:last-child td { border-bottom:none; }
+    .slo-tbl .tier-cell { display:flex; align-items:center; gap:8px; }
+    .slo-tbl .tier-tag { display:inline-block; padding:3px 8px; border-radius:5px; font-family: var(--font-num); font-weight:700; font-size:10px; }
+    .tier-0 { background: rgba(255,71,87,0.12); color: var(--danger); border:1px solid rgba(255,71,87,0.3); }
+    .tier-1 { background: rgba(255,184,0,0.12); color: var(--warning); border:1px solid rgba(255,184,0,0.3); }
+    .tier-2 { background: rgba(0,212,255,0.12); color: var(--primary); border:1px solid rgba(0,212,255,0.3); }
+    .slo-tbl .num { font-family: var(--font-num); color: var(--text); font-weight:600; }
+
+    .signal-card { padding:10px 12px; border-radius:9px; background: var(--bg-card); border:1px solid var(--border); border-top:3px solid var(--primary); display:flex; flex-direction:column; gap:5px; }
+    .signal-card .head { display:flex; align-items:center; gap:7px; }
+    .signal-card .head .material-icons { color: var(--primary); font-size:18px; }
+    .signal-card .head .ttl { font-family: var(--font-heading); font-weight:700; font-size:13px; color: var(--text); }
+    .signal-card ul { list-style:none; padding:0; margin:0; }
+    .signal-card li { font-size:10px; line-height:1.4; color: var(--text-dim); padding-left:10px; position:relative; margin-bottom:2px; }
+    .signal-card li::before { content:'›'; position:absolute; left:0; color: var(--text-mute); }
+
+    .budget-bar { padding:11px 14px; border-radius:9px; background: linear-gradient(135deg, rgba(177,78,255,0.07), rgba(0,212,255,0.07)); border:1px solid rgba(177,78,255,0.25); display:flex; gap:11px; align-items:flex-start; }
+    .budget-bar .material-icons { color: var(--accent); font-size:20px; flex-shrink:0; margin-top:1px; }
+    .budget-bar .body { flex:1; }
+    .budget-bar .ttl { font-family: var(--font-heading); font-weight:700; font-size:12px; color: var(--text); margin-bottom:3px; }
+    .budget-bar .desc { font-size:10.5px; line-height:1.45; color: var(--text-dim); }
+    .budget-bar strong { color: var(--accent); }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>08 — ROADMAP &amp; DEVOPS</span>
+    </div>
+    <div class="page-num">41 / 50</div>
+  </header>
+
+  <div class="mb-2">
+    <span class="section-kicker">RELIABILITY</span>
+    <h1 class="slide-title">Monitoring &amp; SLOs <span class="text-dim font-ar" style="font-weight:600;">/ المراقبة والأهداف</span></h1>
+    <p class="slide-subtitle">Service Level Objectives per service — with error budgets that gate deployments.</p>
+  </div>
+
+  <!-- TOP — SLO Table -->
+  <div class="card-glow" style="padding:12px 14px; margin-top:10px;">
+    <div class="sec-h">
+      <span class="material-icons">dashboard</span>
+      <h2>Service Tier SLOs</h2><span class="ar rtl">/ مستويات الخدمة</span>
+    </div>
+    <table class="slo-tbl">
+      <thead>
+        <tr>
+          <th style="width:18%;">Tier</th>
+          <th style="width:38%;">Services</th>
+          <th style="width:14%;">Uptime SLO</th>
+          <th style="width:14%;">Latency p95</th>
+          <th style="width:16%;">Error Budget/Month</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="tier-cell"><span class="tier-tag tier-0">TIER 0</span><span class="text-mute" style="font-size:10px;">Critical</span></div></td>
+          <td>Order, Payment, Auth</td>
+          <td><span class="num">99.95%</span></td>
+          <td><span class="num">&lt;500ms</span></td>
+          <td><span class="num text-danger">22 min</span></td>
+        </tr>
+        <tr>
+          <td><div class="tier-cell"><span class="tier-tag tier-1">TIER 1</span><span class="text-mute" style="font-size:10px;">Important</span></div></td>
+          <td>Restaurant Catalog, Menu, Delivery Matching, Geo, Notification</td>
+          <td><span class="num">99.9%</span></td>
+          <td><span class="num">&lt;1s</span></td>
+          <td><span class="num text-warning">43 min</span></td>
+        </tr>
+        <tr>
+          <td><div class="tier-cell"><span class="tier-tag tier-2">TIER 2</span><span class="text-mute" style="font-size:10px;">Standard</span></div></td>
+          <td>Driver Mgmt, Promo/Loyalty, Fraud, Analytics</td>
+          <td><span class="num">99.5%</span></td>
+          <td><span class="num">&lt;2s</span></td>
+          <td><span class="num text-primary">3.6h</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MIDDLE — Golden Signals -->
+  <div style="margin-top:10px;">
+    <div class="sec-h">
+      <span class="material-icons">sensors</span>
+      <h2>Golden Signals</h2><span class="ar rtl">/ الإشارات الذهبية</span>
+    </div>
+    <div class="grid-4" style="gap:10px;">
+      <div class="signal-card">
+        <div class="head"><span class="material-icons">speed</span><span class="ttl">Latency</span></div>
+        <ul>
+          <li>p50, p95, p99 per endpoint</li>
+          <li>Alert if p95 &gt;SLO for 5 min</li>
+          <li>Grafana dashboard per service</li>
+        </ul>
+      </div>
+      <div class="signal-card" style="border-top-color: var(--accent);">
+        <div class="head"><span class="material-icons" style="color: var(--accent);">swap_horiz</span><span class="ttl">Traffic</span></div>
+        <ul>
+          <li>RPS, concurrent connections</li>
+          <li>Kafka msgs/sec per topic</li>
+          <li>WebSocket active connections</li>
+        </ul>
+      </div>
+      <div class="signal-card" style="border-top-color: var(--danger);">
+        <div class="head"><span class="material-icons" style="color: var(--danger);">error_outline</span><span class="ttl">Errors</span></div>
+        <ul>
+          <li>HTTP 5xx rate</li>
+          <li>Kafka consumer errors</li>
+          <li>Client-side error rate (Sentry)</li>
+        </ul>
+      </div>
+      <div class="signal-card" style="border-top-color: var(--warning);">
+        <div class="head"><span class="material-icons" style="color: var(--warning);">data_usage</span><span class="ttl">Saturation</span></div>
+        <ul>
+          <li>CPU, memory, disk, network</li>
+          <li>DB connection pool usage</li>
+          <li>Kafka consumer lag</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM — Error Budget Policy -->
+  <div style="margin-top:10px;">
+    <div class="budget-bar">
+      <span class="material-icons">policy</span>
+      <div class="body">
+        <div class="ttl">Error Budget Policy <span class="text-dim font-ar" style="font-weight:400; font-size:11px;">/ سياسة ميزانية الأخطاء</span></div>
+        <div class="desc">If a service burns <strong>&gt;50% of its monthly error budget</strong> in any 7-day window → deployment freeze for non-critical changes to that service. Focus shifts to reliability work. Budget resets monthly. Tier 0 violations trigger automatic incident review.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - 3-tier SLO framework: Tier 0 critical (99.95%), Tier 1 important (99.9%), Tier 2 standard (99.5%).
+    - Tier 0 services: Order, Payment, Auth — 22 min/month error budget.
+    - 4 Golden Signals: Latency, Traffic, Errors, Saturation — Google SRE classic.
+    - Error budget policy gates deployments — &gt;50% burn in 7d = freeze.
+    - Tier 0 violations trigger automatic incident review.
+  </aside>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Promotions & Loyalty Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .feat-card { padding: 13px 14px; border-radius: 12px; background: var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; gap:6px; min-height:0; }
+    .feat-card.c1 { border-top:3px solid var(--primary); }
+    .feat-card.c2 { border-top:3px solid var(--accent); }
+    .feat-card.c3 { border-top:3px solid var(--success); }
+    .feat-card.c4 { border-top:3px solid var(--danger); }
+    .feat-card .head { display:flex; align-items:center; gap:8px; padding-bottom:5px; border-bottom:1px solid var(--border); }
+    .feat-card .head .icon { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+    .feat-card .head .icon .material-icons { font-size:16px; }
+    .c1 .head .icon { background: rgba(0,212,255,0.10); color: var(--primary); border:1px solid rgba(0,212,255,0.30); }
+    .c2 .head .icon { background: rgba(177,78,255,0.10); color: var(--accent); border:1px solid rgba(177,78,255,0.30); }
+    .c3 .head .icon { background: rgba(0,229,138,0.10); color: var(--success); border:1px solid rgba(0,229,138,0.30); }
+    .c4 .head .icon { background: rgba(255,71,87,0.10); color: var(--danger); border:1px solid rgba(255,71,87,0.30); }
+    .feat-card .head h3 { font-family: var(--font-heading); font-weight:800; font-size:13px; color: var(--text); }
+    .feat-card .head .ar { font-family: var(--font-cn); font-size:10px; color: var(--text-dim); margin-top:1px; }
+    .feat-card ul { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:3px; }
+    .feat-card ul li { font-size:10.5px; line-height:1.4; color: var(--text-dim); padding-left:11px; position:relative; }
+    .feat-card ul li::before { content:'▸'; position:absolute; left:0; color: var(--primary); font-size:9px; top:1px; }
+    .c2 ul li::before { color: var(--accent); }
+    .c3 ul li::before { color: var(--success); }
+    .c4 ul li::before { color: var(--danger); }
+    .feat-card ul li b { color: var(--text); font-weight:600; }
+    .feat-card ul li .mono { font-family: var(--font-num); color: var(--text); font-size:10px; }
+    .feat-card .note { font-size:10px; line-height:1.4; color: var(--text-mute); padding-top:5px; border-top:1px dashed var(--border); font-style:italic; }
+    .tier-row { display:flex; gap:4px; margin-top:2px; }
+    .tier-row .tier { padding:2px 6px; border-radius:4px; font-family: var(--font-num); font-size:9px; font-weight:700; }
+    .tier.silver { background: rgba(156,168,199,0.10); color: var(--text-dim); border:1px solid var(--border-soft); }
+    .tier.gold { background: rgba(255,184,0,0.10); color: var(--warning); border:1px solid rgba(255,184,0,0.30); }
+    .tier.platinum { background: rgba(0,229,138,0.10); color: var(--success); border:1px solid rgba(0,229,138,0.30); }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>06 — BUSINESS LOGIC FLOWS</span>
+    </div>
+    <div class="page-num">30 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">GROWTH</span>
+    <h1 class="slide-title" style="font-size:26px;">Promotions &amp; Loyalty Engine <span class="text-dim font-ar" style="font-weight:600;">/ محرك العروض والولاء</span></h1>
+    <p class="slide-subtitle" style="font-size:13px; margin-top:3px;">Coupons, campaigns, points, cashback — all configurable without code deploys.</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; flex:1; min-height:0;">
+    <!-- CARD 1 -->
+    <div class="feat-card c1">
+      <div class="head">
+        <div class="icon"><span class="material-icons">local_offer</span></div>
+        <div>
+          <h3>Coupon Types</h3>
+          <div class="ar rtl">أنواع الكوبونات</div>
+        </div>
+      </div>
+      <ul>
+        <li><b>Flat discount</b> — EGP 20 off orders &gt;EGP 100</li>
+        <li><b>Percentage</b> — 15% off, capped at EGP 50</li>
+        <li><b>Free delivery</b> — no fee</li>
+        <li><b>BOGO</b> — buy one get one (menu_item scoped)</li>
+        <li><b>First-order bonus</b> — new users only</li>
+      </ul>
+      <div class="note">Each coupon has: code, valid window, usage limit per user, total usage limit, minimum order value, applicable restaurants/items.</div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="feat-card c2">
+      <div class="head">
+        <div class="icon"><span class="material-icons">campaign</span></div>
+        <div>
+          <h3>Campaign Targeting</h3>
+          <div class="ar rtl">استهداف الحملات</div>
+        </div>
+      </div>
+      <ul>
+        <li><b>Segment-based:</b> new users, dormant users (no order in 30 days), high-value (top 10% GMV)</li>
+        <li><b>Geo-based:</b> per city, per district</li>
+        <li><b>Time-based:</b> lunch hours, weekday vs weekend</li>
+        <li><b>Behavior-based:</b> viewed restaurant X but didn't order</li>
+      </ul>
+      <div class="note">Campaigns are evaluated in real-time when the Customer App loads <span class="font-num text-accent">/home</span> — returning personalized banners.</div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="feat-card c3">
+      <div class="head">
+        <div class="icon"><span class="material-icons">stars</span></div>
+        <div>
+          <h3>Loyalty Points</h3>
+          <div class="ar rtl">نقاط الولاء</div>
+        </div>
+      </div>
+      <ul>
+        <li><span class="mono">1 point</span> per EGP 1 spent (excl. delivery fee)</li>
+        <li><span class="mono">2×</span> points during birthdays</li>
+        <li><span class="mono">100 points</span> = EGP 5 discount</li>
+        <li>Tier system unlocks perks:
+          <div class="tier-row">
+            <span class="tier silver">SILVER · 1K pts</span>
+            <span class="tier gold">GOLD · 5K pts</span>
+            <span class="tier platinum">PLATINUM · 15K pts</span>
+          </div>
+        </li>
+        <li>Tiers unlock: priority support, free delivery, exclusive restaurant access</li>
+      </ul>
+      <div class="note">Points expire 12 months after earning — encourages redemption.</div>
+    </div>
+
+    <!-- CARD 4 -->
+    <div class="feat-card c4">
+      <div class="head">
+        <div class="icon"><span class="material-icons">shield</span></div>
+        <div>
+          <h3>Anti-Abuse Rules</h3>
+          <div class="ar rtl">قواعد منع الإساءة</div>
+        </div>
+      </div>
+      <ul>
+        <li>Max <span class="mono">1 coupon</span> per order</li>
+        <li>Max <span class="mono">3 coupons</span> per user per month</li>
+        <li>New device + new number + same IP → <b>flagged for review</b></li>
+        <li>Coupon flooding detected via velocity rules (<span class="mono">5 redemptions in 1hr</span> from same area = block)</li>
+        <li>Manual review queue for high-value coupons (&gt;EGP 50 discount)</li>
+      </ul>
+      <div class="note">Velocity rules + device fingerprinting = layered defense against promo abuse.</div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - 4 engines: Coupons, Campaigns, Loyalty, Anti-Abuse.
+    - All configurable without code deploys (rules engine + admin UI).
+    - Loyalty: 1 pt/EGP, 3 tiers (Silver/Gold/Platinum).
+    - Campaigns evaluated real-time on /home for personalization.
+    - Anti-abuse: velocity rules + device fingerprint + manual review queue.
+  </aside>
+</body>
+</html>

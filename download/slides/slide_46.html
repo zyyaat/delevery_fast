@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Decision Points &amp; Go/No-Go Gates</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .gate-card { padding:13px 16px; border-radius:12px; background: var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; gap:6px; position:relative; overflow:hidden; }
+    .gate-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; }
+    .gate-card.g1::before { background: var(--primary); box-shadow: 0 0 12px rgba(0,212,255,0.5); }
+    .gate-card.g2::before { background: var(--accent); box-shadow: 0 0 12px rgba(177,78,255,0.5); }
+    .gate-card.g3::before { background: var(--success); box-shadow: 0 0 12px rgba(0,229,138,0.5); }
+    .gate-card.g4::before { background: var(--gold); box-shadow: 0 0 12px rgba(255,209,102,0.5); }
+
+    .gate-h { display:flex; align-items:center; justify-content:space-between; padding-bottom:5px; border-bottom:1px solid var(--border); }
+    .gate-h .left { display:flex; align-items:center; gap:8px; }
+    .gate-h .num { font-family: var(--font-num); font-weight:800; font-size:11px; letter-spacing:1px; }
+    .g1 .gate-h .num { color: var(--primary); }
+    .g2 .gate-h .num { color: var(--accent); }
+    .g3 .gate-h .num { color: var(--success); }
+    .g4 .gate-h .num { color: var(--gold); }
+    .gate-h .month { font-family: var(--font-num); font-size:9.5px; color: var(--text-mute); }
+    .gate-h .arrow { color: var(--text-mute); font-size:11px; }
+    .gate-h .verdict { font-family: var(--font-heading); font-weight:800; font-size:12.5px; color: var(--text); padding:2px 8px; border-radius:5px; background: var(--bg-elev); border:1px solid var(--border-soft); }
+
+    .sec-label { font-family: var(--font-num); font-size:9px; color: var(--text-mute); letter-spacing:1px; font-weight:700; margin-top:4px; margin-bottom:2px; text-transform:uppercase; display:flex; align-items:center; gap:4px; }
+    .sec-label .material-icons { font-size:11px; color: var(--success); }
+    .gate-card ul { list-style:none; padding:0; margin:0; }
+    .gate-card li { font-size:10px; line-height:1.4; color: var(--text-dim); padding-left:11px; position:relative; margin-bottom:2px; }
+    .gate-card li::before { content:'✓'; position:absolute; left:0; color: var(--success); font-size:9px; top:0; }
+
+    .nogo-bar { margin-top:5px; padding:6px 9px; background: rgba(255,71,87,0.07); border-left:2px solid var(--danger); border-radius:5px; font-size:9.5px; line-height:1.35; color: var(--text-dim); display:flex; gap:5px; align-items:flex-start; }
+    .nogo-bar .material-icons { color: var(--danger); font-size:13px; flex-shrink:0; margin-top:1px; }
+    .nogo-bar strong { color: var(--danger); }
+
+    .owner-row { display:flex; justify-content:space-between; align-items:center; padding:5px 9px; background: var(--bg-elev); border-radius:5px; font-size:10px; margin-top:auto; }
+    .owner-row .lbl { color: var(--text-mute); font-family: var(--font-num); font-size:9px; letter-spacing:1px; }
+    .owner-row .val { color: var(--text); font-weight:700; font-size:10.5px; }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>08 — ROADMAP &amp; DEVOPS</span>
+    </div>
+    <div class="page-num">46 / 50</div>
+  </header>
+
+  <div class="mb-2">
+    <span class="section-kicker">PHASE GATES</span>
+    <h1 class="slide-title">Decision Points &amp; Go/No-Go Gates <span class="text-dim font-ar" style="font-weight:600;">/ نقاط القرار</span></h1>
+    <p class="slide-subtitle">Each phase ends with a structured go/no-go review — explicit criteria, explicit decisions.</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap:12px; flex:1; margin-top:8px;">
+    <!-- GATE 1 -->
+    <div class="gate-card g1">
+      <div class="gate-h">
+        <div class="left">
+          <span class="num">GATE 1</span>
+          <span class="arrow">·</span>
+          <span class="month">END OF PHASE 1 · MONTH 3</span>
+        </div>
+        <span class="verdict">Cairo MVP Validated</span>
+      </div>
+
+      <div class="sec-label"><span class="material-icons">check_circle</span>GO CRITERIA (ALL MUST BE MET)</div>
+      <ul>
+        <li>500 orders/day sustained for last 14 days</li>
+        <li>50 restaurants active (placed ≥3 orders in last 7 days)</li>
+        <li>p95 latency &lt;3s, uptime &gt;99%</li>
+        <li>Customer NPS &gt;30, Restaurant NPS &gt;30</li>
+        <li>Contribution margin &gt;EGP 0/order</li>
+      </ul>
+
+      <div class="nogo-bar"><span class="material-icons">block</span><span><strong>NO-GO:</strong> 2-week extension; if still not met, pivot or sunset. CEO + investors review.</span></div>
+      <div class="owner-row"><span class="lbl">DECISION OWNER</span><span class="val">CEO + Tech Lead</span></div>
+    </div>
+
+    <!-- GATE 2 -->
+    <div class="gate-card g2">
+      <div class="gate-h">
+        <div class="left">
+          <span class="num">GATE 2</span>
+          <span class="arrow">·</span>
+          <span class="month">END OF PHASE 2 · MONTH 6</span>
+        </div>
+        <span class="verdict">Giza Expansion Validated</span>
+      </div>
+
+      <div class="sec-label"><span class="material-icons">check_circle</span>GO CRITERIA</div>
+      <ul>
+        <li>5K orders/day across Cairo + Giza</li>
+        <li>300 restaurants, 2 cities live</li>
+        <li>Self-serve restaurant onboarding &gt;40% of new signups</li>
+        <li>Driver matching p95 &lt;15s</li>
+        <li>Fraud rate &lt;0.5% of GMV</li>
+      </ul>
+
+      <div class="nogo-bar"><span class="material-icons">block</span><span><strong>NO-GO:</strong> Hold Alexandria expansion; focus on Giza density. Re-evaluate in 4 weeks.</span></div>
+      <div class="owner-row"><span class="lbl">DECISION OWNER</span><span class="val">CEO + Head of Ops</span></div>
+    </div>
+
+    <!-- GATE 3 -->
+    <div class="gate-card g3">
+      <div class="gate-h">
+        <div class="left">
+          <span class="num">GATE 3</span>
+          <span class="arrow">·</span>
+          <span class="month">END OF PHASE 3 · MONTH 9</span>
+        </div>
+        <span class="verdict">Scale Validated</span>
+      </div>
+
+      <div class="sec-label"><span class="material-icons">check_circle</span>GO CRITERIA</div>
+      <ul>
+        <li>20K orders/day across 3 cities</li>
+        <li>1K restaurants live</li>
+        <li>Employee portal live, biometric auth enforced</li>
+        <li>ML fraud model in production, &gt;85% precision</li>
+        <li>Contribution margin &gt;EGP 2/order</li>
+      </ul>
+
+      <div class="nogo-bar"><span class="material-icons">block</span><span><strong>NO-GO:</strong> Delay Phase 4 optimizations; focus on operational excellence. Re-evaluate in 8 weeks.</span></div>
+      <div class="owner-row"><span class="lbl">DECISION OWNER</span><span class="val">CEO + CTO</span></div>
+    </div>
+
+    <!-- GATE 4 -->
+    <div class="gate-card g4">
+      <div class="gate-h">
+        <div class="left">
+          <span class="num">GATE 4</span>
+          <span class="arrow">·</span>
+          <span class="month">END OF PHASE 4 · MONTH 12</span>
+        </div>
+        <span class="verdict">Series A Ready</span>
+      </div>
+
+      <div class="sec-label"><span class="material-icons">check_circle</span>GO CRITERIA</div>
+      <ul>
+        <li>50K orders/day, 4 cities</li>
+        <li>2.5K restaurants, 15K drivers</li>
+        <li>Monthly revenue &gt;EGP 51M</li>
+        <li>Net positive monthly contribution margin</li>
+        <li>CAC &lt;EGP 80, LTV/CAC &gt;10x</li>
+        <li>All Tier 0 SLOs met in last 90 days</li>
+      </ul>
+
+      <div class="nogo-bar"><span class="material-icons">block</span><span><strong>NO-GO:</strong> Extend runway 3 months; cost optimization pass; Series A pitch with revised metrics.</span></div>
+      <div class="owner-row"><span class="lbl">DECISION OWNER</span><span class="val">CEO + Board</span></div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - 4 phase gates: M3 MVP, M6 Giza, M9 Scale, M12 Series A.
+    - Each gate has explicit go criteria + no-go consequences + decision owner.
+    - Gate 1: 500 orders/day, 50 restaurants, p95 <3s, NPS >30, margin >EGP 0.
+    - Gate 4 (Series A): 50K orders/day, 4 cities, monthly revenue >EGP 51M, LTV/CAC >10x.
+    - No-go paths always have a re-evaluation window, not just an exit.
+  </aside>
+</body>
+</html>

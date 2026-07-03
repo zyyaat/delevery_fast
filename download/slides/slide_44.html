@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Risks &amp; Mitigations</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .risk-tbl { width:100%; border-collapse:collapse; }
+    .risk-tbl th { font-family: var(--font-num); font-weight:700; font-size:9px; color: var(--text-mute); letter-spacing:1px; text-transform:uppercase; text-align:left; padding:6px 9px; border-bottom:1px solid var(--border-soft); background: var(--bg-elev); }
+    .risk-tbl td { padding:7px 9px; border-bottom:1px solid var(--border); vertical-align:top; font-size:10.5px; line-height:1.4; color: var(--text-dim); }
+    .risk-tbl tr:last-child td { border-bottom:none; }
+    .risk-tbl tr:hover td { background: rgba(0,212,255,0.02); }
+    .risk-tbl .num-cell { width:24px; text-align:center; font-family: var(--font-num); font-weight:700; color: var(--primary); }
+    .risk-tbl .risk-cell { width:22%; }
+    .risk-tbl .risk-cell .ttl { font-family: var(--font-heading); font-weight:700; font-size:11.5px; color: var(--text); line-height:1.25; margin-bottom:2px; }
+    .risk-tbl .risk-cell .ar { font-family: var(--font-cn); font-size:10px; color: var(--text-mute); }
+    .risk-tbl .sev-cell { width:8%; }
+    .risk-tbl .like-cell { width:9%; }
+    .risk-tbl .own-cell { width:14%; font-family: var(--font-num); font-size:10px; color: var(--text); font-weight:600; }
+    .sev-tag, .like-tag { display:inline-block; padding:2px 7px; border-radius:4px; font-family: var(--font-num); font-weight:700; font-size:9.5px; letter-spacing:0.5px; }
+    .sev-critical { background: rgba(255,71,87,0.15); color: var(--danger); border:1px solid rgba(255,71,87,0.35); }
+    .sev-high { background: rgba(255,184,0,0.15); color: var(--warning); border:1px solid rgba(255,184,0,0.35); }
+    .sev-medium { background: rgba(0,212,255,0.15); color: var(--primary); border:1px solid rgba(0,212,255,0.35); }
+    .like-high { background: rgba(255,71,87,0.10); color: var(--danger); border:1px solid rgba(255,71,87,0.25); }
+    .like-medium { background: rgba(255,184,0,0.10); color: var(--warning); border:1px solid rgba(255,184,0,0.25); }
+    .like-low { background: rgba(0,229,138,0.10); color: var(--success); border:1px solid rgba(0,229,138,0.25); }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>08 — ROADMAP &amp; DEVOPS</span>
+    </div>
+    <div class="page-num">44 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">RISK MANAGEMENT</span>
+    <h1 class="slide-title">Risks &amp; Mitigations <span class="text-dim font-ar" style="font-weight:600;">/ المخاطر وخطط التخفيف</span></h1>
+    <p class="slide-subtitle">Top 8 risks across technical, business, and regulatory — each with explicit owner and mitigation.</p>
+  </div>
+
+  <div class="card-glow" style="padding:8px 10px; flex:1; overflow:hidden;">
+    <table class="risk-tbl">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Risk</th>
+          <th>Severity</th>
+          <th>Likelihood</th>
+          <th>Mitigation</th>
+          <th>Owner</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="num-cell">1</td>
+          <td class="risk-cell"><div class="ttl">Vodafone Cash / InstaPay API downtime</div></td>
+          <td class="sev-cell"><span class="sev-tag sev-high">HIGH</span></td>
+          <td class="like-cell"><span class="like-tag like-medium">MEDIUM</span></td>
+          <td>Multi-provider fallback (auto-switch to card on 3 failures); queue orders and process when API recovers; maintain status page from provider.</td>
+          <td class="own-cell">Payment Squad</td>
+        </tr>
+        <tr>
+          <td class="num-cell">2</td>
+          <td class="risk-cell"><div class="ttl">Driver supply shortage during peak</div></td>
+          <td class="sev-cell"><span class="sev-tag sev-high">HIGH</span></td>
+          <td class="like-cell"><span class="like-tag like-high">HIGH</span></td>
+          <td>Surge bonuses during peak; onboarding pipeline to keep 20% buffer of approved drivers; partnerships with driver recruitment agencies.</td>
+          <td class="own-cell">Delivery Squad + Ops</td>
+        </tr>
+        <tr>
+          <td class="num-cell">3</td>
+          <td class="risk-cell"><div class="ttl">Restaurant churn to Talabat (exclusivity pressure)</div></td>
+          <td class="sev-cell"><span class="sev-tag sev-high">HIGH</span></td>
+          <td class="like-cell"><span class="like-tag like-medium">MEDIUM</span></td>
+          <td>Lower commission as moat; long-term contracts with discount locks; exclusive menu items; co-marketing budget.</td>
+          <td class="own-cell">BD + Discovery Squad</td>
+        </tr>
+        <tr>
+          <td class="num-cell">4</td>
+          <td class="risk-cell"><div class="ttl">Internal employee fraud (refunds, data leaks)</div></td>
+          <td class="sev-cell"><span class="sev-tag sev-high">HIGH</span></td>
+          <td class="like-cell"><span class="like-tag like-low">LOW</span></td>
+          <td>Biometric auth, dual approval, immutable audit log, quarterly access review, anomaly detection on refund volumes.</td>
+          <td class="own-cell">Trust Squad + Legal</td>
+        </tr>
+        <tr>
+          <td class="num-cell">5</td>
+          <td class="risk-cell"><div class="ttl">Data breach (customer PII)</div></td>
+          <td class="sev-cell"><span class="sev-tag sev-critical">CRITICAL</span></td>
+          <td class="like-cell"><span class="like-tag like-low">LOW</span></td>
+          <td>Encryption at rest + in transit; column-level PII encryption; network segmentation; quarterly pen-tests; bug bounty; 72h breach notification process.</td>
+          <td class="own-cell">Platform Squad + CISO</td>
+        </tr>
+        <tr>
+          <td class="num-cell">6</td>
+          <td class="risk-cell"><div class="ttl">Regulatory changes (CBE payment rules)</div></td>
+          <td class="sev-cell"><span class="sev-tag sev-medium">MEDIUM</span></td>
+          <td class="like-cell"><span class="like-tag like-medium">MEDIUM</span></td>
+          <td>Legal counsel on retainer; quarterly compliance review; flexible payment architecture to swap providers; engage with regulators proactively.</td>
+          <td class="own-cell">Legal + Finance</td>
+        </tr>
+        <tr>
+          <td class="num-cell">7</td>
+          <td class="risk-cell"><div class="ttl">Tech talent attrition (key Go engineers)</div></td>
+          <td class="sev-cell"><span class="sev-tag sev-medium">MEDIUM</span></td>
+          <td class="like-cell"><span class="like-tag like-medium">MEDIUM</span></td>
+          <td>Above-market compensation; equity for first 20 hires; knowledge sharing (no single-person bottlenecks); pair programming; conference budget.</td>
+          <td class="own-cell">CEO + Tech Lead</td>
+        </tr>
+        <tr>
+          <td class="num-cell">8</td>
+          <td class="risk-cell"><div class="ttl">Infrastructure cost overrun at scale</div></td>
+          <td class="sev-cell"><span class="sev-tag sev-medium">MEDIUM</span></td>
+          <td class="like-cell"><span class="like-tag like-medium">MEDIUM</span></td>
+          <td>Monthly FinOps review; autoscaling tuned aggressively; spot instances for non-critical workloads; reserved instances for baseline; ClickHouse offload from Postgres.</td>
+          <td class="own-cell">Platform Squad + Finance</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - 8 risks: 4 high severity, 1 critical (data breach), 3 medium.
+    - Top operational risk: driver supply shortage during peak (high sev, high likelihood).
+    - Critical risk: PII breach — multi-layer mitigation with 72h breach notification.
+    - Each risk has explicit owner — no ambiguity on accountability.
+    - Quarterly compliance review and FinOps review are recurring checkpoints.
+  </aside>
+</body>
+</html>

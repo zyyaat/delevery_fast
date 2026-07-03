@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Summary &amp; Next Steps</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .sec-h { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .sec-h .material-icons { color: var(--primary); font-size:18px; }
+    .sec-h h2 { font-family: var(--font-heading); font-weight:800; font-size:15px; color: var(--text); }
+    .sec-h .ar { font-family: var(--font-cn); font-size:11px; color: var(--text-dim); }
+
+    .recap-card { padding:14px 16px; border-radius:12px; background: var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; gap:7px; height:100%; }
+    .recap-item { display:flex; gap:9px; padding:8px 10px; background: var(--bg-elev); border-radius:7px; border-left:3px solid var(--primary); }
+    .recap-item .material-icons { color: var(--primary); font-size:16px; flex-shrink:0; margin-top:1px; }
+    .recap-item .text { font-size:10.5px; line-height:1.4; color: var(--text-dim); }
+    .recap-item .text strong { color: var(--text); font-weight:600; }
+    .recap-item:nth-child(3) { border-left-color: var(--accent); }
+    .recap-item:nth-child(3) .material-icons { color: var(--accent); }
+    .recap-item:nth-child(4) { border-left-color: var(--success); }
+    .recap-item:nth-child(4) .material-icons { color: var(--success); }
+    .recap-item:nth-child(5) { border-left-color: var(--gold); }
+    .recap-item:nth-child(5) .material-icons { color: var(--gold); }
+    .recap-item:nth-child(6) { border-left-color: var(--accent); }
+    .recap-item:nth-child(6) .material-icons { color: var(--accent); }
+
+    .action-list { display:flex; flex-direction:column; gap:6px; }
+    .action-item { padding:7px 11px; border-radius:8px; background: var(--bg-card); border:1px solid var(--border); border-left:3px solid var(--primary); display:grid; grid-template-columns: 22px 1fr auto; gap:8px; align-items:flex-start; }
+    .action-item .num { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:5px; background: rgba(0,212,255,0.12); border:1px solid rgba(0,212,255,0.3); color: var(--primary); font-family: var(--font-num); font-weight:700; font-size:10px; }
+    .action-item .body { min-width:0; }
+    .action-item .ttl { font-family: var(--font-heading); font-weight:700; font-size:11px; color: var(--text); line-height:1.2; margin-bottom:2px; }
+    .action-item .desc { font-size:9.5px; line-height:1.35; color: var(--text-dim); }
+    .action-item .meta { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+    .action-item .due { font-family: var(--font-num); font-weight:700; font-size:9px; color: var(--accent); padding:2px 6px; background: rgba(177,78,255,0.10); border:1px solid rgba(177,78,255,0.25); border-radius:4px; }
+    .action-item .owner { font-family: var(--font-num); font-size:8.5px; color: var(--text-mute); white-space:nowrap; }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>08 — ROADMAP &amp; DEVOPS</span>
+    </div>
+    <div class="page-num">49 / 50</div>
+  </header>
+
+  <div class="mb-2">
+    <span class="section-kicker">WRAP-UP</span>
+    <h1 class="slide-title">Summary &amp; Next Steps <span class="text-dim font-ar" style="font-weight:600;">/ الملخص والخطوات التالية</span></h1>
+    <p class="slide-subtitle">What we're building, why it wins, and what we need to start tomorrow.</p>
+  </div>
+
+  <div class="grid-2" style="flex:1; align-content:start; gap:14px; margin-top:8px;">
+    <!-- LEFT — What We're Building -->
+    <div>
+      <div class="sec-h">
+        <span class="material-icons">inventory_2</span>
+        <h2>What We're Building</h2><span class="ar rtl">/ ماذا نبني</span>
+      </div>
+      <div class="recap-card">
+        <div class="recap-item">
+          <span class="material-icons">restaurant</span>
+          <div class="text">A <strong>production-grade food delivery platform</strong> for the Egyptian market — engineered like Uber Eats, priced like elmenus.</div>
+        </div>
+        <div class="recap-item">
+          <span class="material-icons">smartphone</span>
+          <div class="text"><strong>7 dedicated apps</strong> serving 7 distinct user types — mobile where mobile makes sense, web where web does.</div>
+        </div>
+        <div class="recap-item">
+          <span class="material-icons">memory</span>
+          <div class="text"><strong>12 domain-oriented Go microservices</strong> on a Kafka event backbone, with PostgreSQL as the source of truth.</div>
+        </div>
+        <div class="recap-item">
+          <span class="material-icons">shield</span>
+          <div class="text"><strong>Three-layer anti-fraud defense</strong> (customer, driver, internal employee) — including biometric auth and immutable audit logs.</div>
+        </div>
+        <div class="recap-item">
+          <span class="material-icons">map</span>
+          <div class="text">A <strong>12-month roadmap</strong> with 4 phases, each gated by explicit go/no-go criteria — culminating in 50K orders/day and Series A readiness.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT — Next Steps -->
+    <div>
+      <div class="sec-h">
+        <span class="material-icons">rocket_launch</span>
+        <h2>Next Steps</h2><span class="ar rtl">/ الخطوات التالية</span>
+      </div>
+      <div class="action-list">
+        <div class="action-item">
+          <span class="num">1</span>
+          <div class="body">
+            <div class="ttl">Finalize team hiring plan</div>
+            <div class="desc">Lock the 8-person Phase 1 team. Start recruiting: 1 Tech Lead, 3 Go engineers, 2 React Native engineers, 1 React engineer, 1 DevOps.</div>
+          </div>
+          <div class="meta"><span class="due">WEEK 1</span><span class="owner">CEO + Tech Lead</span></div>
+        </div>
+
+        <div class="action-item">
+          <span class="num">2</span>
+          <div class="body">
+            <div class="ttl">AWS account + base infrastructure</div>
+            <div class="desc">Provision AWS org, set up billing alerts, deploy base Terraform (VPC, EKS skeleton, RDS Postgres, Redis, MSK Kafka).</div>
+          </div>
+          <div class="meta"><span class="due">WEEK 2</span><span class="owner">Tech Lead + DevOps</span></div>
+        </div>
+
+        <div class="action-item">
+          <span class="num">3</span>
+          <div class="body">
+            <div class="ttl">Repo structure + CI/CD skeleton</div>
+            <div class="desc">Create GitHub org, 12 service repos, 4 client repos, shared libraries. Set up GitHub Actions CI for all repos with test/lint/build.</div>
+          </div>
+          <div class="meta"><span class="due">WEEK 2</span><span class="owner">Tech Lead</span></div>
+        </div>
+
+        <div class="action-item">
+          <span class="num">4</span>
+          <div class="body">
+            <div class="ttl">Architecture review with stakeholders</div>
+            <div class="desc">Walk this deck through with engineering team + CEO + key investors. Capture feedback, finalize ADRs, archive as v1.0.</div>
+          </div>
+          <div class="meta"><span class="due">WEEK 1</span><span class="owner">Tech Lead</span></div>
+        </div>
+
+        <div class="action-item">
+          <span class="num">5</span>
+          <div class="body">
+            <div class="ttl">Vendor negotiations</div>
+            <div class="desc">Sign contracts with: Vodafone Cash (merchant account), InstaPay, Paymob (card processing), Twilio (SMS), AWS (credits for startups).</div>
+          </div>
+          <div class="meta"><span class="due">WEEK 2</span><span class="owner">CEO + Finance</span></div>
+        </div>
+
+        <div class="action-item">
+          <span class="num">6</span>
+          <div class="body">
+            <div class="ttl">Restaurant pipeline kickoff</div>
+            <div class="desc">BD team starts conversations with first 50 target restaurants in Cairo (Zamalek, Maadi, New Cairo). Soft LOIs by end of week 2.</div>
+          </div>
+          <div class="meta"><span class="due">WEEK 2</span><span class="owner">Head of BD</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - Recap: Egyptian food delivery platform, 7 apps, 12 Go microservices, 3-layer anti-fraud, 12-month roadmap.
+    - 6 next-step actions to start within 2 weeks.
+    - Critical path: hiring (W1), AWS + repos (W2), vendor contracts (W2), BD pipeline (W2).
+    - Architecture review captures feedback and locks ADRs as v1.0.
+    - Each action has explicit owner and due date — accountability from day 1.
+  </aside>
+</body>
+</html>

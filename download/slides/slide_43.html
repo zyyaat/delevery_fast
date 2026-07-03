@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Team Structure</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .sec-h { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .sec-h .material-icons { color: var(--primary); font-size:18px; }
+    .sec-h h2 { font-family: var(--font-heading); font-weight:800; font-size:15px; color: var(--text); }
+    .sec-h .ar { font-family: var(--font-cn); font-size:11px; color: var(--text-dim); }
+
+    .squad-card { padding:11px 12px; border-radius:10px; background: var(--bg-card); border:1px solid var(--border); border-top:3px solid var(--primary); display:flex; flex-direction:column; gap:5px; }
+    .squad-card .num { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:5px; background: rgba(0,212,255,0.12); border:1px solid rgba(0,212,255,0.3); color: var(--primary); font-family: var(--font-num); font-weight:700; font-size:10px; }
+    .squad-card .name { font-family: var(--font-heading); font-weight:700; font-size:12.5px; color: var(--text); line-height:1.15; }
+    .squad-card ul { list-style:none; padding:0; margin:0; }
+    .squad-card li { font-size:10px; line-height:1.4; color: var(--text-dim); padding-left:10px; position:relative; margin-bottom:2px; }
+    .squad-card li::before { content:'›'; position:absolute; left:0; color: var(--text-mute); }
+    .squad-card li strong { color: var(--text); font-weight:600; }
+    .squad-card .mission { margin-top:auto; padding:6px 9px; background: var(--bg-elev); border-left:2px solid var(--accent); border-radius:5px; font-size:10px; line-height:1.35; color: var(--text-dim); font-style:italic; }
+    .squad-card .mission strong { color: var(--accent); font-style:normal; font-family: var(--font-num); font-size:9px; letter-spacing:1px; }
+
+    .squad-card.s2 { border-top-color: var(--accent); }
+    .squad-card.s2 .num { background: rgba(177,78,255,0.12); border-color: rgba(177,78,255,0.3); color: var(--accent); }
+    .squad-card.s2 .mission { border-left-color: var(--primary); }
+    .squad-card.s3 { border-top-color: var(--success); }
+    .squad-card.s3 .num { background: rgba(0,229,138,0.12); border-color: rgba(0,229,138,0.3); color: var(--success); }
+    .squad-card.s4 { border-top-color: var(--danger); }
+    .squad-card.s4 .num { background: rgba(255,71,87,0.12); border-color: rgba(255,71,87,0.3); color: var(--danger); }
+    .squad-card.s5 { border-top-color: var(--warning); }
+    .squad-card.s5 .num { background: rgba(255,184,0,0.12); border-color: rgba(255,184,0,0.3); color: var(--warning); }
+
+    .phase-card { padding:10px 12px; border-radius:9px; background: var(--bg-elev); border:1px solid var(--border); border-left:3px solid var(--primary); display:flex; flex-direction:column; gap:4px; }
+    .phase-card .ph-h { display:flex; align-items:center; justify-content:space-between; }
+    .phase-card .ph-h .lbl { font-family: var(--font-num); font-weight:700; font-size:11px; color: var(--primary); }
+    .phase-card .ph-h .count { font-family: var(--font-num); font-size:10px; color: var(--text-mute); }
+    .phase-card .desc { font-size:10.5px; line-height:1.4; color: var(--text-dim); }
+    .phase-card.p2 { border-left-color: var(--accent); }
+    .phase-card.p2 .ph-h .lbl { color: var(--accent); }
+    .phase-card.p3 { border-left-color: var(--success); }
+    .phase-card.p3 .ph-h .lbl { color: var(--success); }
+
+    .oncall-bar { margin-top:10px; padding:9px 12px; border-radius:8px; background: linear-gradient(135deg, rgba(255,71,87,0.06), rgba(255,184,0,0.06)); border:1px solid rgba(255,71,87,0.25); display:flex; gap:9px; align-items:flex-start; }
+    .oncall-bar .material-icons { color: var(--danger); font-size:18px; flex-shrink:0; margin-top:1px; }
+    .oncall-bar .body { flex:1; }
+    .oncall-bar .ttl { font-family: var(--font-heading); font-weight:700; font-size:11.5px; color: var(--text); margin-bottom:2px; }
+    .oncall-bar .desc { font-size:10px; line-height:1.4; color: var(--text-dim); }
+    .oncall-bar strong { color: var(--warning); }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>08 — ROADMAP &amp; DEVOPS</span>
+    </div>
+    <div class="page-num">43 / 50</div>
+  </header>
+
+  <div class="mb-2">
+    <span class="section-kicker">ORG</span>
+    <h1 class="slide-title">Team Structure <span class="text-dim font-ar" style="font-weight:600;">/ هيكل الفريق</span></h1>
+    <p class="slide-subtitle">Cross-functional squads aligned to platform domains — each owning their services end-to-end.</p>
+  </div>
+
+  <!-- TOP — Squad Structure -->
+  <div style="margin-top:8px;">
+    <div class="sec-h">
+      <span class="material-icons">groups</span>
+      <h2>Squad Structure</h2><span class="ar rtl">/ هيكل الفريق</span>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:9px;">
+      <div class="squad-card s1">
+        <div style="display:flex; gap:7px; align-items:center;"><span class="num">1</span><span class="name">Order &amp; Payment</span></div>
+        <ul>
+          <li><strong>Owns:</strong> Order, Payment, Promo/Loyalty</li>
+          <li><strong>Comp:</strong> 1 lead + 3 BE (Go) + 1 mobile + 1 QA</li>
+        </ul>
+        <div class="mission"><strong>MISSION</strong><br>Order lifecycle, payment capture, promos</div>
+      </div>
+
+      <div class="squad-card s2">
+        <div style="display:flex; gap:7px; align-items:center;"><span class="num">2</span><span class="name">Discovery &amp; Catalog</span></div>
+        <ul>
+          <li><strong>Owns:</strong> Restaurant Catalog, Menu, Analytics</li>
+          <li><strong>Comp:</strong> 1 lead + 2 BE + 2 FE + 1 QA</li>
+        </ul>
+        <div class="mission"><strong>MISSION</strong><br>Restaurant browse, search, menu management</div>
+      </div>
+
+      <div class="squad-card s3">
+        <div style="display:flex; gap:7px; align-items:center;"><span class="num">3</span><span class="name">Delivery &amp; Geo</span></div>
+        <ul>
+          <li><strong>Owns:</strong> Delivery Matching, Geo/Tracking, Driver Mgmt</li>
+          <li><strong>Comp:</strong> 1 lead + 3 BE + 2 mobile + 1 QA</li>
+        </ul>
+        <div class="mission"><strong>MISSION</strong><br>Driver matching, GPS tracking, driver app</div>
+      </div>
+
+      <div class="squad-card s4">
+        <div style="display:flex; gap:7px; align-items:center;"><span class="num">4</span><span class="name">Trust &amp; Safety</span></div>
+        <ul>
+          <li><strong>Owns:</strong> Auth, Fraud Detection, Employee Portal, Audit</li>
+          <li><strong>Comp:</strong> 1 lead + 2 BE + 1 ML + 1 FE + 1 QA</li>
+        </ul>
+        <div class="mission"><strong>MISSION</strong><br>Anti-fraud, security, internal controls</div>
+      </div>
+
+      <div class="squad-card s5">
+        <div style="display:flex; gap:7px; align-items:center;"><span class="num">5</span><span class="name">Platform &amp; Infra</span></div>
+        <ul>
+          <li><strong>Owns:</strong> K8s, CI/CD, observability, shared libs</li>
+          <li><strong>Comp:</strong> 1 lead + 3 DevOps + 1 SRE</li>
+        </ul>
+        <div class="mission"><strong>MISSION</strong><br>Developer platform, reliability, cost optimization</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM — Scaling Plan -->
+  <div style="margin-top:10px;">
+    <div class="sec-h">
+      <span class="material-icons">trending_up</span>
+      <h2>Scaling Plan</h2><span class="ar rtl">/ خطة التوسع</span>
+    </div>
+    <div class="grid-3" style="gap:10px;">
+      <div class="phase-card p1">
+        <div class="ph-h"><span class="lbl">PHASE 1</span><span class="count">8 people</span></div>
+        <div class="desc">2 squads (Order+Payment, Discovery) share Platform/Infra. Mobile engineers cover all 3 mobile apps.</div>
+      </div>
+      <div class="phase-card p2">
+        <div class="ph-h"><span class="lbl">PHASE 2</span><span class="count">18 people</span></div>
+        <div class="desc">Split into 4 squads. Dedicated QA per squad. First SRE hire.</div>
+      </div>
+      <div class="phase-card p3">
+        <div class="ph-h"><span class="lbl">PHASE 3-4</span><span class="count">28-35 people</span></div>
+        <div class="desc">Full 5-squad structure. Add ML engineer to Trust squad. Add 2nd SRE for follow-the-sun on-call.</div>
+      </div>
+    </div>
+
+    <div class="oncall-bar">
+      <span class="material-icons">notifications_active</span>
+      <div class="body">
+        <div class="ttl">On-call policy</div>
+        <div class="desc">Each squad runs 24/7 on-call rotation within the squad. <strong>Tier 0 incidents</strong> page the owning squad. Cross-squad incidents have a predefined <strong>Incident Commander</strong> role.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - 5 cross-functional squads aligned to platform domains.
+    - Each squad owns services end-to-end: lead + backend + mobile/frontend + QA.
+    - Phase 1 (8 ppl): 2 squads share infra. Phase 2 (18): 4 squads + first SRE. Phase 3-4 (28-35): full 5-squad structure.
+    - 24/7 on-call rotation per squad; Tier 0 incidents page owning squad.
+    - Cross-squad incidents have predefined Incident Commander role.
+  </aside>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Flow — Capture & Refund</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .flow-card { padding: 14px 16px; border-radius: 12px; background: var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; gap:8px; height:100%; min-height:0; }
+    .flow-card.capture { border-top:3px solid var(--success); }
+    .flow-card.refund { border-top:3px solid var(--accent-2); }
+    .flow-card .head { display:flex; align-items:center; gap:10px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+    .flow-card .head .icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+    .capture .head .icon { background: rgba(0,229,138,0.10); color: var(--success); border:1px solid rgba(0,229,138,0.30); }
+    .refund .head .icon { background: rgba(255,62,143,0.10); color: var(--accent-2); border:1px solid rgba(255,62,143,0.30); }
+    .flow-card .head h3 { font-family: var(--font-heading); font-weight:800; font-size:15px; color: var(--text); }
+    .flow-card .head .ar { font-family: var(--font-cn); font-size:11px; color: var(--text-dim); }
+    .step { display:flex; gap:8px; align-items:flex-start; font-size:10.5px; line-height:1.4; }
+    .step .n { flex-shrink:0; width:18px; height:18px; border-radius:50%; background: var(--bg-card-2); border:1px solid var(--border-soft); color: var(--text-dim); font-family: var(--font-num); font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+    .capture .step .n { color: var(--success); border-color: rgba(0,229,138,0.40); }
+    .refund .step .n { color: var(--accent-2); border-color: rgba(255,62,143,0.40); }
+    .step .txt { color: var(--text-dim); }
+    .step .txt b { color: var(--text); font-weight:600; }
+    .step .txt .mono { font-family: var(--font-num); color: var(--primary); font-size:10px; }
+    .provider-list { font-size:10px; line-height:1.5; color: var(--text-dim); padding: 6px 8px; background: var(--bg-card-2); border-radius:6px; border-left:2px solid var(--primary); }
+    .provider-list .lbl { font-family: var(--font-num); font-size:9px; color: var(--text-mute); letter-spacing:0.5px; }
+    .failure-box { padding: 8px 10px; border-radius:8px; background: rgba(255,71,87,0.05); border:1px dashed rgba(255,71,87,0.30); margin-top:auto; }
+    .failure-box .lbl { font-family: var(--font-num); font-size:9px; color: var(--danger); letter-spacing:0.5px; font-weight:700; }
+    .failure-box ul { list-style:none; padding:0; margin:4px 0 0; display:flex; flex-direction:column; gap:2px; }
+    .failure-box ul li { font-size:10px; line-height:1.4; color: var(--text-dim); padding-left:10px; position:relative; }
+    .failure-box ul li::before { content:'•'; position:absolute; left:0; color: var(--danger); }
+    .failure-box ul li .mono { font-family: var(--font-num); color: var(--warning); }
+    .policy-box { padding: 8px 10px; border-radius:8px; background: var(--bg-card-2); border-left:2px solid var(--accent-2); margin-top:auto; }
+    .policy-box .lbl { font-family: var(--font-num); font-size:9px; color: var(--accent-2); letter-spacing:0.5px; font-weight:700; margin-bottom:4px; }
+    .policy-box ul { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:2px; }
+    .policy-box ul li { font-size:10px; line-height:1.4; color: var(--text-dim); padding-left:10px; position:relative; }
+    .policy-box ul li::before { content:'•'; position:absolute; left:0; color: var(--accent-2); }
+    .policy-box ul li b { color: var(--text); font-weight:600; }
+    .steps-list { display:flex; flex-direction:column; gap:5px; }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>06 — BUSINESS LOGIC FLOWS</span>
+    </div>
+    <div class="page-num">27 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">PAYMENTS</span>
+    <h1 class="slide-title" style="font-size:26px;">Payment Flow — Capture &amp; Refund <span class="text-dim font-ar" style="font-weight:600;">/ تدفق الدفع</span></h1>
+    <p class="slide-subtitle" style="font-size:13px; margin-top:3px;">Vodafone Cash, InstaPay, Card, COD — unified under one idempotent Payment Service.</p>
+  </div>
+
+  <div class="grid-2" style="flex:1; min-height:0;">
+    <!-- LEFT — Capture -->
+    <div class="flow-card capture">
+      <div class="head">
+        <div class="icon"><span class="material-icons" style="font-size:18px;">payments</span></div>
+        <div>
+          <h3>Payment Capture</h3>
+          <div class="ar rtl">عملية الدفع</div>
+        </div>
+      </div>
+
+      <div class="steps-list">
+        <div class="step"><span class="n">1</span><span class="txt"><b>Customer taps 'Place Order'</b></span></div>
+        <div class="step"><span class="n">2</span><span class="txt">Order Service creates <span class="mono">PENDING</span> order</span></div>
+        <div class="step"><span class="n">3</span><span class="txt">Order Service → Payment Service (gRPC, <span class="mono">idempotency_key=order_id</span>)</span></div>
+        <div class="step"><span class="n">4</span><span class="txt">Payment Service selects provider:</span></div>
+      </div>
+
+      <div class="provider-list">
+        <div class="lbl">PROVIDER ROUTING</div>
+        • <b style="color:var(--text);">Vodafone Cash</b> for EGP &lt;500<br>
+        • <b style="color:var(--text);">InstaPay</b> for EGP 500–2000<br>
+        • <b style="color:var(--text);">Card</b> for &gt;EGP 2000 or recurring customers
+      </div>
+
+      <div class="steps-list">
+        <div class="step"><span class="n">5</span><span class="txt">Payment Service calls provider API (with 30s timeout)</span></div>
+        <div class="step"><span class="n">6</span><span class="txt">Provider redirects customer to auth (OTP/biometric)</span></div>
+        <div class="step"><span class="n">7</span><span class="txt">On success → Payment Service publishes <span class="mono">PaymentCaptured</span></span></div>
+        <div class="step"><span class="n">8</span><span class="txt">Order Service consumes → updates order to <span class="mono">CONFIRMED</span></span></div>
+        <div class="step"><span class="n">9</span><span class="txt">Notification Service pushes to Restaurant App</span></div>
+      </div>
+
+      <div class="failure-box">
+        <div class="lbl">FAILURE HANDLING</div>
+        <ul>
+          <li>Timeout → Payment Service marks as <span class="mono">PENDING_TIMEOUT</span>, retries once</li>
+          <li>Provider decline → <span class="mono">PaymentFailed</span> event, Order cancelled</li>
+          <li>Duplicate idempotency_key → returns original result (no double charge)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- RIGHT — Refund -->
+    <div class="flow-card refund">
+      <div class="head">
+        <div class="icon"><span class="material-icons" style="font-size:18px;">currency_exchange</span></div>
+        <div>
+          <h3>Refund Flow</h3>
+          <div class="ar rtl">عملية الاسترجاع</div>
+        </div>
+      </div>
+
+      <div class="steps-list">
+        <div class="step"><span class="n">1</span><span class="txt"><b>Customer requests cancellation</b> OR Support initiates</span></div>
+        <div class="step"><span class="n">2</span><span class="txt">Order Service validates cancellation policy:</span></div>
+      </div>
+
+      <div class="policy-box">
+        <div class="lbl">REFUND POLICY (BY STAGE)</div>
+        <ul>
+          <li><b>Before CONFIRMED:</b> 100% refund</li>
+          <li><b>Before PREPARING:</b> 100% refund</li>
+          <li><b>During PREPARING:</b> 50% refund</li>
+          <li><b>After READY:</b> 0% refund (restaurant cost already incurred)</li>
+        </ul>
+      </div>
+
+      <div class="steps-list">
+        <div class="step"><span class="n">3</span><span class="txt">Order Service publishes <span class="mono" style="color: var(--accent-2);">OrderCancelled</span></span></div>
+        <div class="step"><span class="n">4</span><span class="txt">Payment Service consumes → calls provider refund API</span></div>
+        <div class="step"><span class="n">5</span><span class="txt">Refund may take 1–5 business days (provider-dependent)</span></div>
+        <div class="step"><span class="n">6</span><span class="txt">Payment Service publishes <span class="mono" style="color: var(--accent-2);">PaymentRefunded</span></span></div>
+        <div class="step"><span class="n">7</span><span class="txt">Notification pushes to customer with refund reference</span></div>
+        <div class="step"><span class="n">8</span><span class="txt">Loyalty Service reverses any points earned</span></div>
+      </div>
+
+      <div class="failure-box" style="background: rgba(255,184,0,0.04); border-color: rgba(255,184,0,0.30);">
+        <div class="lbl" style="color: var(--warning);">IDEMPOTENCY NOTE</div>
+        <ul>
+          <li>Refund uses same <span class="mono">idempotency_key</span> as capture (order_id)</li>
+          <li>Loyalty reversal is saga-choreographed, not 2PC</li>
+          <li>Provider reconciliation job runs nightly to catch orphan refunds</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - One Payment Service unifies 4 providers (VF Cash, InstaPay, Card, COD).
+    - Provider routing by amount — small=VF, mid=InstaPay, large=Card.
+    - Idempotency key = order_id → no double charges, no double refunds.
+    - Refund policy stages: 100% / 100% / 50% / 0% based on prep stage.
+    - Loyalty reversal happens via saga, not 2PC.
+  </aside>
+</body>
+</html>

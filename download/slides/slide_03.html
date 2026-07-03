@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Section 01 — Project Overview</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="global.css">
+<style>
+  .ghost-num {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 460px;
+    line-height: 0.8;
+    letter-spacing: -20px;
+    background: linear-gradient(180deg, rgba(0,212,255,0.85) 0%, rgba(177,78,255,0.25) 60%, transparent 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: absolute;
+    right: 60px;
+    top: 80px;
+    z-index: 0;
+    user-select: none;
+  }
+  .ghost-num::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,212,255,0.12), transparent 65%);
+    z-index: -1;
+    filter: blur(20px);
+  }
+  .progress-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #1E2A4A;
+    border: 1px solid #2A3656;
+  }
+  .progress-dot.active {
+    background: #00D4FF;
+    border-color: #00D4FF;
+    box-shadow: 0 0 12px #00D4FF;
+  }
+  .vertical-rule {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(180deg, #00D4FF, transparent);
+  }
+</style>
+</head>
+<body class="slide">
+
+  <!-- Top minimal header -->
+  <div class="flex items-center justify-between mb-auto" style="font-family:'JetBrains Mono', monospace; font-size:11px; color:#5C6B8E; letter-spacing:2px;">
+    <div class="flex items-center gap-3">
+      <span class="inline-block w-1.5 h-1.5 rounded-full" style="background:#00D4FF; box-shadow:0 0 8px #00D4FF;"></span>
+      <span>SECTION 01 OF 08</span>
+    </div>
+    <div>03 / 50</div>
+  </div>
+
+  <!-- Ghost numeral -->
+  <div class="ghost-num" data-decor aria-hidden="true">01</div>
+
+  <!-- Center content -->
+  <div class="flex-1 flex flex-col justify-center" style="max-width:780px;">
+    <div class="vertical-rule mb-6" data-decor></div>
+
+    <div class="font-num text-xs tracking-[6px] mb-4" style="color:#00D4FF;">CHAPTER</div>
+
+    <h1 class="font-en font-black text-7xl leading-none mb-4" style="color:#EAF0FF; letter-spacing:-2.5px;">
+      Project<br>Overview
+    </h1>
+
+    <p class="font-ar text-3xl mb-7" dir="rtl" style="color:#9BA8C7; font-weight:600;">
+      نظرة عامة على المشروع
+    </p>
+
+    <div class="neon-line mb-7" data-decor style="width:120px; height:2px; background:linear-gradient(90deg,#00D4FF,transparent); box-shadow:0 0 8px rgba(0,212,255,0.6);"></div>
+
+    <p class="font-en text-lg leading-relaxed" style="color:#9BA8C7; max-width:680px;">
+      Building an Uber Eats-class platform for the Egyptian market — from vision to execution blueprint.
+    </p>
+  </div>
+
+  <!-- Bottom progress dots -->
+  <div class="flex items-center justify-between mt-auto">
+    <div class="flex items-center gap-3">
+      <span class="font-num text-xs tracking-[2px]" style="color:#5C6B8E;">PROGRESS</span>
+      <div class="flex items-center gap-2">
+        <span class="progress-dot active"></span>
+        <span class="progress-dot"></span>
+        <span class="progress-dot"></span>
+        <span class="progress-dot"></span>
+        <span class="progress-dot"></span>
+        <span class="progress-dot"></span>
+        <span class="progress-dot"></span>
+        <span class="progress-dot"></span>
+      </div>
+      <span class="font-num text-xs" style="color:#00D4FF;">1 / 8</span>
+    </div>
+    <div class="font-num text-xs" style="color:#5C6B8E;">FOOD DELIVERY PLATFORM</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - Pause briefly — this is a chapter break.
+    - Set up: vision, market sizing, scale targets ahead.
+    - Frame as "Uber Eats-class for Egypt" — explicit benchmark.
+    - 4 slides follow: vision, goals/non-goals, 7 apps, market.
+    - Keep it short, ~20 seconds.
+  </aside>
+</body>
+</html>

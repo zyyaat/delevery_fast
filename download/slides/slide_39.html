@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DevOps &amp; Infrastructure</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .dev-card { padding:12px 14px; border-radius:10px; background: var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; gap:6px; }
+    .dev-card .head { display:flex; align-items:center; gap:9px; }
+    .dev-card .icon { width:30px; height:30px; border-radius:7px; background: rgba(0,212,255,0.10); border:1px solid rgba(0,212,255,0.25); color: var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .dev-card .icon .material-icons { font-size:17px; }
+    .dev-card .ttl { font-family: var(--font-heading); font-weight:700; font-size:13px; color: var(--text); line-height:1.15; }
+    .dev-card ul { list-style:none; padding:0; margin:0; }
+    .dev-card li { font-size:10px; line-height:1.4; color: var(--text-dim); padding-left:11px; position:relative; margin-bottom:2px; }
+    .dev-card li::before { content:'›'; position:absolute; left:0; color: var(--text-mute); top:0; }
+    .dev-card .target { margin-top:auto; padding:6px 9px; border-radius:5px; background: var(--bg-elev); border-left:2px solid var(--accent); font-size:10px; line-height:1.35; color: var(--text-dim); }
+    .dev-card .target strong { color: var(--accent); font-family: var(--font-num); font-weight:700; font-size:9px; letter-spacing:0.5px; }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>08 — ROADMAP &amp; DEVOPS</span>
+    </div>
+    <div class="page-num">39 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">PLATFORM ENGINEERING</span>
+    <h1 class="slide-title">DevOps &amp; Infrastructure <span class="text-dim font-ar" style="font-weight:600;">/ العمليات والبنية التحتية</span></h1>
+    <p class="slide-subtitle">Kubernetes-native, GitOps-deployed, fully observable — built for 99.9% uptime from day one.</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; gap:12px; flex:1;">
+    <!-- CARD 1 -->
+    <div class="dev-card">
+      <div class="head">
+        <div class="icon"><span class="material-icons">hub</span></div>
+        <div class="ttl">Container Orchestration</div>
+      </div>
+      <ul>
+        <li>Kubernetes (EKS on AWS)</li>
+        <li>3 node groups: backend (Go), web (React), data (Postgres/Redis/Kafka)</li>
+        <li>Autoscaling: HPA on CPU/RPS, KEDA for Kafka-driven scaling</li>
+        <li>Pod anti-affinity for HA across AZs</li>
+        <li>Cluster autoscaler for node-level scaling</li>
+      </ul>
+      <div class="target"><strong>TARGET</strong><br>Spin up new pod in &lt;30s; auto-recover from node failure in &lt;2min.</div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="dev-card">
+      <div class="head">
+        <div class="icon"><span class="material-icons">sync</span></div>
+        <div class="ttl">CI/CD Pipeline</div>
+      </div>
+      <ul>
+        <li>GitHub Actions for CI (test, lint, build, scan)</li>
+        <li>ArgoCD for CD (GitOps — cluster state declared in Git)</li>
+        <li>Helm charts per service (versioned, reusable)</li>
+        <li>Image scanning via Trivy (block on CRITICAL CVEs)</li>
+        <li>Deploy preview env per PR (ephemeral, auto-destroy after 24h)</li>
+      </ul>
+      <div class="target"><strong>PIPELINE</strong><br>push → lint → test → build → scan → staging → smoke → prod (manual approval).</div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="dev-card">
+      <div class="head">
+        <div class="icon"><span class="material-icons">code</span></div>
+        <div class="ttl">Infrastructure as Code</div>
+      </div>
+      <ul>
+        <li>Terraform for AWS resources (VPC, EKS, RDS, S3, etc.)</li>
+        <li>Terragrunt for multi-env (dev/staging/prod) DRY</li>
+        <li>Terraform state in S3 + DynamoDB lock</li>
+        <li>All changes via PR review — no console clicks</li>
+        <li>Drift detection nightly</li>
+      </ul>
+      <div class="target"><strong>POLICY</strong><br>If it's not in Terraform, it doesn't exist.</div>
+    </div>
+
+    <!-- CARD 4 -->
+    <div class="dev-card">
+      <div class="head">
+        <div class="icon"><span class="material-icons">visibility</span></div>
+        <div class="ttl">Observability</div>
+      </div>
+      <ul>
+        <li>Prometheus + Grafana (metrics, 15s scrape, 90-day retention)</li>
+        <li>Loki (logs, structured JSON, 30-day retention)</li>
+        <li>Jaeger + OpenTelemetry (traces, 7-day retention, 10% sampling)</li>
+        <li>Sentry (client + backend errors)</li>
+        <li>Alerting: PagerDuty for P0/P1, Slack for P2/P3</li>
+      </ul>
+      <div class="target"><strong>SLOs</strong><br>99.9% uptime for Order/Payment; 99.5% for others.</div>
+    </div>
+
+    <!-- CARD 5 -->
+    <div class="dev-card">
+      <div class="head">
+        <div class="icon"><span class="material-icons">vpn_key</span></div>
+        <div class="ttl">Secrets &amp; Config</div>
+      </div>
+      <ul>
+        <li>AWS Secrets Manager for production secrets</li>
+        <li>External Secrets Operator syncs to K8s secrets</li>
+        <li>Sealed Secrets for GitOps-friendly sensitive values</li>
+        <li>Rotation: DB creds every 90 days, API keys quarterly</li>
+        <li>No secrets in code, env files, or chat</li>
+      </ul>
+      <div class="target"><strong>AUDIT</strong><br>Every secret access logged; quarterly access review.</div>
+    </div>
+
+    <!-- CARD 6 -->
+    <div class="dev-card">
+      <div class="head">
+        <div class="icon"><span class="material-icons">backup</span></div>
+        <div class="ttl">Disaster Recovery</div>
+      </div>
+      <ul>
+        <li>RPO: 5 min (Postgres WAL streaming + 5-min snapshots)</li>
+        <li>RTO: 30 min (multi-AZ failover, tested quarterly)</li>
+        <li>Cross-region replication (us-east-1 → us-west-2)</li>
+        <li>Quarterly DR drill (full restore in staging)</li>
+        <li>Runbooks for top 20 incident scenarios</li>
+      </ul>
+      <div class="target"><strong>TEST</strong><br>Chaos game days quarterly — kill pods, simulate AZ failure.</div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - 6 DevOps pillars: K8s, CI/CD, IaC, observability, secrets, DR.
+    - EKS on AWS with HPA + KEDA autoscaling; pods in <30s.
+    - GitOps via ArgoCD, Helm charts per service, Trivy image scanning.
+    - Prometheus/Grafana/Loki/Jaeger/Sentry — full observability stack.
+    - DR: RPO 5min, RTO 30min, quarterly chaos game days.
+  </aside>
+</body>
+</html>

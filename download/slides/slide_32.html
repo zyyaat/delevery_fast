@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Three-Layer Fraud Defense</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .layer-card { padding: 14px 16px; border-radius: 12px; background: var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; gap:8px; min-height:0; height:100%; }
+    .layer-card.l1 { border-top:3px solid var(--danger); }
+    .layer-card.l2 { border-top:3px solid var(--warning); }
+    .layer-card.l3 { border-top:3px solid var(--accent); }
+    .layer-card .head { display:flex; align-items:center; gap:8px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+    .layer-card .head .icon { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+    .l1 .head .icon { background: rgba(255,71,87,0.10); color: var(--danger); border:1px solid rgba(255,71,87,0.30); }
+    .l2 .head .icon { background: rgba(255,184,0,0.10); color: var(--warning); border:1px solid rgba(255,184,0,0.30); }
+    .l3 .head .icon { background: rgba(177,78,255,0.10); color: var(--accent); border:1px solid rgba(177,78,255,0.30); }
+    .layer-card .head h3 { font-family: var(--font-heading); font-weight:800; font-size:14px; color: var(--text); }
+    .layer-card .head .ar { font-family: var(--font-cn); font-size:11px; color: var(--text-dim); margin-top:1px; }
+    .layer-card .head .num { margin-left:auto; font-family: var(--font-num); font-size:10px; padding:2px 6px; border-radius:4px; letter-spacing:1px; font-weight:700; }
+    .l1 .head .num { background: rgba(255,71,87,0.10); color: var(--danger); border:1px solid rgba(255,71,87,0.30); }
+    .l2 .head .num { background: rgba(255,184,0,0.10); color: var(--warning); border:1px solid rgba(255,184,0,0.30); }
+    .l3 .head .num { background: rgba(177,78,255,0.10); color: var(--accent); border:1px solid rgba(177,78,255,0.30); }
+    .sub-h { font-family: var(--font-num); font-size:9px; color: var(--text-mute); letter-spacing:1px; text-transform:uppercase; margin-bottom:2px; }
+    .layer-card ul.threats { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:2px; }
+    .layer-card ul.threats li { font-size:10px; line-height:1.4; color: var(--text-dim); padding-left:11px; position:relative; }
+    .layer-card ul.threats li::before { content:'⚠'; position:absolute; left:0; font-size:9px; }
+    .l1 ul.threats li::before { color: var(--danger); }
+    .l2 ul.threats li::before { color: var(--warning); }
+    .l3 ul.threats li::before { color: var(--accent); }
+    .layer-card ul.detect { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:2px; }
+    .layer-card ul.detect li { font-size:10px; line-height:1.4; color: var(--text-dim); padding-left:11px; position:relative; }
+    .layer-card ul.detect li::before { content:'✓'; position:absolute; left:0; }
+    .l1 ul.detect li::before { color: var(--success); }
+    .l2 ul.detect li::before { color: var(--success); }
+    .l3 ul.detect li::before { color: var(--success); }
+    .layer-card .response { padding: 7px 9px; border-radius:6px; margin-top:auto; font-size:10px; line-height:1.4; }
+    .l1 .response { background: rgba(255,71,87,0.06); border:1px dashed rgba(255,71,87,0.30); color: var(--text-dim); }
+    .l2 .response { background: rgba(255,184,0,0.06); border:1px dashed rgba(255,184,0,0.30); color: var(--text-dim); }
+    .l3 .response { background: rgba(177,78,255,0.06); border:1px dashed rgba(177,78,255,0.30); color: var(--text-dim); }
+    .layer-card .response .lbl { font-family: var(--font-num); font-size:9px; letter-spacing:0.5px; font-weight:700; margin-right:4px; }
+    .l1 .response .lbl { color: var(--danger); }
+    .l2 .response .lbl { color: var(--warning); }
+    .l3 .response .lbl { color: var(--accent); }
+    .layer-card .response b { color: var(--text); font-weight:600; }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>07 — SECURITY & ANTI-FRAUD</span>
+    </div>
+    <div class="page-num">32 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">DEFENSE IN DEPTH</span>
+    <h1 class="slide-title" style="font-size:26px;">Three-Layer Fraud Defense <span class="text-dim font-ar" style="font-weight:600;">/ ثلاث طبقات دفاعية</span></h1>
+    <p class="slide-subtitle" style="font-size:13px; margin-top:3px;">Customer fraud, driver fraud, internal fraud — each with dedicated detection and response.</p>
+  </div>
+
+  <div class="grid-3" style="flex:1; min-height:0;">
+    <!-- LAYER 1 -->
+    <div class="layer-card l1">
+      <div class="head">
+        <div class="icon"><span class="material-icons" style="font-size:20px;">person_off</span></div>
+        <div>
+          <h3>Customer Fraud</h3>
+          <div class="ar rtl">احتيال العملاء</div>
+        </div>
+        <span class="num">LAYER 01</span>
+      </div>
+
+      <div>
+        <div class="sub-h">Threats</div>
+        <ul class="threats">
+          <li>Fake accounts for promo abuse (new user coupons)</li>
+          <li>Stolen credit cards (chargeback risk)</li>
+          <li>Friendly fraud (claim non-delivery to get free food)</li>
+          <li>COD abuse (order, refuse at door, food wasted)</li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="sub-h">Detection</div>
+        <ul class="detect">
+          <li>Device fingerprinting (FingerprintJS)</li>
+          <li>Phone number age + verification</li>
+          <li>Order velocity per device/IP/household</li>
+          <li>ML model trained on historical chargebacks</li>
+          <li>Trust score (0–100) on every user, recalculated on each order</li>
+        </ul>
+      </div>
+
+      <div class="response">
+        <span class="lbl">RESPONSE:</span>
+        Block auto-refund for users with trust score <b>&lt;30</b>; require OTP for high-value COD orders.
+      </div>
+    </div>
+
+    <!-- LAYER 2 -->
+    <div class="layer-card l2">
+      <div class="head">
+        <div class="icon"><span class="material-icons" style="font-size:20px;">two_wheeler</span></div>
+        <div>
+          <h3>Driver Fraud</h3>
+          <div class="ar rtl">احتيال المندوبين</div>
+        </div>
+        <span class="num">LAYER 02</span>
+      </div>
+
+      <div>
+        <div class="sub-h">Threats</div>
+        <ul class="threats">
+          <li>Fake deliveries (mark delivered without actually delivering)</li>
+          <li>Collusion with restaurants (split overcharging)</li>
+          <li>GPS spoofing to game matching</li>
+          <li>Multi-accounting (one person, multiple driver accounts)</li>
+          <li>Long-hauling (taking longer routes to inflate distance pay)</li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="sub-h">Detection</div>
+        <ul class="detect">
+          <li>GPS trajectory validation (compare actual route to optimal)</li>
+          <li>Customer delivery confirmation (photo + OTP)</li>
+          <li>Restaurant pickup confirmation scan</li>
+          <li>Cross-driver restaurant frequency analysis</li>
+          <li>Driver earnings anomaly detection</li>
+        </ul>
+      </div>
+
+      <div class="response">
+        <span class="lbl">RESPONSE:</span>
+        Auto-suspend drivers with <b>&gt;3 flagged orders</b> in 7 days; manual review by Field Supervisor.
+      </div>
+    </div>
+
+    <!-- LAYER 3 -->
+    <div class="layer-card l3">
+      <div class="head">
+        <div class="icon"><span class="material-icons" style="font-size:20px;">badge</span></div>
+        <div>
+          <h3>Internal Employee Fraud</h3>
+          <div class="ar rtl">احتيال الموظفين الداخليين</div>
+        </div>
+        <span class="num">LAYER 03</span>
+      </div>
+
+      <div>
+        <div class="sub-h">Threats</div>
+        <ul class="threats">
+          <li>Manual refunds for friends/family</li>
+          <li>Approving fake restaurant signups for kickbacks</li>
+          <li>Leaking customer data</li>
+          <li>Order manipulation (cancelling real orders to redirect)</li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="sub-h">Detection</div>
+        <ul class="detect">
+          <li>Biometric auth (fingerprint/face) on every portal login + sensitive action</li>
+          <li>Immutable audit log (append-only, blockchain-style hashing)</li>
+          <li>Anomaly detection on refund volume per employee</li>
+          <li>Segregation of duties (refund approval requires 2 people &gt;EGP 500)</li>
+          <li>Quarterly access review by Command Center</li>
+        </ul>
+      </div>
+
+      <div class="response">
+        <span class="lbl">RESPONSE:</span>
+        Immediate account suspension; legal action per Egyptian cybercrime law (<b>Law 175/2018</b>).
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - Three-layer defense-in-depth, each with threats / detection / response.
+    - Customer layer: device fingerprint + ML trust score (0-100).
+    - Driver layer: GPS trajectory + photo+OTP confirmation.
+    - Internal layer: biometric + immutable audit log + segregation of duties.
+    - Legal backbone: Egyptian cybercrime Law 175/2018.
+  </aside>
+</body>
+</html>

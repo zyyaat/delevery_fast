@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Success Metrics</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .sec-h { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .sec-h .material-icons { color: var(--primary); font-size:18px; }
+    .sec-h h2 { font-family: var(--font-heading); font-weight:800; font-size:15px; color: var(--text); }
+    .sec-h .ar { font-family: var(--font-cn); font-size:11px; color: var(--text-dim); }
+
+    .north-card { padding:13px 18px; border-radius:12px; background: linear-gradient(135deg, rgba(0,212,255,0.10) 0%, rgba(177,78,255,0.10) 100%); border:1px solid rgba(0,212,255,0.30); display:flex; gap:18px; align-items:center; }
+    .north-card .icon { width:44px; height:44px; border-radius:10px; background: linear-gradient(135deg, var(--primary), var(--accent)); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow: 0 0 18px rgba(0,212,255,0.4); }
+    .north-card .icon .material-icons { color: #0A0E1A; font-size:24px; }
+    .north-card .body { flex:1; }
+    .north-card .lbl { font-family: var(--font-num); font-size:9.5px; color: var(--primary); letter-spacing:1.5px; font-weight:700; }
+    .north-card .name { font-family: var(--font-heading); font-weight:800; font-size:17px; color: var(--text); margin:2px 0; line-height:1.15; }
+    .north-card .why { font-size:10.5px; color: var(--text-dim); line-height:1.4; }
+    .north-card .target { padding:8px 14px; background: var(--bg-elev); border:1px solid var(--border-soft); border-radius:8px; text-align:center; flex-shrink:0; }
+    .north-card .target .lbl2 { font-family: var(--font-num); font-size:9px; color: var(--text-mute); letter-spacing:1px; }
+    .north-card .target .val { font-family: var(--font-num); font-weight:800; font-size:24px; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height:1; }
+    .north-card .target .sub { font-size:9.5px; color: var(--text-dim); margin-top:2px; }
+
+    .kpi-card { padding:10px 12px; border-radius:9px; background: var(--bg-card); border:1px solid var(--border); border-left:3px solid var(--primary); display:flex; flex-direction:column; gap:3px; }
+    .kpi-card .group { font-family: var(--font-num); font-size:8.5px; color: var(--text-mute); letter-spacing:1px; font-weight:700; text-transform:uppercase; }
+    .kpi-card .name { font-family: var(--font-heading); font-weight:700; font-size:11.5px; color: var(--text); line-height:1.2; min-height:28px; }
+    .kpi-card .target-row { display:flex; justify-content:space-between; align-items:baseline; margin-top:2px; padding-top:5px; border-top:1px dashed var(--border-soft); }
+    .kpi-card .target-lbl { font-size:9px; color: var(--text-mute); font-family: var(--font-num); letter-spacing:0.5px; }
+    .kpi-card .target-val { font-family: var(--font-num); font-weight:700; font-size:13px; color: var(--primary); }
+    .kpi-card .cadence { font-size:9px; color: var(--text-mute); font-family: var(--font-num); margin-top:2px; }
+    .kpi-card .cadence .material-icons { font-size:10px; vertical-align:middle; margin-right:2px; }
+
+    .kpi-card.reliability { border-left-color: var(--accent); }
+    .kpi-card.reliability .target-val { color: var(--accent); }
+    .kpi-card.reliability .group { color: var(--accent); }
+
+    .ue-bar { padding:9px 13px; border-radius:8px; background: var(--bg-elev); border:1px solid var(--border); display:flex; justify-content:space-around; align-items:center; }
+    .ue-item { display:flex; flex-direction:column; align-items:center; gap:2px; }
+    .ue-item .lbl { font-size:9.5px; color: var(--text-mute); font-family: var(--font-num); letter-spacing:0.5px; text-align:center; }
+    .ue-item .val { font-family: var(--font-num); font-weight:800; font-size:14px; color: var(--success); }
+    .ue-divider { width:1px; height:28px; background: var(--border-soft); }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>08 — ROADMAP &amp; DEVOPS</span>
+    </div>
+    <div class="page-num">45 / 50</div>
+  </header>
+
+  <div class="mb-2">
+    <span class="section-kicker">KPIs</span>
+    <h1 class="slide-title">Success Metrics <span class="text-dim font-ar" style="font-weight:600;">/ مؤشرات النجاح</span></h1>
+    <p class="slide-subtitle">North-star metric + supporting KPIs across growth, reliability, and unit economics.</p>
+  </div>
+
+  <!-- TOP — North Star Metric -->
+  <div style="margin-top:8px;">
+    <div class="sec-h">
+      <span class="material-icons">star</span>
+      <h2>North Star Metric</h2><span class="ar rtl">/ المؤشر الأساسي</span>
+    </div>
+    <div class="north-card">
+      <div class="icon"><span class="material-icons">trending_up</span></div>
+      <div class="body">
+        <div class="lbl">NORTH STAR</div>
+        <div class="name">Weekly Active Orders per Customer (WAO/Customer)</div>
+        <div class="why">Why: Captures both retention and frequency — the truest signal of product-market fit.</div>
+      </div>
+      <div class="target">
+        <div class="lbl2">TARGET</div>
+        <div class="val">2.5+</div>
+        <div class="sub">by month 12</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIDDLE — KPI Grid -->
+  <div style="margin-top:10px;">
+    <div class="sec-h">
+      <span class="material-icons">grid_view</span>
+      <h2>KPI Grid</h2><span class="ar rtl">/ شبكة المؤشرات</span>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr 1fr; gap:9px;">
+      <!-- GROWTH -->
+      <div class="kpi-card">
+        <div class="group">GROWTH</div>
+        <div class="name">GMV (Gross Merchandise Value)</div>
+        <div class="target-row"><span class="target-lbl">TARGET</span><span class="target-val">EGP 270M/mo</span></div>
+        <div class="cadence"><span class="material-icons">schedule</span>Daily · by month 12</div>
+      </div>
+      <div class="kpi-card">
+        <div class="group">GROWTH</div>
+        <div class="name">Active Customers (placed order in last 30 days)</div>
+        <div class="target-row"><span class="target-lbl">TARGET</span><span class="target-val">200K</span></div>
+        <div class="cadence"><span class="material-icons">schedule</span>Weekly · by month 12</div>
+      </div>
+      <div class="kpi-card">
+        <div class="group">GROWTH</div>
+        <div class="name">Restaurant Active Count</div>
+        <div class="target-row"><span class="target-lbl">TARGET</span><span class="target-val">2,500+</span></div>
+        <div class="cadence"><span class="material-icons">schedule</span>Weekly · by month 12</div>
+      </div>
+      <div class="kpi-card">
+        <div class="group">GROWTH</div>
+        <div class="name">Driver Active Count</div>
+        <div class="target-row"><span class="target-lbl">TARGET</span><span class="target-val">15K+</span></div>
+        <div class="cadence"><span class="material-icons">schedule</span>Weekly · by month 12</div>
+      </div>
+
+      <!-- RELIABILITY -->
+      <div class="kpi-card reliability">
+        <div class="group">RELIABILITY</div>
+        <div class="name">Order Completion Rate (not cancelled)</div>
+        <div class="target-row"><span class="target-lbl">TARGET</span><span class="target-val">&gt;92%</span></div>
+        <div class="cadence"><span class="material-icons">schedule</span>Daily</div>
+      </div>
+      <div class="kpi-card reliability">
+        <div class="group">RELIABILITY</div>
+        <div class="name">Average Delivery Time (pickup to dropoff)</div>
+        <div class="target-row"><span class="target-lbl">TARGET</span><span class="target-val">&lt;35 min</span></div>
+        <div class="cadence"><span class="material-icons">schedule</span>Daily</div>
+      </div>
+      <div class="kpi-card reliability">
+        <div class="group">RELIABILITY</div>
+        <div class="name">p95 API Latency (Order Service)</div>
+        <div class="target-row"><span class="target-lbl">TARGET</span><span class="target-val">&lt;500ms</span></div>
+        <div class="cadence"><span class="material-icons">schedule</span>Real-time</div>
+      </div>
+      <div class="kpi-card reliability">
+        <div class="group">RELIABILITY</div>
+        <div class="name">Uptime (Tier 0 services)</div>
+        <div class="target-row"><span class="target-lbl">TARGET</span><span class="target-val">99.95%</span></div>
+        <div class="cadence"><span class="material-icons">schedule</span>Real-time</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM — Unit Economics -->
+  <div style="margin-top:9px;">
+    <div class="ue-bar">
+      <div class="ue-item">
+        <div class="lbl">CONTRIBUTION MARGIN / ORDER</div>
+        <div class="val">EGP 4+</div>
+      </div>
+      <div class="ue-divider"></div>
+      <div class="ue-item">
+        <div class="lbl">CAC (CUSTOMER ACQUISITION)</div>
+        <div class="val">&lt;EGP 80</div>
+      </div>
+      <div class="ue-divider"></div>
+      <div class="ue-item">
+        <div class="lbl">LTV (LIFETIME VALUE)</div>
+        <div class="val">EGP 800+</div>
+      </div>
+      <div class="ue-divider"></div>
+      <div class="ue-item">
+        <div class="lbl">LTV / CAC RATIO</div>
+        <div class="val">10x+</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - North star: Weekly Active Orders per Customer — target 2.5+ by month 12.
+    - 8 supporting KPIs: 4 growth (GMV, customers, restaurants, drivers), 4 reliability (completion, delivery time, latency, uptime).
+    - Unit economics: EGP 4 contribution margin, <EGP 80 CAC, EGP 800+ LTV, 10x+ LTV/CAC.
+    - Cadence varies from real-time (latency, uptime) to weekly (growth counts).
+    - North star captures both retention AND frequency — truest PMF signal.
+  </aside>
+</body>
+</html>

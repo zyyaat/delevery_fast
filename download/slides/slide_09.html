@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Competitor Comparison Matrix</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="global.css">
+<style>
+  .matrix {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 11.5px;
+  }
+  .matrix thead th {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 10px 12px;
+    color: #9BA8C7;
+    background: rgba(15,20,36,0.6);
+    border-bottom: 1px solid #2A3656;
+    border-top: 1px solid #1E2A4A;
+  }
+  .matrix thead th.ours {
+    color: #00D4FF;
+    background: rgba(0,212,255,0.08);
+    border-bottom: 2px solid #00D4FF;
+  }
+  .matrix tbody td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #1A2240;
+    color: #C7D0E6;
+    vertical-align: middle;
+  }
+  .matrix tbody tr:hover td { background: rgba(255,255,255,0.015); }
+  .matrix tbody td.ours {
+    background: rgba(0,212,255,0.04);
+    border-left: 1px solid rgba(0,212,255,0.2);
+    border-right: 1px solid rgba(0,212,255,0.2);
+    color: #EAF0FF;
+    font-weight: 600;
+  }
+  .matrix tbody td.feat {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: #EAF0FF;
+    font-size: 11.5px;
+  }
+  .matrix tbody td.feat .num {
+    color: #5C6B8E;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    margin-right: 6px;
+  }
+  .mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    line-height: 1;
+  }
+  .mark-y { background: rgba(0,229,138,0.12); color: #00E58A; border: 1px solid rgba(0,229,138,0.3); }
+  .mark-n { background: rgba(255,71,87,0.12); color: #FF4757; border: 1px solid rgba(255,71,87,0.3); }
+  .mark-p { background: rgba(255,184,0,0.12); color: #FFB800; border: 1px solid rgba(255,184,0,0.3); }
+  .mark-q { background: rgba(156,168,199,0.08); color: #9BA8C7; border: 1px solid #2A3656; }
+  .mark-text {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: #9BA8C7;
+  }
+  .mark-text.strong { color: #EAF0FF; font-weight: 600; }
+  .mark-text.ours { color: #00D4FF; font-weight: 700; }
+</style>
+</head>
+<body class="slide">
+
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>02 — COMPETITIVE LANDSCAPE</span>
+      <span style="color:#2A3656;">/</span>
+      <span>MATRIX</span>
+    </div>
+    <div class="page-num">09 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">FEATURE GAP ANALYSIS</span>
+    <h1 class="slide-title" style="font-size:32px;">Competitor Comparison <span style="color:#5C6B8E; font-weight:400;">/</span> <span class="font-ar" dir="rtl">مقارنة المنافسين</span></h1>
+  </div>
+
+  <div class="card-elev flex-1" style="padding:8px 12px;">
+    <table class="matrix">
+      <thead>
+        <tr>
+          <th style="width:32%;">FEATURE</th>
+          <th style="width:15%;">Talabat</th>
+          <th style="width:15%;">Uber Eats</th>
+          <th style="width:15%;">elmenus</th>
+          <th style="width:23%;" class="ours">Our Platform</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="feat"><span class="num">01</span>Restaurant catalog size (Egypt)</td>
+          <td><span class="mark-text">~6000</span> <span class="mark mark-y">✓</span></td>
+          <td><span class="mark-text">~3500</span> <span class="mark mark-y">✓</span></td>
+          <td><span class="mark-text">~12000</span> <span class="mark mark-y">✓</span></td>
+          <td class="ours"><span class="mark-text ours">Target 2500 Y1</span> <span class="mark mark-p">curated</span></td>
+        </tr>
+        <tr>
+          <td class="feat"><span class="num">02</span>Real-time order tracking</td>
+          <td><span class="mark mark-y">✓</span></td>
+          <td><span class="mark mark-y">✓</span></td>
+          <td><span class="mark mark-n">✕</span> <span class="mark-text">no own fleet</span></td>
+          <td class="ours"><span class="mark mark-y">✓</span></td>
+        </tr>
+        <tr>
+          <td class="feat"><span class="num">03</span>Driver earnings transparency</td>
+          <td><span class="mark mark-n">✕</span></td>
+          <td><span class="mark mark-p">partial</span></td>
+          <td><span class="mark mark-q">N/A</span></td>
+          <td class="ours"><span class="mark mark-y">✓</span> <span class="mark-text ours">Full</span></td>
+        </tr>
+        <tr>
+          <td class="feat"><span class="num">04</span>Local payments (Vodafone Cash / InstaPay)</td>
+          <td><span class="mark mark-y">✓</span></td>
+          <td><span class="mark mark-n">✕</span> <span class="mark-text">cards only</span></td>
+          <td><span class="mark mark-y">✓</span></td>
+          <td class="ours"><span class="mark mark-y">✓</span> <span class="mark-text ours">Native</span></td>
+        </tr>
+        <tr>
+          <td class="feat"><span class="num">05</span>Lower restaurant commission</td>
+          <td><span class="mark-text strong">20-25%</span></td>
+          <td><span class="mark-text strong">25-30%</span></td>
+          <td><span class="mark-text strong">12-18%</span></td>
+          <td class="ours"><span class="mark-text ours">12-15%</span></td>
+        </tr>
+        <tr>
+          <td class="feat"><span class="num">06</span>AI recommendations</td>
+          <td><span class="mark mark-p">basic</span></td>
+          <td><span class="mark mark-y">✓</span> <span class="mark-text">advanced</span></td>
+          <td><span class="mark mark-y">✓</span> <span class="mark-text">strong</span></td>
+          <td class="ours"><span class="mark mark-y">✓</span> <span class="mark-text ours">Personalized</span></td>
+        </tr>
+        <tr>
+          <td class="feat"><span class="num">07</span>Anti-fraud ML layer</td>
+          <td><span class="mark mark-q">?</span></td>
+          <td><span class="mark mark-y">✓</span></td>
+          <td><span class="mark mark-q">N/A</span></td>
+          <td class="ours"><span class="mark mark-y">✓</span> <span class="mark-text ours">Native</span></td>
+        </tr>
+        <tr>
+          <td class="feat"><span class="num">08</span>Internal employee anti-fraud</td>
+          <td><span class="mark mark-q">?</span></td>
+          <td><span class="mark mark-y">✓</span></td>
+          <td><span class="mark mark-q">N/A</span></td>
+          <td class="ours"><span class="mark mark-y">✓</span> <span class="mark-text ours">Biometric + audit</span></td>
+        </tr>
+        <tr>
+          <td class="feat"><span class="num">09</span>Multi-vendor orders (one delivery, multiple restaurants)</td>
+          <td><span class="mark mark-n">✕</span></td>
+          <td><span class="mark mark-n">✕</span></td>
+          <td><span class="mark mark-n">✕</span></td>
+          <td class="ours"><span class="mark mark-y">✓</span> <span class="mark-text ours">Planned</span></td>
+        </tr>
+        <tr>
+          <td class="feat"><span class="num">10</span>24/7 live ops command center</td>
+          <td><span class="mark mark-y">✓</span></td>
+          <td><span class="mark mark-y">✓</span></td>
+          <td><span class="mark mark-n">✕</span></td>
+          <td class="ours"><span class="mark mark-y">✓</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex items-center gap-4 mt-3" style="font-size:10.5px; color:#5C6B8E; font-family:'JetBrains Mono', monospace; letter-spacing:0.5px;">
+    <span class="mark mark-y">✓</span> FULL SUPPORT
+    <span class="mark mark-p">partial</span> PARTIAL
+    <span class="mark mark-n">✕</span> NOT SUPPORTED
+    <span class="mark mark-q">N/A</span> NOT APPLICABLE
+    <span class="ml-auto" style="color:#00D4FF;">→ OUR EDGE: COMMISSION, ANTI-FRAUD, MULTI-VENDOR</span>
+  </div>
+
+  <footer class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>02 — COMPETITIVE LANDSCAPE</span></div>
+    <div>09 / 50</div>
+  </footer>
+
+  <aside data-notes class="hidden">
+    - Walk the rows where we differentiate, skip the parity rows.
+    - Highlight rows 5, 8, 9 — commission, employee anti-fraud, multi-vendor.
+    - Note: elmenus has bigger catalog but no own fleet — different game.
+    - "?" marks indicate unknown — don't claim what we can't verify.
+    - Multi-vendor is "Planned" — honest, not pretend-shipped.
+  </aside>
+</body>
+</html>

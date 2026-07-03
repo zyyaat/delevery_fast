@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Driver Matching Algorithm</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .step-col { padding: 14px; border-radius: 12px; background: var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; gap:8px; height:100%; min-height:0; position:relative; }
+    .step-col.s1 { border-top:3px solid var(--primary); }
+    .step-col.s2 { border-top:3px solid var(--accent); }
+    .step-col.s3 { border-top:3px solid var(--success); }
+    .step-col .head { display:flex; align-items:center; gap:8px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+    .step-col .head .icon { width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+    .s1 .head .icon { background: rgba(0,212,255,0.10); color: var(--primary); border:1px solid rgba(0,212,255,0.30); }
+    .s2 .head .icon { background: rgba(177,78,255,0.10); color: var(--accent); border:1px solid rgba(177,78,255,0.30); }
+    .s3 .head .icon { background: rgba(0,229,138,0.10); color: var(--success); border:1px solid rgba(0,229,138,0.30); }
+    .step-col .head .lbl { font-family: var(--font-num); font-size:9px; color: var(--text-mute); letter-spacing:1px; }
+    .step-col .head h3 { font-family: var(--font-heading); font-weight:800; font-size:13px; color: var(--text); }
+    .step-col .head .ar { font-family: var(--font-cn); font-size:11px; color: var(--text-dim); margin-top:1px; }
+    .step-col p { font-size:11px; line-height:1.5; color: var(--text-dim); }
+    .step-col p b { color: var(--text); font-weight:600; }
+    .step-col p .mono { font-family: var(--font-num); color: var(--primary); }
+    .code-snip { font-family: var(--font-num); font-size:10px; line-height:1.5; padding:8px 10px; background: var(--bg); border:1px solid var(--border-soft); border-radius:6px; color: var(--text); }
+    .code-snip .k { color: var(--accent); font-weight:700; }
+    .code-snip .s { color: var(--success); }
+    .code-snip .n { color: var(--warning); }
+    .factor-list { display:flex; flex-direction:column; gap:6px; }
+    .factor { padding: 6px 8px; border-radius:6px; background: var(--bg-card-2); border-left:2px solid var(--accent); }
+    .factor .head { display:flex; align-items:center; justify-content:space-between; font-size:11px; }
+    .factor .name { color: var(--text); font-weight:600; }
+    .factor .wt { font-family: var(--font-num); font-size:10px; font-weight:700; color: var(--accent); }
+    .factor .desc { font-size:10px; line-height:1.4; color: var(--text-dim); margin-top:2px; }
+    .props { padding:8px 10px; border-radius:6px; background: rgba(0,229,138,0.05); border:1px dashed rgba(0,229,138,0.30); margin-top:auto; }
+    .props .lbl { font-family: var(--font-num); font-size:9px; color: var(--success); letter-spacing:0.5px; font-weight:700; margin-bottom:4px; }
+    .props ul { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:2px; }
+    .props ul li { font-size:10.5px; line-height:1.4; color: var(--text-dim); padding-left:10px; position:relative; }
+    .props ul li::before { content:'✓'; position:absolute; left:0; color: var(--success); }
+    .props ul li b { color: var(--text); font-weight:600; }
+    .props ul li .mono { font-family: var(--font-num); color: var(--primary); }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>06 — BUSINESS LOGIC FLOWS</span>
+    </div>
+    <div class="page-num">28 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">DISPATCH ENGINE</span>
+    <h1 class="slide-title" style="font-size:26px;">Driver Matching Algorithm <span class="text-dim font-ar" style="font-weight:600;">/ خوارزمية مطابقة السائق</span></h1>
+    <p class="slide-subtitle" style="font-size:13px; margin-top:3px;">Finding the best driver in under 10 seconds — geospatial + scoring + batching.</p>
+  </div>
+
+  <div class="grid-3" style="flex:1; min-height:0;">
+    <!-- Column 1 -->
+    <div class="step-col s1">
+      <div class="head">
+        <div class="icon"><span class="material-icons" style="font-size:16px;">my_location</span></div>
+        <div>
+          <div class="lbl">STEP 1</div>
+          <h3>Geospatial Filter</h3>
+          <div class="ar rtl">الفلترة الجغرافية</div>
+        </div>
+      </div>
+      <p>When <b>RestaurantAccepted</b> fires, the Delivery Matching Service queries <b>Redis GEO</b> for all available drivers within <span class="mono">3km</span> of the restaurant. Uses <span class="mono">GEORADIUS</span> (or <span class="mono">GEOSEARCH</span> in Redis 6+). Returns driver IDs sorted by distance.</p>
+      <p>Typical result: <b>15–40 candidates</b> in dense areas, <b>3–8</b> in suburban areas. The 3km radius is configurable per city — tuned based on traffic density.</p>
+      <div class="code-snip">
+<span class="k">GEOSEARCH</span> drivers AVAILABLE<br>
+&nbsp;&nbsp;<span class="k">FROMLONLAT</span> lng lat<br>
+&nbsp;&nbsp;<span class="k">BYRADIUS</span> <span class="n">3</span> km<br>
+&nbsp;&nbsp;<span class="s">ASC COUNT 40</span>
+      </div>
+    </div>
+
+    <!-- Column 2 -->
+    <div class="step-col s2">
+      <div class="head">
+        <div class="icon"><span class="material-icons" style="font-size:16px;">tuning</span></div>
+        <div>
+          <div class="lbl">STEP 2</div>
+          <h3>Scoring</h3>
+          <div class="ar rtl">التقييم</div>
+        </div>
+      </div>
+      <p>Each candidate gets a <b>score (0–100)</b> computed from 5 weighted factors:</p>
+
+      <div class="factor-list">
+        <div class="factor">
+          <div class="head"><span class="name">Distance to restaurant</span><span class="wt">35%</span></div>
+          <div class="desc">Closer = higher score. Linear decay beyond 1.5km.</div>
+        </div>
+        <div class="factor">
+          <div class="head"><span class="name">Driver rating</span><span class="wt">20%</span></div>
+          <div class="desc">Customer rating 4.5+ → 100; &lt;4.0 → 50.</div>
+        </div>
+        <div class="factor">
+          <div class="head"><span class="name">Recent acceptance rate</span><span class="wt">20%</span></div>
+          <div class="desc">Last 20 orders acceptance rate. Penalizes drivers who reject often.</div>
+        </div>
+        <div class="factor">
+          <div class="head"><span class="name">Idle time</span><span class="wt">15%</span></div>
+          <div class="desc">Time since last delivery. Favors drivers who've been waiting longer (fairness).</div>
+        </div>
+        <div class="factor">
+          <div class="head"><span class="name">Vehicle type match</span><span class="wt">10%</span></div>
+          <div class="desc">Motorcycle preferred for short distances; car for orders &gt;10km or rain.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Column 3 -->
+    <div class="step-col s3">
+      <div class="head">
+        <div class="icon"><span class="material-icons" style="font-size:16px;">send</span></div>
+        <div>
+          <div class="lbl">STEP 3</div>
+          <h3>Dispatch &amp; Retry</h3>
+          <div class="ar rtl">الإرسال وإعادة المحاولة</div>
+        </div>
+      </div>
+      <p><b>Top 3 candidates</b> receive push notifications simultaneously (broadcast strategy). <b>First to accept wins.</b></p>
+      <p>If no acceptance within <span class="mono" style="color: var(--success);">30s</span>, expand radius to <span class="mono" style="color: var(--success);">5km</span> and retry with next 5 candidates. After <b>3 failed rounds</b> (<span class="mono" style="color: var(--success);">90s total</span>), order moves to manual dispatch queue in Command Center.</p>
+
+      <div class="props">
+        <div class="lbl">PROPERTIES</div>
+        <ul>
+          <li><b>Target:</b> 90% of orders matched within <span class="mono">10s</span></li>
+          <li><b>P95 matching time:</b> <span class="mono">&lt;15s</span></li>
+          <li><b>Auto-recovery:</b> 3 retries before manual</li>
+          <li><b>Driver fair-share:</b> rotated to prevent one driver from monopolizing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - 3-step dispatch: Geo filter → Score → Broadcast + retry.
+    - Redis GEOSEARCH returns 15-40 candidates in 3km radius.
+    - Score weights: distance 35 / rating 20 / acceptance 20 / idle 15 / vehicle 10.
+    - Top 3 get push simultaneously; first-accept wins.
+    - Target: 90% matched in 10s; 3 retries before manual dispatch.
+  </aside>
+</body>
+</html>

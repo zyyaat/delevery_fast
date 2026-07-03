@@ -1,0 +1,912 @@
+     1→================================================================================
+     2→SLIDE INDEX 33 | output: /home/z/my-project/download/slides/slide_34.html
+     3→Title: Internal Employee Portal
+     4→Layout: portal-overview
+     5→--- TASK BRIEF ---
+     6→Internal employee portal deep-dive slide.
+     7→
+     8→Title: 'Internal Employee Portal / بوابة الموظفين الداخلية'
+     9→Kicker: 'INSIDE THE PERIMETER'
+    10→Subtitle: 'Onboarding, biometric auth, and audit trail — the controls that prevent the hardest fraud to detect.'
+    11→
+    12→Left column — 'Portal Modules / وحدات البوابة':
+    13→
+    14→5 cards in a vertical list:
+    15→
+    16→1. Employee Onboarding
+    17→   'HR creates account → employee sets password + TOTP → biometric enrollment (fingerprint/face via WebAuthn). Background check status tracked. Access provisioning automated based on role.'
+    18→
+    19→2. Sensitive Action Authentication
+    20→   'When employee triggers a sensitive action (refund >EGP 200, restaurant approval, payout), portal prompts for biometric re-auth. WebAuthn standard — fingerprint/face/camera. No password reuse.'
+    21→
+    22→3. Audit Log (Immutable)
+    23→   'Every action written to audit_logs table — append-only. Hash-chained: each record includes hash of previous record. Tampering detected via chain validation. Logs exported daily to cold storage (S3 Object Lock).'
+    24→
+    25→4. Dual Approval Workflow
+    26→   'High-value actions require 2 approvers from different teams. Refund >EGP 500 → support_l2 + ops_manager. Restaurant onboarding → ops_manager + finance. Driver KYC approval → field_supervisor + ops_manager.'
+    27→
+    28→5. Quarterly Access Review
+    29→   'Command Center runs access review every quarter. Managers must confirm or revoke each team member\'s permissions. Stale accounts (>30 days inactive) auto-suspended.'
+    30→
+    31→Right column — 'Audit Log Schema / سجل التدقيق':
+    32→
+    33→Monospace table:
+    34→
+    35→id            BIGSERIAL PK
+    36→actor_id      UUID
+    37→actor_type    ENUM (employee, support, ops)
+    38→actor_email   TEXT
+    39→action        TEXT (e.g., 'refund.issued')
+    40→entity_type   TEXT (e.g., 'order')
+    41→entity_id     UUID
+    42→metadata      JSONB (amount, reason, etc.)
+    43→biometric_verified BOOLEAN
+    44→ip_address    INET
+    45→user_agent    TEXT
+    46→session_id    UUID
+    47→prev_hash     BYTEA (chain link)
+    48→record_hash   BYTEA (SHA-256 of all fields + prev_hash)
+    49→created_at    TIMESTAMPTZ DEFAULT NOW()
+    50→
+    51→Bottom small note: 'Tampering with any audit record breaks the hash chain — detectable in <1 minute via nightly validation job.'
+    52→
+    53→Slide header '07 — SECURITY & ANTI-FRAUD' and page '34 / 50'.
+    54→
+    55→================================================================================
+    56→SLIDE INDEX 34 | output: /home/z/my-project/download/slides/slide_35.html
+    57→Title: Audit Trail & Compliance
+    58→Layout: compliance-grid
+    59→--- TASK BRIEF ---
+    60→Audit trail and regulatory compliance slide.
+    61→
+    62→Title: 'Audit Trail & Compliance / سجل التدقيق والامتثال'
+    63→Kicker: 'COMPLIANCE'
+    64→Subtitle: 'Egyptian regulations, PCI-DSS for payments, GDPR-equivalent for customer data.'
+    65→
+    66→4 cards in a 2x2 grid:
+    67→
+    68→CARD 1 — 'Egyptian Regulatory Compliance / الامتثال للأنظمة المصرية'
+    69→Icon: gavel
+    70→• Consumer Protection Law 67/2006 — clear pricing, refund policies, no misleading ads
+    71→• Cybercrime Law 175/2018 — data breach notification within 72h, internal fraud prosecution
+    72→• Central Bank of Egypt (CBE) guidelines for payment intermediaries
+    73→• NTRA regulations for SMS notifications
+    74→• Annual compliance audit by external firm
+    75→Status: 'All flows implemented from day one; legal review at each phase gate.'
+    76→
+    77→CARD 2 — 'PCI-DSS for Card Payments / أمن بطاقات الدفع'
+    78→Icon: credit_card
+    79→• Never store full PAN (card number) — only last 4 digits + token
+    80→• Payment tokenization via provider (Stripe/Paymob)
+    81→• All card input fields rendered in provider\'s iframe (out of our scope)
+    82→• Quarterly ASV scans, annual SAQ-A submission
+    83→• Network segmentation: payment subnet isolated
+    84→Status: 'PCI-DSS SAQ-A — lowest validation tier because we never touch raw card data.'
+    85→
+    86→CARD 3 — 'Customer Data Protection / حماية بيانات العملاء'
+    87→Icon: privacy_tip
+    88→• PII encryption at rest (column-level for phone, email, address)
+    89→• Data retention: 7 years for financial records (tax law), 3 years for orders, 90 days for driver GPS
+    90→• Right to deletion: customer can request account deletion via Support
+    91→• Data export: GDPR-style data portability (JSON export within 30 days)
+    92→• No PII shared with third parties without explicit consent
+    93→Status: 'Privacy policy published; consent flows implemented at signup.'
+    94→
+    95→CARD 4 — 'Audit Log Retention / احتفاظ بسجل التدقيق'
+    96→Icon: history
+    97→• Hot tier: 90 days in PostgreSQL (fast query)
+    98→• Warm tier: 1 year in S3 + Parquet (queryable via Athena)
+    99→• Cold tier: 7 years in S3 Glacier (compliance retention)
+   100→• Hash chain validated nightly — alerts on tampering
+   101→• Logs immutable — even super_admin cannot modify
+   102→Status: 'Retention policy enforced via automated lifecycle rules; legal hold capability for active investigations.'
+   103→
+   104→Slide header '07 — SECURITY & ANTI-FRAUD' and page '35 / 50'.
+   105→
+   106→================================================================================
+   107→SLIDE INDEX 35 | output: /home/z/my-project/download/slides/slide_36.html
+   108→Title: Section Header 08 — Roadmap & DevOps
+   109→Layout: section-header
+   110→--- TASK BRIEF ---
+   111→Section header for Chapter 08.
+   112→
+   113→Big chapter number: '08'
+   114→Chapter title: 'Roadmap & DevOps'
+   115→Arabic title: 'خطة التنفيذ والعمليات'
+   116→Tagline: 'Four phases over 12 months — from MVP to 50K daily orders, with Kubernetes, GitOps, and observability built-in.'
+   117→Progress dots: 8 of 8.
+   118→
+   119→================================================================================
+   120→SLIDE INDEX 36 | output: /home/z/my-project/download/slides/slide_37.html
+   121→Title: 12-Month Roadmap
+   122→Layout: roadmap-timeline
+   123→--- TASK BRIEF ---
+   124→12-month roadmap timeline slide.
+   125→
+   126→Title: '12-Month Execution Roadmap / خطة التنفيذ 12 شهر'
+   127→Kicker: 'PHASES'
+   128→Subtitle: 'Four phases — each ending with a measurable milestone and a go/no-go decision point.'
+   129→
+   130→Horizontal timeline with 4 phase blocks:
+   131→
+   132→PHASE 1 — Months 1-3 · MVP
+   133→Goal: 'Prove the core loop in Cairo with 50 restaurants and 500 orders/day.'
+   134→Deliverables:
+   135→• Customer App (mobile) — browse, order, track, pay
+   136→• Restaurant App — receive orders, update status
+   137→• Driver App — accept, navigate, deliver
+   138→• Core backend: Auth, Restaurant Catalog, Menu, Order, Payment (Vodafone Cash only), Notification
+   139→• PostgreSQL + Redis + Kafka foundation
+   140→• Manual restaurant onboarding (no self-serve yet)
+   141→Team size: 8 engineers
+   142→Exit criteria: 500 orders/day, 50 restaurants live, p95 <3s
+   143→
+   144→PHASE 2 — Months 4-6 · Growth
+   145→Goal: 'Scale to 5K orders/day, add Giza, launch self-serve onboarding.'
+   146→Deliverables:
+   147→• Support App (web) — ticket management, refunds
+   148→• Command Center (web) — live ops dashboard
+   149→• Delivery Matching algorithm v2 (geospatial + scoring)
+   150→• Fraud Detection service (rule-based v1)
+   151→• InstaPay + Card payments added
+   152→• Restaurant self-serve onboarding portal
+   153→• CI/CD pipeline + automated testing
+   154→Team size: 18 engineers
+   155→Exit criteria: 5K orders/day, 300 restaurants, 2 cities
+   156→
+   157→PHASE 3 — Months 7-9 · Scale
+   158→Goal: 'Reach 20K orders/day, expand to Alexandria, launch loyalty program.'
+   159→Deliverables:
+   160→• Employee Portal (web) with biometric auth + audit log
+   161→• Field Supervisor App (mobile)
+   162→• Fraud Detection v2 (ML model)
+   163→• Promo & Loyalty service
+   164→• Analytics service (ClickHouse)
+   165→• Order partitioning + read replicas
+   166→• Multi-city shard readiness
+   167→Team size: 28 engineers
+   168→Exit criteria: 20K orders/day, 1K restaurants, 3 cities
+   169→
+   170→PHASE 4 — Months 10-12 · Optimize
+   171→Goal: 'Hit 50K orders/day, optimize unit economics, prepare for Series A.'
+   172→Deliverables:
+   173→• Recommendations engine (AI)
+   174→• Dynamic pricing (surge, weather, demand)
+   175→• Multi-vendor orders (one delivery, multiple restaurants)
+   176→• B2B partnerships (corporate accounts)
+   177→• Full observability (tracing, SLOs, error budgets)
+   178→• Cost optimization pass (FinOps review)
+   179→Team size: 35 engineers
+   180→Exit criteria: 50K orders/day, 2.5K restaurants, 4 cities, breakeven contribution margin
+   181→
+   182→Use distinct colors per phase (cyan → purple → success-green → gold).
+   183→Slide header '08 — ROADMAP & DEVOPS' and page '37 / 50'.
+   184→
+   185→================================================================================
+   186→SLIDE INDEX 37 | output: /home/z/my-project/download/slides/slide_38.html
+   187→Title: Phase 1 — MVP Detail
+   188→Layout: phase-detail
+   189→--- TASK BRIEF ---
+   190→Phase 1 MVP detailed breakdown slide.
+   191→
+   192→Title: 'Phase 1 — MVP Detail / تفاصيل مرحلة MVP'
+   193→Kicker: 'MONTHS 1-3'
+   194→Subtitle: 'The minimum viable slice that proves the core loop end-to-end.'
+   195→
+   196→Three-column layout:
+   197→
+   198→COLUMN 1 — 'Build Scope / نطاق البناء'
+   199→Apps:
+   200→• Customer App (React Native) — restaurant browse, cart, checkout, order tracking
+   201→• Restaurant App (React Native) — incoming order alerts, accept/reject, status update
+   202→• Driver App (React Native) — order alerts, accept, navigation, mark delivered
+   203→
+   204→Services:
+   205→• Auth Service (phone+OTP, JWT)
+   206→• Restaurant Catalog (50 hand-onboarded)
+   207→• Menu Service (static menus, no modifiers v1)
+   208→• Order Service (state machine, 6 statuses)
+   209→• Payment Service (Vodafone Cash only)
+   210→• Notification Service (push + SMS)
+   211→
+   212→Infra:
+   213→• Single PostgreSQL instance (1 primary + 1 replica)
+   214→• Redis (cache + sessions)
+   215→• Kafka (3 brokers, basic topics)
+   216→• EKS cluster (3 nodes)
+   217→• Cloudflare CDN
+   218→
+   219→COLUMN 2 — 'Team & Cost / الفريق والتكلفة'
+   220→Team (8 people):
+   221→• 1 Tech Lead (Go + architecture)
+   222→• 3 Backend Engineers (Go)
+   223→• 2 Mobile Engineers (React Native)
+   224→• 1 Frontend Engineer (React, for web tools)
+   225→• 1 DevOps Engineer (part-time)
+   226→
+   227→Monthly burn: ~$45K
+   228→• Salaries: $38K
+   229→• Infra (AWS + 3rd party): $4K
+   230→• Tools (Sentry, Datadog, etc.): $2K
+   231→• Misc: $1K
+   232→
+   233→3-month total: ~$135K
+   234→
+   235→COLUMN 3 — 'Exit Criteria / معايير الانتقال'
+   236→Metrics:
+   237→• 500 orders/day average (last 7 days)
+   238→• 50 restaurants live and active
+   239→• p95 API latency <3s
+   240→• 99% uptime (excluding planned maintenance)
+   241→• Payment success rate >95%
+   242→• Order completion rate >90% (not cancelled)
+   243→
+   244→Soft gates:
+   245→• Restaurant NPS >30
+   246→• Customer repeat rate >25% (orders from returning users)
+   247→• Driver retention >70% (week-over-week)
+   248→• No P0 bugs open for >48h
+   249→
+   250→If exit criteria not met → 2-week extension before Phase 2 kickoff.
+   251→
+   252→Slide header '08 — ROADMAP & DEVOPS' and page '38 / 50'.
+   253→
+   254→================================================================================
+   255→SLIDE INDEX 38 | output: /home/z/my-project/download/slides/slide_39.html
+   256→Title: DevOps & Infrastructure
+   257→Layout: devops-stack
+   258→--- TASK BRIEF ---
+   259→DevOps and infrastructure stack slide.
+   260→
+   261→Title: 'DevOps & Infrastructure / العمليات والبنية التحتية'
+   262→Kicker: 'PLATFORM ENGINEERING'
+   263→Subtitle: 'Kubernetes-native, GitOps-deployed, fully observable — built for 99.9% uptime from day one.'
+   264→
+   265→6 cards in a 3x2 grid:
+   266→
+   267→CARD 1 — 'Container Orchestration'
+   268→Icon: hub
+   269→• Kubernetes (EKS on AWS)
+   270→• 3 node groups: backend (Go services), web (React apps), data (Postgres/Redis/Kafka)
+   271→• Autoscaling: HPA on CPU/RPS, KEDA for Kafka-driven scaling
+   272→• Pod anti-affinity for HA across AZs
+   273→• Cluster autoscaler for node-level scaling
+   274→Target: 'Spin up new pod in <30s; auto-recover from node failure in <2min.'
+   275→
+   276→CARD 2 — 'CI/CD Pipeline'
+   277→Icon: sync
+   278→• GitHub Actions for CI (test, lint, build, scan)
+   279→• ArgoCD for CD (GitOps — cluster state declared in Git)
+   280→• Helm charts per service (versioned, reusable)
+   281→• Image scanning via Trivy (block on CRITICAL CVEs)
+   282→• Deploy preview env per PR (ephemeral, auto-destroy after 24h)
+   283→Pipeline: 'push → lint → test → build → scan → deploy to staging → smoke test → promote to prod (manual approval).'
+   284→
+   285→CARD 3 — 'Infrastructure as Code'
+   286→Icon: code
+   287→• Terraform for AWS resources (VPC, EKS, RDS, S3, etc.)
+   288→• Terragrunt for multi-env (dev/staging/prod) DRY
+   289→• Terraform state in S3 + DynamoDB lock
+   290→• All changes via PR review — no console clicks
+   291→• Drift detection nightly
+   292→Policy: 'If it\'s not in Terraform, it doesn\'t exist.'
+   293→
+   294→CARD 4 — 'Observability'
+   295→Icon: visibility
+   296→• Prometheus + Grafana (metrics, 15s scrape interval, 90-day retention)
+   297→• Loki (logs, structured JSON, 30-day retention)
+   298→• Jaeger + OpenTelemetry (traces, 7-day retention, 10% sampling)
+   299→• Sentry (client + backend errors)
+   300→• Alerting: PagerDuty for P0/P1, Slack for P2/P3
+   301→SLOs: '99.9% uptime for Order/Payment services; 99.5% for others.'
+   302→
+   303→CARD 5 — 'Secrets & Config'
+   304→Icon: vpn_key
+   305→• AWS Secrets Manager for production secrets
+   306→• External Secrets Operator syncs to K8s secrets
+   307→• Sealed Secrets for GitOps-friendly sensitive values
+   308→• Secret rotation: DB credentials every 90 days, API keys quarterly
+   309→• No secrets in code, env files, or chat
+   310→Audit: 'Every secret access logged; quarterly access review.'
+   311→
+   312→CARD 6 — 'Disaster Recovery'
+   313→Icon: backup
+   314→• RPO: 5 minutes (Postgres WAL streaming + 5-min snapshots)
+   315→• RTO: 30 minutes (multi-AZ failover, tested quarterly)
+   316→• Cross-region replication for critical data (us-east-1 → us-west-2)
+   317→• Quarterly DR drill (full restore in staging)
+   318→• Runbooks for top 20 incident scenarios
+   319→Test: 'Chaos engineering game days every quarter — kill random pods, simulate AZ failure.'
+   320→
+   321→Slide header '08 — ROADMAP & DEVOPS' and page '39 / 50'.
+   322→
+   323→================================================================================
+   324→SLIDE INDEX 39 | output: /home/z/my-project/download/slides/slide_40.html
+   325→Title: Scaling Strategy
+   326→Layout: scaling-strategy
+   327→--- TASK BRIEF ---
+   328→Scaling strategy for peak loads slide.
+   329→
+   330→Title: 'Scaling Strategy — Peak Load Handling / استراتيجية التوسع'
+   331→Kicker: 'SCALE'
+   332→Subtitle: 'How the platform handles 5x spikes during lunch/dinner peaks without degradation.'
+   333→
+   334→Left column — 'Peak Profile / ملف الذروة':
+   335→
+   336→A small horizontal bar chart showing daily order volume by hour (CSS-built with simple divs):
+   337→
+   338→Hour | Volume
+   339→12pm | ████████████████ 100% (peak)
+   340→1pm  | ██████████████  85%
+   341→2pm  | ████████        50%
+   342→3pm  | ███             20%
+   343→7pm  | ██████████████  85%
+   344→8pm  | ████████████████ 100% (peak)
+   345→9pm  | █████████████   75%
+   346→10pm | ████████        50%
+   347→11pm | ████            30%
+   348→
+   349→Note: 'Lunch and dinner peaks carry 70% of daily volume. Provisioning for peak = provisioning for ~3x average.'
+   350→
+   351→Right column — 'Scaling Tactics / تكتيكات التوسع' (5 cards):
+   352→
+   353→1. Horizontal Pod Autoscaling (HPA)
+   354→• Scale on CPU >70% AND RPS >threshold per service
+   355→• Min replicas: 3 (HA); Max: 50 per service
+   356→• Scale-up fast (<30s); scale-down slow (10min grace)
+   357→
+   358→2. KEDA Event-Driven Autoscaling
+   359→• Kafka lag-based scaling for Notification, Analytics
+   360→• If consumer lag >1000 → add pods
+   361→• Critical for handling burst order events
+   362→
+   363→3. Read Replicas
+   364→• Read traffic split: 80% to replicas, 20% to primary
+   365→• PgBouncer pools connections per service
+   366→• Replica lag monitored; alerts if >5s
+   367→
+   368→4. Caching Strategy
+   369→• Redis for hot reads: restaurant list, menu items, promos
+   370→• TTL: 60s for restaurant list, 300s for menus, 30s for promos
+   371→• Cache invalidation on Kafka events (MenuUpdated, PromoCreated)
+   372→• Hit rate target: >85%
+   373→
+   374→5. Pre-Scaled Capacity
+   375→• Pre-scale Order + Payment services 15 min before expected peak (cron-triggered)
+   376→• Based on historical data + day-of-week + weather
+   377→• Avoids cold-start latency during the first wave of orders
+   378→
+   379→Slide header '08 — ROADMAP & DEVOPS' and page '40 / 50'.
+   380→
+   381→================================================================================
+   382→SLIDE INDEX 40 | output: /home/z/my-project/download/slides/slide_41.html
+   383→Title: Monitoring & SLOs
+   384→Layout: slo-dashboard
+   385→--- TASK BRIEF ---
+   386→Monitoring and SLOs slide.
+   387→
+   388→Title: 'Monitoring & SLOs / المراقبة والأهداف'
+   389→Kicker: 'RELIABILITY'
+   390→Subtitle: 'Service Level Objectives per service — with error budgets that gate deployments.'
+   391→
+   392→Top section — 'Service Tier SLOs / مستويات الخدمة' (table):
+   393→
+   394→Tier | Services | Uptime SLO | Latency p95 | Error Budget/Month
+   395→
+   396→Tier 0 (Critical) | Order, Payment, Auth | 99.95% | <500ms | 22 min
+   397→Tier 1 (Important) | Restaurant Catalog, Menu, Delivery Matching, Geo, Notification | 99.9% | <1s | 43 min
+   398→Tier 2 (Standard) | Driver Mgmt, Promo/Loyalty, Fraud, Analytics | 99.5% | <2s | 3.6h
+   399→
+   400→Use color tags per tier (red/amber/cyan).
+   401→
+   402→Middle section — 'Golden Signals / الإشارات الذهبية' (4 cards in a row):
+   403→
+   404→1. Latency
+   405→• p50, p95, p99 per endpoint
+   406→• Alert if p95 >SLO for 5 min
+   407→• Grafana dashboard per service
+   408→
+   409→2. Traffic
+   410→• RPS, concurrent connections
+   411→• Kafka msgs/sec per topic
+   412→• WebSocket active connections
+   413→
+   414→3. Errors
+   415→• HTTP 5xx rate
+   416→• Kafka consumer errors
+   417→• Client-side error rate (Sentry)
+   418→
+   419→4. Saturation
+   420→• CPU, memory, disk, network
+   421→• DB connection pool usage
+   422→• Kafka consumer lag
+   423→
+   424→Bottom section — 'Error Budget Policy / سياسة ميزانية الأخطاء':
+   425→'If a service burns >50% of its monthly error budget in any 7-day window → deployment freeze for non-critical changes to that service. Focus shifts to reliability work. Budget resets monthly. Tier 0 violations trigger automatic incident review.'
+   426→
+   427→Slide header '08 — ROADMAP & DEVOPS' and page '41 / 50'.
+   428→
+   429→================================================================================
+   430→SLIDE INDEX 41 | output: /home/z/my-project/download/slides/slide_42.html
+   431→Title: Cost & Unit Economics
+   432→Layout: unit-economics
+   433→--- TASK BRIEF ---
+   434→Cost and unit economics slide.
+   435→
+   436→Title: 'Cost & Unit Economics / التكلفة والاقتصاديات الوحدوية'
+   437→Kicker: 'FINANCE'
+   438→Subtitle: 'Per-order economics at scale — path to contribution-margin breakeven by month 12.'
+   439→
+   440→Top — 'Per-Order Economics at 50K orders/day / اقتصاديات الطلب الواحد':
+   441→
+   442→A clean breakdown card with monospace styling:
+   443→
+   444→REVENUE (per order):
+   445→  Commission (15% of EGP 180 subtotal)     +EGP 27.00
+   446→  Service fee                              +EGP  5.00
+   447→  Delivery fee margin                      +EGP  2.00
+   448→                                          ─────────
+   449→  Gross revenue                            +EGP 34.00
+   450→
+   451→COSTS (per order):
+   452→  Payment processing (1.5%)                -EGP  3.00
+   453→  Driver payout (75% of delivery+service)  -EGP 19.50
+   454→  Infrastructure (amortized)               -EGP  1.50
+   455→  Customer support (amortized)             -EGP  2.00
+   456→  Marketing (Year 1 acquisition)           -EGP  4.00
+   457→                                          ─────────
+   458→  Total costs                              -EGP 30.00
+   459→
+   460→CONTRIBUTION MARGIN:                       +EGP  4.00 (≈12% of GMV)
+   461→
+   462→Bottom — 'Monthly P&L Projection / الإسقاط المالي الشهري':
+   463→
+   464→4 stat cards in a row showing months 3, 6, 9, 12:
+   465→
+   466→Month 3 (500 orders/day):
+   467→  GMV: EGP 2.7M/mo
+   468→  Revenue: EGP 510K
+   469→  Costs: EGP 720K
+   470→  Net: -EGP 210K (loss — expected in MVP)
+   471→
+   472→Month 6 (5K orders/day):
+   473→  GMV: EGP 27M/mo
+   474→  Revenue: EGP 5.1M
+   475→  Costs: EGP 4.5M
+   476→  Net: +EGP 600K (breakeven+)
+   477→
+   478→Month 9 (20K orders/day):
+   479→  GMV: EGP 108M/mo
+   480→  Revenue: EGP 20.4M
+   481→  Costs: EGP 16.5M
+   482→  Net: +EGP 3.9M
+   483→
+   484→Month 12 (50K orders/day):
+   485→  GMV: EGP 270M/mo
+   486→  Revenue: EGP 51M
+   487→  Costs: EGP 38M
+   488→  Net: +EGP 13M (≈$420K USD/mo)
+   489→
+   490→Bottom note: 'Marketing cost drops from EGP 4/order in Year 1 to EGP 1.5/order in Year 2 as organic growth compounds.'
+   491→
+   492→Slide header '08 — ROADMAP & DEVOPS' and page '42 / 50'.
+   493→
+   494→================================================================================
+   495→SLIDE INDEX 42 | output: /home/z/my-project/download/slides/slide_43.html
+   496→Title: Team Structure
+   497→Layout: team-org
+   498→--- TASK BRIEF ---
+   499→Team structure slide.
+   500→
+   501→Title: 'Team Structure / هيكل الفريق'
+   502→Kicker: 'ORG'
+   503→Subtitle: 'Cross-functional squads aligned to platform domains — each owning their services end-to-end.'
+   504→
+   505→Top — 'Squad Structure / هيكل الفريق' (5 cards in a row):
+   506→
+   507→SQUAD 1 — Order & Payment
+   508→• Owns: Order Service, Payment Service, Promo/Loyalty
+   509→• Composition: 1 lead + 3 backend (Go) + 1 mobile + 1 QA
+   510→• Mission: 'Order lifecycle, payment capture, promos'
+   511→
+   512→SQUAD 2 — Discovery & Catalog
+   513→• Owns: Restaurant Catalog, Menu Service, Analytics
+   514→• Composition: 1 lead + 2 backend + 2 frontend + 1 QA
+   515→• Mission: 'Restaurant browse, search, menu management'
+   516→
+   517→SQUAD 3 — Delivery & Geo
+   518→• Owns: Delivery Matching, Geo/Tracking, Driver Management
+   519→• Composition: 1 lead + 3 backend + 2 mobile + 1 QA
+   520→• Mission: 'Driver matching, GPS tracking, driver app'
+   521→
+   522→SQUAD 4 — Trust & Safety
+   523→• Owns: Auth, Fraud Detection, Employee Portal, Audit
+   524→• Composition: 1 lead + 2 backend + 1 ML engineer + 1 frontend + 1 QA
+   525→• Mission: 'Anti-fraud, security, internal controls'
+   526→
+   527→SQUAD 5 — Platform & Infra
+   528→• Owns: K8s, CI/CD, observability, shared libraries
+   529→• Composition: 1 lead + 3 DevOps + 1 SRE
+   530→• Mission: 'Developer platform, reliability, cost optimization'
+   531→
+   532→Bottom — 'Scaling Plan / خطة التوسع' (3 small cards):
+   533→
+   534→Phase 1 (8 people): '2 squads (Order+Payment, Discovery) share Platform/Infra. Mobile engineers cover all 3 mobile apps.'
+   535→
+   536→Phase 2 (18 people): 'Split into 4 squads. Dedicated QA per squad. First SRE hire.'
+   537→
+   538→Phase 3-4 (28-35 people): 'Full 5-squad structure. Add ML engineer to Trust squad. Add 2nd SRE for follow-the-sun on-call.'
+   539→
+   540→On-call policy: 'Each squad runs 24/7 on-call rotation within the squad. Tier 0 incidents page the owning squad. Cross-squad incidents have a predefined Incident Commander role.'
+   541→
+   542→Slide header '08 — ROADMAP & DEVOPS' and page '43 / 50'.
+   543→
+   544→================================================================================
+   545→SLIDE INDEX 43 | output: /home/z/my-project/download/slides/slide_44.html
+   546→Title: Risks & Mitigations
+   547→Layout: risk-matrix
+   548→--- TASK BRIEF ---
+   549→Risks and mitigations slide.
+   550→
+   551→Title: 'Risks & Mitigations / المخاطر وخطط التخفيف'
+   552→Kicker: 'RISK MANAGEMENT'
+   553→Subtitle: 'Top 8 risks across technical, business, and regulatory — each with explicit owner and mitigation.'
+   554→
+   555→A table-style layout with 8 rows. Columns: Risk | Severity | Likelihood | Mitigation | Owner
+   556→
+   557→1. Vodafone Cash / InstaPay API downtime
+   558→   Sev: High | Likelihood: Medium
+   559→   Mitigation: 'Multi-provider fallback (auto-switch to card on 3 failures); queue orders and process when API recovers; maintain status page from provider.'
+   560→   Owner: Payment Squad
+   561→
+   562→2. Driver supply shortage during peak
+   563→   Sev: High | Likelihood: High
+   564→   Mitigation: 'Surge bonuses during peak; onboarding pipeline to keep 20% buffer of approved drivers; partnerships with driver recruitment agencies.'
+   565→   Owner: Delivery Squad + Ops
+   566→
+   567→3. Restaurant churn to Talabat (exclusivity pressure)
+   568→   Sev: High | Likelihood: Medium
+   569→   Mitigation: 'Lower commission as moat; long-term contracts with discount locks; exclusive menu items; co-marketing budget.'
+   570→   Owner: BD + Discovery Squad
+   571→
+   572→4. Internal employee fraud (refunds, data leaks)
+   573→   Sev: High | Likelihood: Low
+   574→   Mitigation: 'Biometric auth, dual approval, immutable audit log, quarterly access review, anomaly detection on refund volumes.'
+   575→   Owner: Trust Squad + Legal
+   576→
+   577→5. Data breach (customer PII)
+   578→   Sev: Critical | Likelihood: Low
+   579→   Mitigation: 'Encryption at rest + in transit; column-level PII encryption; network segmentation; quarterly pen-tests; bug bounty; 72h breach notification process.'
+   580→   Owner: Platform Squad + CISO
+   581→
+   582→6. Regulatory changes (CBE payment rules)
+   583→   Sev: Medium | Likelihood: Medium
+   584→   Mitigation: 'Legal counsel on retainer; quarterly compliance review; flexible payment architecture to swap providers; engage with regulators proactively.'
+   585→   Owner: Legal + Finance
+   586→
+   587→7. Tech talent attrition (key Go engineers)
+   588→   Sev: Medium | Likelihood: Medium
+   589→   Mitigation: 'Above-market compensation; equity for first 20 hires; knowledge sharing (no single-person bottlenecks); pair programming; conference budget.'
+   590→   Owner: CEO + Tech Lead
+   591→
+   592→8. Infrastructure cost overrun at scale
+   593→   Sev: Medium | Likelihood: Medium
+   594→   Mitigation: 'Monthly FinOps review; autoscaling tuned aggressively; spot instances for non-critical workloads; reserved instances for baseline; ClickHouse offload from Postgres.'
+   595→   Owner: Platform Squad + Finance
+   596→
+   597→Use color-coded severity tags (red/amber/cyan).
+   598→Slide header '08 — ROADMAP & DEVOPS' and page '44 / 50'.
+   599→
+   600→================================================================================
+   601→SLIDE INDEX 44 | output: /home/z/my-project/download/slides/slide_45.html
+   602→Title: Success Metrics
+   603→Layout: kpi-grid
+   604→--- TASK BRIEF ---
+   605→Success metrics / KPIs slide.
+   606→
+   607→Title: 'Success Metrics / مؤشرات النجاح'
+   608→Kicker: 'KPIs'
+   609→Subtitle: 'North-star metric + supporting KPIs across growth, reliability, and unit economics.'
+   610→
+   611→Top — 'North Star Metric / المؤشر الأساسي':
+   612→A large highlighted card:
+   613→'Weekly Active Orders per Customer (WAO/Customer)'
+   614→Target: 2.5+ by month 12 (each active customer places 2.5 orders/week on average)
+   615→Why: 'Captures both retention and frequency — the truest signal of product-market fit.'
+   616→
+   617→Middle — 'KPI Grid / شبكة المؤشرات' (8 cards in 4x2):
+   618→
+   619→GROWTH:
+   620→1. GMV (Gross Merchandise Value)
+   621→   Target: EGP 270M/month by month 12
+   622→   Cadence: Daily
+   623→
+   624→2. Active Customers (placed order in last 30 days)
+   625→   Target: 200K by month 12
+   626→   Cadence: Weekly
+   627→
+   628→3. Restaurant Active Count
+   629→   Target: 2,500+ by month 12
+   630→   Cadence: Weekly
+   631→
+   632→4. Driver Active Count
+   633→   Target: 15K+ by month 12
+   634→   Cadence: Weekly
+   635→
+   636→RELIABILITY:
+   637→5. Order Completion Rate (not cancelled)
+   638→   Target: >92%
+   639→   Cadence: Daily
+   640→
+   641→6. Average Delivery Time
+   642→   Target: <35 min (pickup to dropoff)
+   643→   Cadence: Daily
+   644→
+   645→7. p95 API Latency (Order Service)
+   646→   Target: <500ms
+   647→   Cadence: Real-time
+   648→
+   649→8. Uptime (Tier 0 services)
+   650→   Target: 99.95%
+   651→   Cadence: Real-time
+   652→
+   653→Bottom — 'Unit Economics':
+   654→• Contribution Margin per Order: EGP 4+ by month 12
+   655→• CAC (Customer Acquisition Cost): <EGP 80
+   656→• LTV (Lifetime Value): EGP 800+
+   657→• LTV/CAC ratio: 10x+
+   658→
+   659→Slide header '08 — ROADMAP & DEVOPS' and page '45 / 50'.
+   660→
+   661→================================================================================
+   662→SLIDE INDEX 45 | output: /home/z/my-project/download/slides/slide_46.html
+   663→Title: Decision Points & Go/No-Go
+   664→Layout: decision-gates
+   665→--- TASK BRIEF ---
+   666→Decision points and go/no-go gates slide.
+   667→
+   668→Title: 'Decision Points & Go/No-Go Gates / نقاط القرار'
+   669→Kicker: 'PHASE GATES'
+   670→Subtitle: 'Each phase ends with a structured go/no-go review — explicit criteria, explicit decisions.'
+   671→
+   672→4 phase gate cards in a 2x2 grid:
+   673→
+   674→GATE 1 — End of Phase 1 (Month 3) → 'Cairo MVP Validated'
+   675→Go criteria (ALL must be met):
+   676→• 500 orders/day sustained for last 14 days
+   677→• 50 restaurants active (placed ≥3 orders in last 7 days)
+   678→• p95 latency <3s, uptime >99%
+   679→• Customer NPS >30, Restaurant NPS >30
+   680→• Contribution margin >EGP 0/order
+   681→No-go consequences: '2-week extension; if still not met, pivot or sunset. CEO + investors review.'
+   682→Decision owner: CEO + Tech Lead
+   683→
+   684→GATE 2 — End of Phase 2 (Month 6) → 'Giza Expansion Validated'
+   685→Go criteria:
+   686→• 5K orders/day across Cairo + Giza
+   687→• 300 restaurants, 2 cities live
+   688→• Self-serve restaurant onboarding >40% of new signups
+   689→• Driver matching p95 <15s
+   690→• Fraud rate <0.5% of GMV
+   691→No-go consequences: 'Hold Alexandria expansion; focus on Giza density. Re-evaluate in 4 weeks.'
+   692→Decision owner: CEO + Head of Ops
+   693→
+   694→GATE 3 — End of Phase 3 (Month 9) → 'Scale Validated'
+   695→Go criteria:
+   696→• 20K orders/day across 3 cities
+   697→• 1K restaurants live
+   698→• Employee portal live, biometric auth enforced
+   699→• ML fraud model in production, >85% precision
+   700→• Contribution margin >EGP 2/order
+   701→No-go consequences: 'Delay Phase 4 optimizations; focus on operational excellence. Re-evaluate in 8 weeks.'
+   702→Decision owner: CEO + CTO
+   703→
+   704→GATE 4 — End of Phase 4 (Month 12) → 'Series A Ready'
+   705→Go criteria:
+   706→• 50K orders/day, 4 cities
+   707→• 2.5K restaurants, 15K drivers
+   708→• Monthly revenue >EGP 51M
+   709→• Net positive monthly contribution margin
+   710→• CAC <EGP 80, LTV/CAC >10x
+   711→• All Tier 0 SLOs met in last 90 days
+   712→No-go consequences: 'Extend runway 3 months; cost optimization pass; Series A pitch with revised metrics.'
+   713→Decision owner: CEO + Board
+   714→
+   715→Slide header '08 — ROADMAP & DEVOPS' and page '46 / 50'.
+   716→
+   717→================================================================================
+   718→SLIDE INDEX 46 | output: /home/z/my-project/download/slides/slide_47.html
+   719→Title: Implementation Priorities — First 90 Days
+   720→Layout: priority-list
+   721→--- TASK BRIEF ---
+   722→First 90 days implementation priorities slide.
+   723→
+   724→Title: 'First 90 Days — Implementation Priorities / أول 90 يوم'
+   725→Kicker: 'WEEK-BY-WEEK'
+   726→Subtitle: 'Concrete weekly plan to ship the MVP — what gets built, by whom, in what order.'
+   727→
+   728→Three sections (Months 1, 2, 3) shown as horizontal columns:
+   729→
+   730→MONTH 1 — Foundation (Weeks 1-4)
+   731→Week 1-2: Infra setup
+   732→• AWS account, EKS cluster, Terraform skeleton
+   733→• GitHub repos, CI/CD skeleton
+   734→• PostgreSQL + Redis + Kafka deployment
+   735→• Auth Service scaffolding (Go + chi)
+   736→
+   737→Week 3-4: Core services
+   738→• Restaurant Catalog (50 restaurants seeded manually)
+   739→• Menu Service (static menus)
+   740→• Order Service (state machine)
+   741→• Basic API Gateway (Kong)
+   742→
+   743→Deliverable: 'Backend skeleton with all services deployed to staging. No UI yet.'
+   744→
+   745→MONTH 2 — Apps (Weeks 5-8)
+   746→Week 5-6: Customer App
+   747→• React Native setup, navigation
+   748→• Restaurant browse + menu detail
+   749→• Cart + checkout (Vodafone Cash integration)
+   750→
+   751→Week 7-8: Restaurant + Driver Apps
+   752→• Restaurant App: incoming orders, status update
+   753→• Driver App: order alerts, accept, mark delivered
+   754→• Push notifications (Firebase Cloud Messaging)
+   755→• Real-time order tracking (WebSocket)
+   756→
+   757→Deliverable: 'End-to-end order flow working in staging with real Vodafone Cash sandbox.'
+   758→
+   759→MONTH 3 — Production (Weeks 9-12)
+   760→Week 9-10: Production readiness
+   761→• Production AWS account hardened
+   762→• Observability stack (Prometheus, Grafana, Loki)
+   763→• Load testing (k6) — verify 500 orders/day capacity
+   764→• Security review (pen-test by external firm)
+   765→
+   766→Week 11-12: Soft launch
+   767→• Onboard 10 restaurants in 1 Cairo district
+   768→• Recruit 20 drivers
+   769→• Run closed beta with 100 customers (friends/family)
+   770→• Fix P0/P1 bugs daily
+   771→
+   772→Deliverable: 'Soft launch live. 50 restaurants + 50 drivers + 500 orders/day by end of week 12.'
+   773→
+   774→Slide header '08 — ROADMAP & DEVOPS' and page '47 / 50'.
+   775→
+   776→================================================================================
+   777→SLIDE INDEX 47 | output: /home/z/my-project/download/slides/slide_48.html
+   778→Title: Technology Decisions — Rationale
+   779→Layout: decisions-log
+   780→--- TASK BRIEF ---
+   781→Technology decisions rationale slide — ADR-style summary.
+   782→
+   783→Title: 'Technology Decisions — Rationale / مبررات القرارات التقنية'
+   784→Kicker: 'ADR SUMMARY'
+   785→Subtitle: 'Why each major tech choice was made — alternatives considered, decision, revisit triggers.'
+   786→
+   787→6 decision cards (ADR-style) in a 3x2 grid. Each card has:
+   788→- Decision title
+   789→- Alternatives considered (small)
+   790→- Choice (highlighted)
+   791→- Why (1-2 sentences)
+   792→- Revisit trigger
+   793→
+   794→1. Backend Language: Go
+   795→Alternatives: Node.js, Python, Java, Rust
+   796→Choice: Go 1.22
+   797→Why: 'Best concurrency model for I/O-heavy services; fast compile times enable rapid iteration; small binary size = fast container starts; strong standard library for HTTP/gRPC.'
+   798→Revisit: 'If we add ML inference to backend → Python sidecar for ML; Go stays for business logic.'
+   799→
+   800→2. Frontend Framework: React (Native + Web)
+   801→Alternatives: Vue, Svelte, Flutter, Swift+Kotlin native
+   802→Choice: React 18 + React Native 0.74
+   803→Why: 'Single component mental model across mobile + web; largest talent pool in Egypt; ecosystem maturity; React knowledge reusable.'
+   804→Revisit: 'If performance becomes an issue on low-end Android → consider Flutter for Customer App only.'
+   805→
+   806→3. Database: PostgreSQL
+   807→Alternatives: MySQL, MongoDB, DynamoDB
+   808→Choice: PostgreSQL 16 + PostGIS
+   809→Why: 'ACID guarantees for orders/payments; JSONB for flexible metadata; PostGIS for geospatial; mature ecosystem; battle-tested at scale (Uber, Instagram).'
+   810→Revisit: 'Never for transactional data. May add ClickHouse for analytics (planned).'
+   811→
+   812→4. Event Bus: Apache Kafka
+   813→Alternatives: RabbitMQ, NATS, Redis Streams, AWS Kinesis
+   814→Choice: Apache Kafka 3.x (MSK or self-managed)
+   815→Why: 'Industry standard for event-driven; replay capability for fraud analytics; exactly-once semantics for payments; massive scale proven (LinkedIn, Uber, Netflix).'
+   816→Revisit: 'If operational burden too high → consider Upstash Kafka (managed) or Redpanda (Kafka-compatible, lower ops).'
+   817→
+   818→5. Container Orchestration: Kubernetes
+   819→Alternatives: ECS, Nomad, Docker Swarm, serverless (Lambda)
+   820→Choice: Kubernetes (EKS)
+   821→Why: 'Portability (no vendor lock-in); rich ecosystem (Helm, ArgoCD, KEDA); standard skill for engineers; horizontal pod autoscaling critical for peak hours.'
+   822→Revisit: 'If team too small to operate K8s → ECS Fargate for first 6 months, migrate to EKS in Phase 2.'
+   823→
+   824→6. Mobile Architecture: React Native
+   825→Alternatives: Native (Swift+Kotlin), Flutter, PWA
+   826→Choice: React Native 0.74 (New Architecture enabled)
+   827→Why: 'Single codebase for iOS+Android; same engineers can ship to both; fast iteration via hot reload; reusable components with web app; Hermes engine performance now comparable to native for our use case.'
+   828→Revisit: 'If driver app performance issues (GPS, background tasks) → consider going native for Driver App only.'
+   829→
+   830→Slide header '08 — ROADMAP & DEVOPS' and page '48 / 50'.
+   831→
+   832→================================================================================
+   833→SLIDE INDEX 48 | output: /home/z/my-project/download/slides/slide_49.html
+   834→Title: Summary & Next Steps
+   835→Layout: summary
+   836→--- TASK BRIEF ---
+   837→Summary and next steps slide.
+   838→
+   839→Title: 'Summary & Next Steps / الملخص والخطوات التالية'
+   840→Kicker: 'WRAP-UP'
+   841→Subtitle: 'What we\'re building, why it wins, and what we need to start tomorrow.'
+   842→
+   843→Left column — 'What We\'re Building / ماذا نبني':
+   844→A recap card with 5 bullets:
+   845→
+   846→• A production-grade food delivery platform for the Egyptian market — engineered like Uber Eats, priced like elmenus.
+   847→• 7 dedicated apps serving 7 distinct user types — mobile where mobile makes sense, web where web does.
+   848→• 12 domain-oriented Go microservices on a Kafka event backbone, with PostgreSQL as the source of truth.
+   849→• Three-layer anti-fraud defense (customer, driver, internal employee) — including biometric auth and immutable audit logs.
+   850→• A 12-month roadmap with 4 phases, each gated by explicit go/no-go criteria — culminating in 50K orders/day and Series A readiness.
+   851→
+   852→Right column — 'Next Steps / الخطوات التالية':
+   853→A numbered list of immediate actions (next 2 weeks):
+   854→
+   855→1. Finalize team hiring plan
+   856→   'Lock the 8-person Phase 1 team. Start recruiting: 1 Tech Lead, 3 Go engineers, 2 React Native engineers, 1 React engineer, 1 DevOps.'
+   857→   Owner: CEO + Tech Lead
+   858→   Due: Week 1
+   859→
+   860→2. AWS account + base infrastructure
+   861→   'Provision AWS organization, set up billing alerts, deploy base Terraform (VPC, EKS skeleton, RDS Postgres, Redis, MSK Kafka).'
+   862→   Owner: Tech Lead + DevOps
+   863→   Due: Week 2
+   864→
+   865→3. Repo structure + CI/CD skeleton
+   866→   'Create GitHub org, 12 service repos, 4 client repos, shared libraries (Go module, React component lib). Set up GitHub Actions CI for all repos with test/lint/build.'
+   867→   Owner: Tech Lead
+   868→   Due: Week 2
+   869→
+   870→4. Architecture review with stakeholders
+   871→   'Walk this deck through with engineering team + CEO + key investors. Capture feedback, finalize ADRs, archive as v1.0.'
+   872→   Owner: Tech Lead
+   873→   Due: Week 1
+   874→
+   875→5. Vendor negotiations
+   876→   'Sign contracts with: Vodafone Cash (merchant account), InstaPay, Paymob (card processing), Twilio (SMS), AWS (credits for startups).'
+   877→   Owner: CEO + Finance
+   878→   Due: Week 2
+   879→
+   880→6. Restaurant pipeline kickoff
+   881→   'BD team starts conversations with first 50 target restaurants in Cairo (Zamalek, Maadi, New Cairo). Soft LOIs by end of week 2.'
+   882→   Owner: Head of BD
+   883→   Due: Week 2
+   884→
+   885→Slide header '08 — ROADMAP & DEVOPS' and page '49 / 50'.
+   886→
+   887→================================================================================
+   888→SLIDE INDEX 49 | output: /home/z/my-project/download/slides/slide_50.html
+   889→Title: Thank You / Q&A
+   890→Layout: closing
+   891→--- TASK BRIEF ---
+   892→Closing slide.
+   893→
+   894→Title (huge): 'Let\'s build it.'
+   895→Arabic title (smaller, below): 'يلا نبنيه سوا'
+   896→
+   897→Subtitle: 'Questions, challenges, alternative views — the floor is open.'
+   898→
+   899→Three small contact-style cards at the bottom (no real names — placeholders):
+   900→
+   901→• Technical Questions → 'architecture@platform.local'
+   902→• Business / Roadmap → 'ceo@platform.local'
+   903→• Hiring / Joining → 'careers@platform.local'
+   904→
+   905→A small footer line: 'Document version 1.0 · Internal Engineering · For review only'
+   906→
+   907→Use the hero background image (low opacity + dark overlay):
+   908→https://sfile.chatglm.cn/images-ppt/baa7218eb76f.jpg
+   909→
+   910→No page number on closing slide. Make it visually striking with neon gradient on the title.
+   911→
+   912→

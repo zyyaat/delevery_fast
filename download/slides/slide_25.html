@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Business Logic Flows — Section Header</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .chapter-num {
+      font-family: var(--font-num);
+      font-weight: 800;
+      font-size: 320px;
+      line-height: 0.85;
+      background: linear-gradient(180deg, rgba(0,212,255,0.20) 0%, rgba(177,78,255,0.05) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -10px;
+    }
+    .progress-dots { display:flex; gap:10px; align-items:center; }
+    .progress-dots .dot { width:10px; height:10px; border-radius:50%; background: var(--border-soft); }
+    .progress-dots .dot.active { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+    .progress-dots .dot.done { background: var(--accent); }
+    .grid-bg {
+      position:absolute; inset:0; pointer-events:none; z-index:0;
+      background-image:
+        linear-gradient(rgba(30,42,74,0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30,42,74,0.25) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+    }
+    .scanline {
+      position:absolute; left:0; right:0; height:2px; z-index:0; pointer-events:none;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      box-shadow: 0 0 20px var(--primary);
+      opacity:0.5;
+    }
+  </style>
+</head>
+<body class="slide" style="padding: 64px 80px; justify-content:center;">
+  <div class="grid-bg" data-decor></div>
+  <div class="scanline" style="top: 25%;" data-decor></div>
+  <div class="scanline" style="bottom: 25%; opacity:0.25;" data-decor></div>
+
+  <header class="slide-header" style="position:absolute; top:32px; left:80px; right:80px;">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>SECTION 06</span>
+    </div>
+    <div class="page-num">25 / 50</div>
+  </header>
+
+  <div class="flex items-center" style="flex:1; gap: 60px; position:relative;">
+    <div style="flex-shrink:0;">
+      <div class="chapter-num" data-decor>06</div>
+    </div>
+    <div style="flex:1;">
+      <span class="section-kicker">CHAPTER 06</span>
+      <h1 style="font-family: var(--font-heading); font-weight:900; font-size:68px; line-height:1; letter-spacing:-2px; color: var(--text);">Business Logic Flows</h1>
+      <h2 class="rtl font-ar" style="font-size:36px; font-weight:700; color: var(--accent); margin-top:10px; line-height:1.2;">المنطق التجاري</h2>
+      <p style="margin-top:24px; font-size:18px; line-height:1.55; color: var(--text-dim); max-width:620px;">
+        Order lifecycle, payment capture, delivery matching — <span class="text-primary" style="font-weight:600;">the algorithms</span> that make the platform actually work.
+      </p>
+
+      <div style="margin-top: 36px;" class="progress-dots">
+        <span class="text-mute font-num text-xs" style="letter-spacing:1px;">CHAPTER PROGRESS</span>
+        <span class="dot done"></span>
+        <span class="dot done"></span>
+        <span class="dot done"></span>
+        <span class="dot done"></span>
+        <span class="dot done"></span>
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="font-num text-xs ml-3"><span class="text-primary" style="font-weight:700;">6</span><span class="text-mute"> / 8</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>SECTION HEADER</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - Chapter 6 of 8 — Business Logic Flows.
+    - The "brains" chapter: state machine, payment, dispatch, pricing, promos.
+    - All algorithms enforce business rules at the service layer.
+    - 5 slides cover lifecycle → payment → matching → pricing → loyalty.
+    - This is where the platform earns its keep.
+  </aside>
+</body>
+</html>

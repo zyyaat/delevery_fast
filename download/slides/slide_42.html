@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cost &amp; Unit Economics</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .sec-h { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .sec-h .material-icons { color: var(--primary); font-size:18px; }
+    .sec-h h2 { font-family: var(--font-heading); font-weight:800; font-size:15px; color: var(--text); }
+    .sec-h .ar { font-family: var(--font-cn); font-size:11px; color: var(--text-dim); }
+
+    .econ-card { padding:13px 16px; border-radius:11px; background: var(--bg-elev); border:1px solid var(--border-soft); }
+    .econ-block { font-family: var(--font-num); font-size:11px; line-height:1.55; }
+    .econ-block .head { color: var(--text-mute); font-weight:700; letter-spacing:1px; font-size:9.5px; margin-bottom:5px; text-transform:uppercase; }
+    .econ-row { display:grid; grid-template-columns: 1fr auto; gap:10px; padding:3px 0; color: var(--text-dim); }
+    .econ-row .lbl { color: var(--text-dim); }
+    .econ-row .val.pos { color: var(--success); font-weight:700; }
+    .econ-row .val.neg { color: var(--danger); font-weight:700; }
+    .econ-divider { height:1px; background: var(--border-soft); margin:5px 0; }
+    .econ-total { display:grid; grid-template-columns: 1fr auto; gap:10px; padding:5px 0; font-weight:700; font-size:12px; }
+    .econ-total .lbl { color: var(--text); }
+    .econ-total.pos .val { color: var(--success); }
+    .econ-total.neg .val { color: var(--danger); }
+
+    .margin-callout { margin-top:8px; padding:9px 12px; border-radius:8px; background: linear-gradient(135deg, rgba(0,229,138,0.10), rgba(0,212,255,0.10)); border:1px solid rgba(0,229,138,0.3); display:flex; justify-content:space-between; align-items:center; }
+    .margin-callout .lbl { font-family: var(--font-num); font-weight:700; font-size:11px; color: var(--success); letter-spacing:1px; }
+    .margin-callout .val { font-family: var(--font-num); font-weight:800; font-size:18px; color: var(--success); }
+    .margin-callout .pct { font-size:10px; color: var(--text-dim); margin-left:6px; }
+
+    .month-card { padding:11px 13px; border-radius:9px; background: var(--bg-card); border:1px solid var(--border); border-top:3px solid var(--primary); display:flex; flex-direction:column; gap:4px; }
+    .month-card .m-h { display:flex; justify-content:space-between; align-items:baseline; }
+    .month-card .m-h .m { font-family: var(--font-num); font-weight:800; font-size:13px; color: var(--primary); }
+    .month-card .m-h .rate { font-family: var(--font-num); font-size:10px; color: var(--text-mute); }
+    .month-card .row { display:flex; justify-content:space-between; font-size:10.5px; line-height:1.4; }
+    .month-card .row .lbl { color: var(--text-mute); }
+    .month-card .row .val { font-family: var(--font-num); color: var(--text); font-weight:600; }
+    .month-card .row.net { margin-top:4px; padding-top:5px; border-top:1px dashed var(--border-soft); }
+    .month-card .row.net .val { font-weight:800; }
+    .month-card.loss .row.net .val { color: var(--danger); }
+    .month-card.gain .row.net .val { color: var(--success); }
+    .month-card.m6 { border-top-color: var(--accent); }
+    .month-card.m6 .m-h .m { color: var(--accent); }
+    .month-card.m9 { border-top-color: var(--success); }
+    .month-card.m9 .m-h .m { color: var(--success); }
+    .month-card.m12 { border-top-color: var(--gold); }
+    .month-card.m12 .m-h .m { color: var(--gold); }
+
+    .footer-note { margin-top:8px; padding:7px 11px; background: var(--bg-elev); border-left:2px solid var(--accent); border-radius:5px; font-size:10.5px; color: var(--text-dim); line-height:1.4; }
+    .footer-note strong { color: var(--accent); }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>08 — ROADMAP &amp; DEVOPS</span>
+    </div>
+    <div class="page-num">42 / 50</div>
+  </header>
+
+  <div class="mb-2">
+    <span class="section-kicker">FINANCE</span>
+    <h1 class="slide-title">Cost &amp; Unit Economics <span class="text-dim font-ar" style="font-weight:600;">/ التكلفة والاقتصاديات الوحدوية</span></h1>
+    <p class="slide-subtitle">Per-order economics at scale — path to contribution-margin breakeven by month 12.</p>
+  </div>
+
+  <!-- TOP — Per-Order Economics -->
+  <div class="card-glow" style="padding:12px 14px; margin-top:10px;">
+    <div class="sec-h">
+      <span class="material-icons">receipt_long</span>
+      <h2>Per-Order Economics at 50K orders/day</h2><span class="ar rtl">/ اقتصاديات الطلب الواحد</span>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px;">
+      <div class="econ-card">
+        <div class="econ-block">
+          <div class="head" style="color: var(--success);">REVENUE (per order)</div>
+          <div class="econ-row"><span class="lbl">Commission (15% of EGP 180 subtotal)</span><span class="val pos">+EGP 27.00</span></div>
+          <div class="econ-row"><span class="lbl">Service fee</span><span class="val pos">+EGP  5.00</span></div>
+          <div class="econ-row"><span class="lbl">Delivery fee margin</span><span class="val pos">+EGP  2.00</span></div>
+          <div class="econ-divider"></div>
+          <div class="econ-total pos"><span class="lbl">Gross revenue</span><span class="val">+EGP 34.00</span></div>
+        </div>
+      </div>
+
+      <div class="econ-card">
+        <div class="econ-block">
+          <div class="head" style="color: var(--danger);">COSTS (per order)</div>
+          <div class="econ-row"><span class="lbl">Payment processing (1.5%)</span><span class="val neg">-EGP  3.00</span></div>
+          <div class="econ-row"><span class="lbl">Driver payout (75% of delivery+service)</span><span class="val neg">-EGP 19.50</span></div>
+          <div class="econ-row"><span class="lbl">Infrastructure (amortized)</span><span class="val neg">-EGP  1.50</span></div>
+          <div class="econ-row"><span class="lbl">Customer support (amortized)</span><span class="val neg">-EGP  2.00</span></div>
+          <div class="econ-row"><span class="lbl">Marketing (Year 1 acquisition)</span><span class="val neg">-EGP  4.00</span></div>
+          <div class="econ-divider"></div>
+          <div class="econ-total neg"><span class="lbl">Total costs</span><span class="val">-EGP 30.00</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="margin-callout">
+      <span class="lbl">CONTRIBUTION MARGIN</span>
+      <span><span class="val">+EGP 4.00</span><span class="pct">(≈12% of GMV)</span></span>
+    </div>
+  </div>
+
+  <!-- BOTTOM — Monthly P&L -->
+  <div style="margin-top:10px;">
+    <div class="sec-h">
+      <span class="material-icons">trending_up</span>
+      <h2>Monthly P&amp;L Projection</h2><span class="ar rtl">/ الإسقاط المالي الشهري</span>
+    </div>
+    <div class="grid-4" style="gap:10px;">
+      <div class="month-card m3 loss">
+        <div class="m-h"><span class="m">Month 3</span><span class="rate">500 orders/day</span></div>
+        <div class="row"><span class="lbl">GMV</span><span class="val">EGP 2.7M/mo</span></div>
+        <div class="row"><span class="lbl">Revenue</span><span class="val">EGP 510K</span></div>
+        <div class="row"><span class="lbl">Costs</span><span class="val">EGP 720K</span></div>
+        <div class="row net"><span class="lbl">Net</span><span class="val">-EGP 210K</span></div>
+        <div style="font-size:9.5px; color: var(--text-mute); font-style:italic;">loss — expected in MVP</div>
+      </div>
+
+      <div class="month-card m6 gain">
+        <div class="m-h"><span class="m">Month 6</span><span class="rate">5K orders/day</span></div>
+        <div class="row"><span class="lbl">GMV</span><span class="val">EGP 27M/mo</span></div>
+        <div class="row"><span class="lbl">Revenue</span><span class="val">EGP 5.1M</span></div>
+        <div class="row"><span class="lbl">Costs</span><span class="val">EGP 4.5M</span></div>
+        <div class="row net"><span class="lbl">Net</span><span class="val">+EGP 600K</span></div>
+        <div style="font-size:9.5px; color: var(--text-mute); font-style:italic;">breakeven+</div>
+      </div>
+
+      <div class="month-card m9 gain">
+        <div class="m-h"><span class="m">Month 9</span><span class="rate">20K orders/day</span></div>
+        <div class="row"><span class="lbl">GMV</span><span class="val">EGP 108M/mo</span></div>
+        <div class="row"><span class="lbl">Revenue</span><span class="val">EGP 20.4M</span></div>
+        <div class="row"><span class="lbl">Costs</span><span class="val">EGP 16.5M</span></div>
+        <div class="row net"><span class="lbl">Net</span><span class="val">+EGP 3.9M</span></div>
+      </div>
+
+      <div class="month-card m12 gain">
+        <div class="m-h"><span class="m">Month 12</span><span class="rate">50K orders/day</span></div>
+        <div class="row"><span class="lbl">GMV</span><span class="val">EGP 270M/mo</span></div>
+        <div class="row"><span class="lbl">Revenue</span><span class="val">EGP 51M</span></div>
+        <div class="row"><span class="lbl">Costs</span><span class="val">EGP 38M</span></div>
+        <div class="row net"><span class="lbl">Net</span><span class="val">+EGP 13M</span></div>
+        <div style="font-size:9.5px; color: var(--text-mute); font-style:italic;">≈$420K USD/mo</div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      <strong>Note:</strong> Marketing cost drops from <strong>EGP 4/order</strong> in Year 1 to <strong>EGP 1.5/order</strong> in Year 2 as organic growth compounds.
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - Per-order economics at 50K/day: +EGP 34 revenue, -EGP 30 costs, +EGP 4 contribution margin (≈12% of GMV).
+    - Driver payout is the biggest cost line at EGP 19.50/order (75% of delivery+service).
+    - P&L trajectory: M3 loss -210K, M6 breakeven+ 600K, M9 +3.9M, M12 +13M (~$420K USD/mo).
+    - Series A ready by month 12 with EGP 270M/mo GMV.
+    - Year 2 marketing cost drops from EGP 4 to EGP 1.5/order as organic compounds.
+  </aside>
+</body>
+</html>

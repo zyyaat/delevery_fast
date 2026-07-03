@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Technology Decisions — Rationale</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .adr-card { padding:11px 13px; border-radius:10px; background: var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; gap:5px; position:relative; overflow:hidden; }
+    .adr-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background: linear-gradient(180deg, var(--primary), var(--accent)); }
+    .adr-card .head { display:flex; align-items:center; gap:7px; padding-bottom:5px; border-bottom:1px dashed var(--border-soft); }
+    .adr-card .num { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:5px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #0A0E1A; font-family: var(--font-num); font-weight:800; font-size:10px; flex-shrink:0; }
+    .adr-card .ttl { font-family: var(--font-heading); font-weight:700; font-size:12px; color: var(--text); line-height:1.15; flex:1; }
+    .adr-card .row { display:flex; gap:6px; align-items:flex-start; font-size:9.5px; line-height:1.4; }
+    .adr-card .row .lbl { font-family: var(--font-num); font-weight:700; color: var(--text-mute); letter-spacing:0.5px; flex-shrink:0; min-width:62px; }
+    .adr-card .row .val { color: var(--text-dim); flex:1; }
+    .adr-card .row.choice .val { color: var(--success); font-family: var(--font-num); font-weight:700; }
+    .adr-card .row.alt .val { font-family: var(--font-num); font-size:9px; color: var(--text-mute); }
+    .adr-card .row.revisit .lbl { color: var(--warning); }
+    .adr-card .row.revisit .val { color: var(--text-dim); font-style:italic; }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>08 — ROADMAP &amp; DEVOPS</span>
+    </div>
+    <div class="page-num">48 / 50</div>
+  </header>
+
+  <div class="mb-2">
+    <span class="section-kicker">ADR SUMMARY</span>
+    <h1 class="slide-title">Technology Decisions — Rationale <span class="text-dim font-ar" style="font-weight:600;">/ مبررات القرارات التقنية</span></h1>
+    <p class="slide-subtitle">Why each major tech choice was made — alternatives considered, decision, revisit triggers.</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; gap:11px; flex:1; margin-top:8px;">
+    <!-- ADR 1 -->
+    <div class="adr-card">
+      <div class="head"><span class="num">1</span><span class="ttl">Backend Language: Go</span></div>
+      <div class="row alt"><span class="lbl">ALT</span><span class="val">Node.js, Python, Java, Rust</span></div>
+      <div class="row choice"><span class="lbl">CHOICE</span><span class="val">Go 1.22</span></div>
+      <div class="row"><span class="lbl">WHY</span><span class="val">Best concurrency model for I/O-heavy services; fast compile times enable rapid iteration; small binary size = fast container starts; strong standard library for HTTP/gRPC.</span></div>
+      <div class="row revisit"><span class="lbl">REVISIT</span><span class="val">If we add ML inference to backend → Python sidecar for ML; Go stays for business logic.</span></div>
+    </div>
+
+    <!-- ADR 2 -->
+    <div class="adr-card">
+      <div class="head"><span class="num">2</span><span class="ttl">Frontend Framework: React (Native + Web)</span></div>
+      <div class="row alt"><span class="lbl">ALT</span><span class="val">Vue, Svelte, Flutter, Swift+Kotlin native</span></div>
+      <div class="row choice"><span class="lbl">CHOICE</span><span class="val">React 18 + React Native 0.74</span></div>
+      <div class="row"><span class="lbl">WHY</span><span class="val">Single component mental model across mobile + web; largest talent pool in Egypt; ecosystem maturity; React knowledge reusable.</span></div>
+      <div class="row revisit"><span class="lbl">REVISIT</span><span class="val">If performance becomes an issue on low-end Android → consider Flutter for Customer App only.</span></div>
+    </div>
+
+    <!-- ADR 3 -->
+    <div class="adr-card">
+      <div class="head"><span class="num">3</span><span class="ttl">Database: PostgreSQL</span></div>
+      <div class="row alt"><span class="lbl">ALT</span><span class="val">MySQL, MongoDB, DynamoDB</span></div>
+      <div class="row choice"><span class="lbl">CHOICE</span><span class="val">PostgreSQL 16 + PostGIS</span></div>
+      <div class="row"><span class="lbl">WHY</span><span class="val">ACID guarantees for orders/payments; JSONB for flexible metadata; PostGIS for geospatial; mature ecosystem; battle-tested at scale (Uber, Instagram).</span></div>
+      <div class="row revisit"><span class="lbl">REVISIT</span><span class="val">Never for transactional data. May add ClickHouse for analytics (planned).</span></div>
+    </div>
+
+    <!-- ADR 4 -->
+    <div class="adr-card">
+      <div class="head"><span class="num">4</span><span class="ttl">Event Bus: Apache Kafka</span></div>
+      <div class="row alt"><span class="lbl">ALT</span><span class="val">RabbitMQ, NATS, Redis Streams, AWS Kinesis</span></div>
+      <div class="row choice"><span class="lbl">CHOICE</span><span class="val">Apache Kafka 3.x (MSK or self-managed)</span></div>
+      <div class="row"><span class="lbl">WHY</span><span class="val">Industry standard for event-driven; replay capability for fraud analytics; exactly-once semantics for payments; massive scale proven (LinkedIn, Uber, Netflix).</span></div>
+      <div class="row revisit"><span class="lbl">REVISIT</span><span class="val">If operational burden too high → consider Upstash Kafka (managed) or Redpanda (Kafka-compatible, lower ops).</span></div>
+    </div>
+
+    <!-- ADR 5 -->
+    <div class="adr-card">
+      <div class="head"><span class="num">5</span><span class="ttl">Container Orchestration: Kubernetes</span></div>
+      <div class="row alt"><span class="lbl">ALT</span><span class="val">ECS, Nomad, Docker Swarm, serverless (Lambda)</span></div>
+      <div class="row choice"><span class="lbl">CHOICE</span><span class="val">Kubernetes (EKS)</span></div>
+      <div class="row"><span class="lbl">WHY</span><span class="val">Portability (no vendor lock-in); rich ecosystem (Helm, ArgoCD, KEDA); standard skill for engineers; horizontal pod autoscaling critical for peak hours.</span></div>
+      <div class="row revisit"><span class="lbl">REVISIT</span><span class="val">If team too small to operate K8s → ECS Fargate for first 6 months, migrate to EKS in Phase 2.</span></div>
+    </div>
+
+    <!-- ADR 6 -->
+    <div class="adr-card">
+      <div class="head"><span class="num">6</span><span class="ttl">Mobile Architecture: React Native</span></div>
+      <div class="row alt"><span class="lbl">ALT</span><span class="val">Native (Swift+Kotlin), Flutter, PWA</span></div>
+      <div class="row choice"><span class="lbl">CHOICE</span><span class="val">React Native 0.74 (New Architecture enabled)</span></div>
+      <div class="row"><span class="lbl">WHY</span><span class="val">Single codebase for iOS+Android; same engineers can ship to both; fast iteration via hot reload; reusable components with web app; Hermes engine performance now comparable to native for our use case.</span></div>
+      <div class="row revisit"><span class="lbl">REVISIT</span><span class="val">If driver app performance issues (GPS, background tasks) → consider going native for Driver App only.</span></div>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - 6 ADRs: Go, React, PostgreSQL, Kafka, Kubernetes, React Native.
+    - Each ADR has alternatives, choice, why, and explicit revisit trigger.
+    - Go chosen for I/O concurrency + fast compile + small binaries.
+    - PostgreSQL 16 + PostGIS — ACID + JSONB + geospatial.
+    - Revisit triggers prevent lock-in: e.g., Python sidecar if ML, Flutter if low-end perf.
+  </aside>
+</body>
+</html>

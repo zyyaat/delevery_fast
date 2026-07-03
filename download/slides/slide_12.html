@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>High-Level Architecture — Food Delivery Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="global.css">
+<style>
+  .layer {
+    background: rgba(15,20,36,0.6);
+    border: 1px solid #1E2A4A;
+    border-radius: 10px;
+    padding: 8px 12px;
+    position: relative;
+  }
+  .layer-label {
+    position: absolute;
+    left: -1px; top: -1px; bottom: -1px;
+    width: 96px;
+    background: linear-gradient(180deg, rgba(0,212,255,0.06), transparent);
+    border-right: 1px solid #1E2A4A;
+    border-radius: 10px 0 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 12px;
+  }
+  .layer-label .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: #5C6B8E;
+    letter-spacing: 1px;
+  }
+  .layer-label .name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    color: #EAF0FF;
+    line-height: 1.1;
+  }
+  .layer-label .ar {
+    font-family: 'Cairo', sans-serif;
+    font-size: 9px;
+    color: #9BA8C7;
+    direction: rtl;
+    margin-top: 2px;
+  }
+  .layer-content {
+    margin-left: 108px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .layer.services {
+    background: linear-gradient(180deg, rgba(0,212,255,0.06), rgba(177,78,255,0.04));
+    border-color: rgba(0,212,255,0.3);
+  }
+  .layer.services .layer-label {
+    background: linear-gradient(180deg, rgba(0,212,255,0.18), rgba(177,78,255,0.1));
+    border-right-color: rgba(0,212,255,0.3);
+  }
+  .client-card, .edge-card, .data-card {
+    background: rgba(19,26,46,0.7);
+    border: 1px solid #1E2A4A;
+    border-radius: 8px;
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-width: 0;
+    flex: 1;
+  }
+  .client-card .material-icons { font-size: 16px; color: #00D4FF; }
+  .client-card .lbl {
+    font-size: 9px;
+    font-weight: 600;
+    color: #C7D0E6;
+    text-align: center;
+    line-height: 1.1;
+  }
+  .client-card .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: #5C6B8E;
+    letter-spacing: 0.5px;
+  }
+  .edge-card {
+    flex: 1;
+    padding: 6px 10px;
+    align-items: flex-start;
+  }
+  .edge-card .head {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #EAF0FF;
+  }
+  .edge-card .head .material-icons { font-size: 14px; color: #B14EFF; }
+  .edge-card .desc {
+    font-size: 9.5px;
+    color: #9BA8C7;
+    line-height: 1.3;
+  }
+  .service-card {
+    background: linear-gradient(180deg, #131A2E, #0F1424);
+    border: 1px solid #2A3656;
+    border-radius: 7px;
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 28px;
+  }
+  .service-card .go-icon {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #00D4FF, #B14EFF);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #0A0E1A;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 900;
+    font-size: 8px;
+    flex-shrink: 0;
+  }
+  .service-card .name {
+    font-size: 10px;
+    color: #EAF0FF;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  .data-card {
+    flex: 1;
+    align-items: flex-start;
+    padding: 6px 10px;
+  }
+  .data-card .head {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #EAF0FF;
+  }
+  .data-card .head .material-icons { font-size: 14px; }
+  .data-card .desc {
+    font-size: 9px;
+    color: #9BA8C7;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+  .arrow-down {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 12px;
+    margin: 2px 0;
+  }
+  .arrow-down::before {
+    content: '↓';
+    color: #00D4FF;
+    font-size: 14px;
+    line-height: 1;
+    text-shadow: 0 0 6px rgba(0,212,255,0.6);
+  }
+</style>
+</head>
+<body class="slide">
+
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>03 — SYSTEM ARCHITECTURE</span>
+      <span style="color:#2A3656;">/</span>
+      <span>DIAGRAM</span>
+    </div>
+    <div class="page-num">12 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">SYSTEM DESIGN</span>
+    <h1 class="slide-title" style="font-size:30px;">High-Level Architecture <span style="color:#5C6B8E; font-weight:400;">/</span> <span class="font-ar" dir="rtl">المعمارية العامة</span></h1>
+    <p class="slide-subtitle" style="font-size:13px; margin-top:2px;">7 client apps → API Gateway → 12 domain services → PostgreSQL + Kafka + Redis</p>
+  </div>
+
+  <div class="flex-1 flex flex-col gap-1.5">
+
+    <!-- LAYER 1: CLIENTS -->
+    <div class="layer">
+      <div class="layer-label">
+        <div class="num">LAYER 01</div>
+        <div class="name">Client Layer</div>
+        <div class="ar">طبقة العملاء</div>
+      </div>
+      <div class="layer-content">
+        <div class="client-card"><span class="material-icons">person</span><span class="lbl">Customer</span><span class="sub">MOBILE</span></div>
+        <div class="client-card"><span class="material-icons">two_wheeler</span><span class="lbl">Driver</span><span class="sub">MOBILE</span></div>
+        <div class="client-card"><span class="material-icons">restaurant</span><span class="lbl">Restaurant</span><span class="sub">M+W</span></div>
+        <div class="client-card"><span class="material-icons">support_agent</span><span class="lbl">Support</span><span class="sub">WEB</span></div>
+        <div class="client-card"><span class="material-icons">dashboard</span><span class="lbl">Command Ctr</span><span class="sub">WEB</span></div>
+        <div class="client-card"><span class="material-icons">badge</span><span class="lbl">Employee</span><span class="sub">WEB</span></div>
+        <div class="client-card"><span class="material-icons">supervisor_account</span><span class="lbl">Field Sup.</span><span class="sub">MOBILE</span></div>
+      </div>
+    </div>
+
+    <div class="arrow-down" data-decor></div>
+
+    <!-- LAYER 2: EDGE -->
+    <div class="layer">
+      <div class="layer-label">
+        <div class="num">LAYER 02</div>
+        <div class="name">Edge Layer</div>
+        <div class="ar">طبقة الحافة</div>
+      </div>
+      <div class="layer-content">
+        <div class="edge-card">
+          <div class="head"><span class="material-icons">router</span>API Gateway</div>
+          <div class="desc">Kong / APISIX — routing, auth, rate limit</div>
+        </div>
+        <div class="edge-card">
+          <div class="head"><span class="material-icons">swap_horiz</span>WebSocket Gateway</div>
+          <div class="desc">Real-time driver location + order push</div>
+        </div>
+        <div class="edge-card">
+          <div class="head"><span class="material-icons">cloud</span>CDN</div>
+          <div class="desc">Cloudflare — static assets, images, menus</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-down" data-decor></div>
+
+    <!-- LAYER 3: SERVICES -->
+    <div class="layer services">
+      <div class="layer-label">
+        <div class="num">LAYER 03</div>
+        <div class="name">Service Layer</div>
+        <div class="ar">طبقة الخدمات</div>
+      </div>
+      <div class="layer-content" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px;">
+        <div class="service-card"><div class="go-icon">Go</div><div class="name">Auth Service</div></div>
+        <div class="service-card"><div class="go-icon">Go</div><div class="name">Restaurant Catalog</div></div>
+        <div class="service-card"><div class="go-icon">Go</div><div class="name">Menu Service</div></div>
+        <div class="service-card"><div class="go-icon">Go</div><div class="name">Order Service</div></div>
+        <div class="service-card"><div class="go-icon">Go</div><div class="name">Payment Service</div></div>
+        <div class="service-card"><div class="go-icon">Go</div><div class="name">Delivery Matching</div></div>
+        <div class="service-card"><div class="go-icon">Go</div><div class="name">Driver Management</div></div>
+        <div class="service-card"><div class="go-icon">Go</div><div class="name">Geo / Tracking</div></div>
+        <div class="service-card"><div class="go-icon">Go</div><div class="name">Notification</div></div>
+        <div class="service-card"><div class="go-icon">Go</div><div class="name">Fraud Detection</div></div>
+        <div class="service-card"><div class="go-icon">Go</div><div class="name">Promo / Loyalty</div></div>
+        <div class="service-card"><div class="go-icon">Go</div><div class="name">Analytics / Reporting</div></div>
+      </div>
+    </div>
+
+    <div class="arrow-down" data-decor></div>
+
+    <!-- LAYER 4: DATA -->
+    <div class="layer">
+      <div class="layer-label">
+        <div class="num">LAYER 04</div>
+        <div class="name">Data Layer</div>
+        <div class="ar">طبقة البيانات</div>
+      </div>
+      <div class="layer-content">
+        <div class="data-card">
+          <div class="head"><span class="material-icons" style="color:#00D4FF;">storage</span>PostgreSQL</div>
+          <div class="desc">PRIMARY · OLTP</div>
+        </div>
+        <div class="data-card">
+          <div class="head"><span class="material-icons" style="color:#FF3E8F;">bolt</span>Redis</div>
+          <div class="desc">CACHE + GEOSPATIAL</div>
+        </div>
+        <div class="data-card">
+          <div class="head"><span class="material-icons" style="color:#B14EFF;">stream</span>Kafka</div>
+          <div class="desc">EVENT BUS</div>
+        </div>
+        <div class="data-card">
+          <div class="head"><span class="material-icons" style="color:#00E58A;">cloud_upload</span>S3 / MinIO</div>
+          <div class="desc">FILES · IMAGES</div>
+        </div>
+        <div class="data-card">
+          <div class="head"><span class="material-icons" style="color:#FFB800;">search</span>ElasticSearch</div>
+          <div class="desc">SEARCH · CATALOG</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>03 — SYSTEM ARCHITECTURE</span></div>
+    <div>12 / 50</div>
+  </footer>
+
+  <aside data-notes class="hidden">
+    - Read top-to-bottom: clients → edge → services → data.
+    - 12 services in 4x3 grid — each owns its data.
+    - Layer 3 is the highlighted band — that's the meat.
+    - Data layer: PostgreSQL + Redis + Kafka + S3 + ElasticSearch.
+    - No SVG — all CSS/flex/grid with thin connector arrows.
+  </aside>
+</body>
+</html>

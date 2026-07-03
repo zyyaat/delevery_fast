@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Database Architecture</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .tier-card { padding: 12px 14px; border-radius:10px; background: var(--bg-card); border:1px solid var(--border); display:flex; flex-direction:column; gap:8px; position:relative; }
+    .tier-card .tier-num { position:absolute; top:-10px; left:12px; padding: 2px 8px; border-radius: 999px; background: var(--bg); border:1px solid var(--border-soft); font-family: var(--font-num); font-size:9px; letter-spacing:1px; color: var(--text-mute); }
+    .tier-card .tier-head { display:flex; align-items:center; gap:8px; margin-top:4px; }
+    .tier-card .tier-head .material-icons { font-size:18px; }
+    .tier-card h3 { font-family: var(--font-heading); font-weight:700; font-size:13px; color: var(--text); }
+    .tier-card .ar { font-family: var(--font-cn); font-size:11px; color: var(--text-dim); }
+    .tier-card ul { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:4px; }
+    .tier-card ul li { font-size:11px; line-height:1.4; color: var(--text-dim); padding-left:10px; position:relative; }
+    .tier-card ul li::before { content:'•'; position:absolute; left:0; color: var(--primary); }
+    .t1 { border-top:2px solid var(--primary); } .t1 .material-icons { color: var(--primary); }
+    .t2 { border-top:2px solid var(--accent); }  .t2 .material-icons { color: var(--accent); }
+    .t3 { border-top:2px solid var(--success); } .t3 .material-icons { color: var(--success); }
+    .t4 { border-top:2px solid var(--warning); } .t4 .material-icons { color: var(--warning); }
+    .info-card { padding: 12px 16px; border-radius:10px; background: linear-gradient(90deg, rgba(0,212,255,0.05), rgba(177,78,255,0.05)); border:1px solid var(--border-soft); display:flex; gap:12px; align-items:flex-start; }
+    .info-card .material-icons { color: var(--accent); font-size:20px; flex-shrink:0; margin-top:2px; }
+    .info-card .lbl { font-family: var(--font-heading); font-weight:700; font-size:13px; color: var(--text); margin-bottom:2px; }
+    .info-card .lbl .ar { font-family: var(--font-cn); color: var(--text-dim); font-weight:400; margin-left:6px; }
+    .info-card p { font-size:11.5px; line-height:1.5; color: var(--text-dim); }
+    .top-card { padding: 10px 14px; border-radius:10px; background: var(--bg-card); border:1px solid var(--border); border-left:3px solid var(--primary); }
+    .top-card .lbl { font-family: var(--font-heading); font-weight:700; font-size:12px; color: var(--text); margin-bottom:4px; }
+    .top-card .lbl .ar { font-family: var(--font-cn); color: var(--text-dim); font-weight:400; margin-left:6px; }
+    .top-card p { font-size:11px; line-height:1.45; color: var(--text-dim); }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>05 — DATABASE SCHEMA</span>
+    </div>
+    <div class="page-num">21 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">POSTGRESQL · MULTI-TENANT</span>
+    <h1 class="slide-title" style="font-size:30px;">Database Architecture <span class="text-dim font-ar" style="font-weight:600;">/ معمارية قاعدة البيانات</span></h1>
+    <p class="slide-subtitle" style="font-size:14px; margin-top:4px;">12 service-owned databases — polyglot persistence tuned per domain.</p>
+  </div>
+
+  <div class="top-card mb-3">
+    <div class="lbl">Database-per-Service <span class="ar rtl">/ قاعدة لكل خدمة</span></div>
+    <p>Each of the 12 microservices owns its own PostgreSQL logical database. No service reads another's database directly — only via API or event. This enforces domain boundaries and lets each service optimize its schema independently. Cross-service joins are replaced by either API composition (for reads) or event-carried state transfer (for writes).</p>
+  </div>
+
+  <div class="grid-4 mb-3">
+    <div class="tier-card t1">
+      <span class="tier-num">TIER 1</span>
+      <div class="tier-head"><span class="material-icons">storage</span><div><h3>Primary OLTP</h3><div class="ar rtl">المعاملات</div></div></div>
+      <ul>
+        <li>PostgreSQL 16 (RDS or self-managed on EC2)</li>
+        <li>12 logical databases, one per service</li>
+        <li>Read replicas (1 primary + 2 per critical service)</li>
+        <li>Failover via Patroni</li>
+      </ul>
+    </div>
+    <div class="tier-card t2">
+      <span class="tier-num">TIER 2</span>
+      <div class="tier-head"><span class="material-icons">explore</span><div><h3>Geospatial</h3><div class="ar rtl">الجغرافية</div></div></div>
+      <ul>
+        <li>PostgreSQL + PostGIS extension</li>
+        <li>Used by Restaurant Catalog + Delivery Matching</li>
+        <li>For sub-ms queries: Redis GEO (GEOADD, GEORADIUS)</li>
+        <li>Driver location stream: Redis only (50K writes/sec)</li>
+      </ul>
+    </div>
+    <div class="tier-card t3">
+      <span class="tier-num">TIER 3</span>
+      <div class="tier-head"><span class="material-icons">bolt</span><div><h3>Cache</h3><div class="ar rtl">التخزين المؤقت</div></div></div>
+      <ul>
+        <li>Redis 7 cluster (6 nodes, 3 shards + replicas)</li>
+        <li>Session, hot menu data, driver availability, rate limits</li>
+        <li>TTL-based eviction + explicit invalidation on Kafka events</li>
+      </ul>
+    </div>
+    <div class="tier-card t4">
+      <span class="tier-num">TIER 4</span>
+      <div class="tier-head"><span class="material-icons">search</span><div><h3>Search &amp; Analytics</h3><div class="ar rtl">البحث والتحليلات</div></div></div>
+      <ul>
+        <li>ElasticSearch 8 (restaurant/menu search, full-text Arabic)</li>
+        <li>ClickHouse (analytics aggregations, 100M+ rows/day)</li>
+        <li>S3 / MinIO (images, documents, audit logs)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <span class="material-icons">call_split</span>
+    <div>
+      <div class="lbl">Partitioning Strategy <span class="ar rtl">/ استراتيجية التقسيم</span></div>
+      <p>Orders table partitioned by month (range partitioning) — keeps active partitions small. Driver_locations archived to S3 after 7 days. Restaurant data sharded by city for &gt;10K restaurants — Cairo/Giza/Alexandria/Mansoura each get a shard.</p>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - 12 services, 12 logical DBs — no shared reads, ever.
+    - 4 storage tiers: OLTP, Geospatial, Cache, Search/Analytics.
+    - Polyglot persistence tuned per domain.
+    - Orders partitioned by month; restaurants sharded by city.
+    - Driver_locations: Redis-only at write path, archived after 7 days.
+  </aside>
+</body>
+</html>

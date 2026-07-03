@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pricing & Commission Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .breakdown-card { padding: 14px 16px; border-radius: 12px; background: var(--bg-card); border:1px solid var(--border); border-top:3px solid var(--primary); height:100%; display:flex; flex-direction:column; gap:8px; }
+    .breakdown-card .head { display:flex; align-items:center; gap:8px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+    .breakdown-card .head .material-icons { color: var(--primary); font-size:18px; }
+    .breakdown-card .head h2 { font-family: var(--font-heading); font-weight:800; font-size:14px; color: var(--text); }
+    .breakdown-card .head .ar { font-family: var(--font-cn); font-size:11px; color: var(--text-dim); }
+    .example-bar { display:flex; align-items:baseline; gap:8px; padding:6px 10px; border-radius:6px; background: rgba(0,212,255,0.06); border:1px solid rgba(0,212,255,0.20); }
+    .example-bar .lbl { font-family: var(--font-num); font-size:10px; color: var(--text-mute); letter-spacing:0.5px; }
+    .example-bar .val { font-family: var(--font-num); font-weight:800; font-size:18px; color: var(--primary); }
+    .line-item { display:grid; grid-template-columns: 1fr auto; gap:8px; padding: 4px 0; font-size:12px; }
+    .line-item .name { color: var(--text-dim); }
+    .line-item .name .lbl { font-family: var(--font-num); font-size:9.5px; color: var(--text-mute); margin-right:6px; }
+    .line-item .val { font-family: var(--font-num); color: var(--text); font-weight:600; }
+    .line-item.add .val { color: var(--success); }
+    .line-item.sub .val { color: var(--danger); }
+    .total-line { margin-top:6px; padding-top:8px; border-top: 2px solid var(--primary); display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:baseline; }
+    .total-line .name { font-family: var(--font-heading); font-weight:800; font-size:14px; color: var(--text); }
+    .total-line .val { font-family: var(--font-num); font-weight:800; font-size:28px; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .commission-card { padding: 12px 14px; border-radius:10px; background: var(--bg-card); border:1px solid var(--border); border-left:3px solid; display:flex; flex-direction:column; gap:5px; }
+    .commission-card.restaurant { border-left-color: var(--accent); }
+    .commission-card.driver { border-left-color: var(--primary); }
+    .commission-card.platform { border-left-color: var(--gold); }
+    .commission-card .head { display:flex; align-items:center; justify-content:space-between; }
+    .commission-card .head .name { display:flex; align-items:center; gap:6px; font-family: var(--font-heading); font-weight:700; font-size:13px; }
+    .commission-card .head .name .material-icons { font-size:16px; }
+    .restaurant .head .name .material-icons { color: var(--accent); }
+    .driver .head .name .material-icons { color: var(--primary); }
+    .platform .head .name .material-icons { color: var(--gold); }
+    .commission-card .head .role { font-family: var(--font-num); font-size:9px; color: var(--text-mute); letter-spacing:0.5px; }
+    .commission-card .receives { display:flex; align-items:baseline; gap:6px; }
+    .commission-card .receives .lbl { font-family: var(--font-num); font-size:9px; color: var(--text-mute); letter-spacing:0.5px; }
+    .commission-card .receives .val { font-family: var(--font-num); font-weight:800; font-size:22px; }
+    .restaurant .receives .val { color: var(--accent); }
+    .driver .receives .val { color: var(--primary); }
+    .platform .receives .val { color: var(--gold); }
+    .commission-card .desc { font-size:11px; line-height:1.45; color: var(--text-dim); }
+    .commission-card .desc .mono { font-family: var(--font-num); color: var(--text); }
+    .commission-card .note { font-size:10px; line-height:1.4; color: var(--text-mute); font-style: italic; padding-top:3px; border-top:1px dashed var(--border); }
+    .commission-card .bonus-line { font-size:10.5px; color: var(--text-dim); padding-left:8px; border-left:1px solid var(--border); }
+    .commission-card .bonus-line .pos { color: var(--success); font-family: var(--font-num); }
+    .note-bar { display:flex; gap:10px; padding:10px 14px; border-radius:10px; background: linear-gradient(90deg, rgba(255,209,102,0.05), rgba(177,78,255,0.05)); border:1px solid var(--border-soft); align-items:flex-start; }
+    .note-bar .material-icons { color: var(--gold); font-size:18px; flex-shrink:0; margin-top:1px; }
+  </style>
+</head>
+<body class="slide">
+  <header class="slide-header">
+    <div class="crumb">
+      <span class="dot"></span>
+      <span>06 — BUSINESS LOGIC FLOWS</span>
+    </div>
+    <div class="page-num">29 / 50</div>
+  </header>
+
+  <div class="mb-3">
+    <span class="section-kicker">MONEY FLOW</span>
+    <h1 class="slide-title" style="font-size:26px;">Pricing &amp; Commission Engine <span class="text-dim font-ar" style="font-weight:600;">/ محرك التسعير والعمولة</span></h1>
+    <p class="slide-subtitle" style="font-size:13px; margin-top:3px;">How every EGP flows through the platform — split between restaurant, driver, and platform.</p>
+  </div>
+
+  <div class="grid-2" style="flex:1; min-height:0;">
+    <!-- LEFT — Order Total Breakdown -->
+    <div class="breakdown-card">
+      <div class="head">
+        <span class="material-icons">receipt_long</span>
+        <div>
+          <h2>Order Total Breakdown</h2>
+          <div class="ar rtl">تفصيل قيمة الطلب</div>
+        </div>
+      </div>
+
+      <div class="example-bar">
+        <span class="lbl">EXAMPLE ORDER</span>
+        <span class="val">EGP 200</span>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:2px;">
+        <div class="line-item add"><span class="name"><span class="lbl">+</span>Subtotal (food)</span><span class="val">EGP 180</span></div>
+        <div class="line-item add"><span class="name"><span class="lbl">+</span>Delivery fee</span><span class="val">EGP 20</span></div>
+        <div class="line-item add"><span class="name"><span class="lbl">+</span>Service fee</span><span class="val">EGP 5</span></div>
+        <div class="line-item sub"><span class="name"><span class="lbl">−</span>Promo discount</span><span class="val">−EGP 5</span></div>
+      </div>
+
+      <div style="font-family: var(--font-num); font-size:10px; color: var(--text-mute); letter-spacing:1px; text-align:center; padding: 4px 0;">─────────────────────────────────</div>
+
+      <div class="total-line">
+        <div>
+          <div class="name">TOTAL <span style="color: var(--text-mute); font-weight:400; font-size:11px;">(customer pays)</span></div>
+        </div>
+        <div class="val">EGP 200</div>
+      </div>
+    </div>
+
+    <!-- RIGHT — Commission Split (3 cards) -->
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div class="commission-card restaurant">
+        <div class="head">
+          <div class="name"><span class="material-icons">restaurant</span>Restaurant</div>
+          <div class="role">15% COMMISSION</div>
+        </div>
+        <div class="receives"><span class="lbl">RECEIVES</span><span class="val">EGP 153</span><span class="text-mute text-xs">(subtotal minus platform commission)</span></div>
+        <div class="desc">Commission rate: <span class="mono">15%</span> on subtotal = <span class="mono">EGP 27</span></div>
+        <div class="note">Lower than Talabat's 22% — SME-friendly.</div>
+      </div>
+
+      <div class="commission-card driver">
+        <div class="head">
+          <div class="name"><span class="material-icons">two_wheeler</span>Driver</div>
+          <div class="role">90% DELIVERY FEE</div>
+        </div>
+        <div class="receives"><span class="lbl">TOTAL EARNINGS</span><span class="val">EGP 23</span></div>
+        <div class="bonus-line">EGP 18 <span class="text-mute">(90% of delivery fee)</span></div>
+        <div class="bonus-line"><span class="pos">+EGP 2</span> <span class="text-mute">distance-based bonus (for &gt;5km)</span></div>
+        <div class="bonus-line"><span class="pos">+EGP 3</span> <span class="text-mute">peak-hour bonus (during 7–11pm)</span></div>
+        <div class="note">75% of platform fees go to drivers vs 55% industry average.</div>
+      </div>
+
+      <div class="commission-card platform">
+        <div class="head">
+          <div class="name"><span class="material-icons">account_balance</span>Platform</div>
+          <div class="role">≈14% OF GMV</div>
+        </div>
+        <div class="receives"><span class="lbl">NET REVENUE</span><span class="val">EGP 34</span><span class="text-mute text-xs">/ order</span></div>
+        <div class="desc">EGP 27 (commission) + EGP 5 (service fee) + EGP 2 (delivery fee margin)</div>
+        <div class="desc text-xs text-mute" style="margin-top:2px;">Less: payment processing (~1.5% = EGP 3) + infra (~EGP 1.5) + support (~EGP 2)</div>
+        <div class="note">Net contribution margin: ~<span style="color: var(--gold); font-family: var(--font-num); font-style: normal; font-weight: 700;">EGP 27.5</span> per order (≈14% of GMV)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-bar mt-2">
+    <span class="material-icons">trending_up</span>
+    <div class="text-xs" style="line-height:1.5;">
+      <span class="font-num text-primary" style="font-weight:700; letter-spacing:0.5px;">DYNAMIC PRICING ENGINE:</span>
+      <span class="text-dim">delivery fee varies by distance, demand, weather, and time of day. Surge multiplier caps at</span> <span class="text-warning font-num" style="font-weight:700;">1.5×</span> <span class="text-dim">— never exploitative.</span>
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="brand"><span class="brand-dot"></span><span>FOOD DELIVERY PLATFORM</span></div>
+    <div>TECHNICAL BLUEPRINT v1.0</div>
+  </div>
+
+  <aside data-notes class="hidden">
+    - EGP 200 example: 180 food + 20 delivery + 5 service − 5 promo.
+    - Restaurant gets 153 (15% commission, lower than Talabat's 22%).
+    - Driver gets 23 (18 base + 2 distance + 3 peak).
+    - Platform net: 34 → ~27.5 after costs (≈14% of GMV).
+    - Surge caps at 1.5× — growth without exploitation.
+  </aside>
+</body>
+</html>
