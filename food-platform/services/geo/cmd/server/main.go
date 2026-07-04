@@ -1,118 +1,86 @@
 package main
 
 import (
-    "context"
-    "fmt"
-    "log"
-    "log/slog"
-    "net/http"
-    "os"
-    "os/signal"
-    "syscall"
-    "time"
+	"context"
+	"log/slog"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/food-platform/geo/internal/application"
+	redisinfra "github.com/food-platform/geo/internal/infrastructure/redis"
+	httpinterfaces "github.com/food-platform/geo/internal/interfaces/http"
+	"github.com/food-platform/shared/config"
+	"github.com/food-platform/shared/logging"
+	"github.com/food-platform/shared/server"
+	"github.com/redis/go-redis/v9"
 )
 
-// Config holds service configuration
-type Config struct {
-    HTTPPort        int           `env:"HTTP_PORT" default:"8088"`
-    DatabaseURL     string        `env:"DATABASE_URL" required:"true"`
-    RedisURL        string        `env:"REDIS_URL" required:"true"`
-    KafkaBrokers    string        `env:"KAFKA_BROKERS" required:"true"`
-    LogLevel        string        `env:"LOG_LEVEL" default:"info"`
-    ShutdownTimeout time.Duration `env:"SHUTDOWN_TIMEOUT" default:"30s"`
-}
-
 func main() {
-    cfg := &Config{
-        HTTPPort:        8088,
-        DatabaseURL:     getEnvOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/geo_db?sslmode=disable"),
-        RedisURL:        getEnvOrDefault("REDIS_URL", "localhost:6379"),
-        KafkaBrokers:    getEnvOrDefault("KAFKA_BROKERS", "localhost:9092"),
-        LogLevel:        getEnvOrDefault("LOG_LEVEL", "info"),
-        ShutdownTimeout: 30 * time.Second,
-    }
+	cfg := loadConfig()
+	logging.Setup(cfg.LogLevel)
+	slog.Info("starting_geo_service", "port", cfg.HTTPPort)
 
-    // Setup structured logger
-    setupLogger(cfg.LogLevel)
-    slog.Info("starting Geo/Tracking Service",
-        "port", cfg.HTTPPort,
-        "service", "geo",
-    )
+	// Connect to Redis
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     cfg.RedisURL,
+		Password: "",
+		DB:       0,
+	})
 
-    // Create HTTP server
-    mux := http.NewServeMux()
-    mux.HandleFunc("/health", healthHandler)
-    mux.HandleFunc("/ready", readyHandler)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-    srv := &http.Server{
-        Addr:         fmt.Sprintf(":%d", cfg.HTTPPort),
-        Handler:      mux,
-        ReadTimeout:  10 * time.Second,
-        WriteTimeout: 30 * time.Second,
-        IdleTimeout:  120 * time.Second,
-    }
+	if err := rdb.Ping(ctx).Err(); err != nil {
+		slog.Error("failed_to_connect_redis", "error", err)
+		os.Exit(1)
+	}
+	slog.Info("redis_connected")
 
-    // Start server in goroutine
-    go func() {
-        slog.Info("HTTP server listening", "addr", srv.Addr)
-        if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-            slog.Error("server failed", "error", err)
-            os.Exit(1)
-        }
-    }()
+	locationStore := redisinfra.NewLocationStore(rdb)
 
-    // Wait for interrupt signal
-    quit := make(chan os.Signal, 1)
-    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-    <-quit
-    slog.Info("shutting down geo service...")
+	updateLocUC := application.NewUpdateLocationUseCase(locationStore)
+	getLocUC := application.NewGetLocationUseCase(locationStore)
+	findNearbyUC := application.NewFindNearbyUseCase(locationStore)
+	calcETAUC := application.NewCalculateETAUseCase()
 
-    // Graceful shutdown
-    ctx, cancel := context.WithTimeout(context.Background(), cfg.ShutdownTimeout)
-    defer cancel()
+	handler := httpinterfaces.SetupRouter(updateLocUC, getLocUC, findNearbyUC, calcETAUC)
+	srv := server.New(handler, server.DefaultConfig(cfg.HTTPPort))
 
-    if err := srv.Shutdown(ctx); err != nil {
-        slog.Error("server forced to shutdown", "error", err)
-        os.Exit(1)
-    }
+	go func() {
+		if err := srv.Start(); err != nil {
+			slog.Error("server_failed", "error", err)
+			os.Exit(1)
+		}
+	}()
 
-    slog.Info("geo service stopped")
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	slog.Info("shutting_down_geo_service")
+
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer shutdownCancel()
+
+	if err := srv.Stop(shutdownCtx); err != nil {
+		slog.Error("server_forced_to_shutdown", "error", err)
+		os.Exit(1)
+	}
+
+	slog.Info("geo_service_stopped")
 }
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    _, _ = w.Write([]byte(`{"status":"ok","service":"geo","version":"1.0.0"}`))
+type Config struct {
+	HTTPPort  int
+	RedisURL  string
+	LogLevel  string
 }
 
-func readyHandler(w http.ResponseWriter, r *http.Request) {
-    // TODO: Check dependencies (DB, Redis, Kafka)
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    _, _ = w.Write([]byte(`{"status":"ready"}`))
-}
-
-func setupLogger(level string) {
-    var lvl slog.Level
-    switch level {
-    case "debug":
-        lvl = slog.LevelDebug
-    case "info":
-        lvl = slog.LevelInfo
-    case "warn":
-        lvl = slog.LevelWarn
-    case "error":
-        lvl = slog.LevelError
-    default:
-        lvl = slog.LevelInfo
-    }
-    handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: lvl})
-    slog.SetDefault(slog.New(handler))
-}
-
-func getEnvOrDefault(key, defaultVal string) string {
-    if val := os.Getenv(key); val != "" {
-        return val
-    }
-    return defaultVal
+func loadConfig() Config {
+	return Config{
+		HTTPPort: config.GetEnvInt("HTTP_PORT", 8088),
+		RedisURL: config.GetEnv("REDIS_URL", "localhost:6379"),
+		LogLevel: config.GetEnv("LOG_LEVEL", "info"),
+	}
 }
