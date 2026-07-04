@@ -55,6 +55,126 @@
 - Need user's preferred timeline (3 months vs 6 months vs flexible)
 - Need decision on infra (AWS account, domain, etc.)
 
+## Session 1.5 — 2026-07-04 (UI/UX Specifications Phase)
+
+**Goal**: Create comprehensive UI/UX specifications for all 7 web apps, matching global competitors (Uber Eats, Talabat, DoorDash, elmenus).
+
+**Completed**:
+- [x] Researched Uber Eats UI/UX (Base design system, customer/driver/restaurant apps)
+- [x] Researched Talabat UI/UX (Egyptian market, Arabic RTL, Vodafone Cash)
+- [x] Researched elmenus + DoorDash UI/UX
+- [x] Researched Uber Eats brand colors (#06C167 green), Talabat (#FF5A00 orange)
+- [x] Researched Uber Eats typography (Uber Move), Talabat (Cairo)
+- [x] Researched food delivery UX best practices (checkout, microinteractions)
+- [x] Created `docs/ui-ux/` directory structure
+- [x] Wrote `docs/ui-ux/DESIGN-SYSTEM.md` (1169 lines)
+  - 7 design principles (Egyptian-first, global standard)
+  - Brand identity (Tandoor Orange #FF5722 + Nile Teal #00897B)
+  - Color palette (primary, semantic, neutrals, dark mode, data viz)
+  - Typography (Cairo + Inter + JetBrains Mono)
+  - Spacing, border radius, elevation
+  - Component library specs (Button, Card, Input)
+  - Iconography (Material Symbols Rounded)
+  - Motion & animation (easing curves, durations)
+  - States (empty, loading, error, success)
+  - Arabic RTL considerations
+  - Responsive breakpoints
+  - Accessibility (WCAG 2.1 AA)
+  - Competitive analysis matrix
+  - Tailwind config + Design tokens (TypeScript)
+- [x] Wrote `docs/ui-ux/SCREEN-INVENTORY.md` (376 lines)
+  - 99 total screens across 7 apps
+  - Customer Web: 22 screens
+  - Driver Web: 14 screens
+  - Restaurant Web: 18 screens
+  - Support Web: 12 screens
+  - Command Center: 10 screens
+  - Employee Portal: 12 screens
+  - Field Supervisor Web: 11 screens
+  - Screen ID convention (CUS-HOME-01, etc.)
+  - Priority definitions (P0/P1/P2)
+- [x] Wrote `docs/ui-ux/customer-web/UI-SPEC.md` (1587 lines)
+  - 22 screens with wireframes (ASCII)
+  - Welcome carousel, Phone login, OTP, Profile setup
+  - Home (7 sections), Address picker, Search, Category browse, Filter
+  - Restaurant detail, Item detail/customize
+  - Cart, Checkout, Order confirmation
+  - Order tracking (live map), Order history, Order detail
+  - Profile, Addresses, Payment methods
+  - Loyalty & wallet, Help/Support
+  - UX flows (first-time, returning, reorder, cancellation)
+  - Component library (RestaurantCard, MenuItemCard, etc.)
+- [x] Wrote `docs/ui-ux/driver-web/UI-SPEC.md` (1178 lines)
+  - 14 screens with wireframes
+  - Phone login, OTP, KYC basic (3 steps), Training (6 modules)
+  - Home (online), Heat map, Profile
+  - Order offer modal (15s timer), Pickup, Dropoff, Order completed
+  - Earnings dashboard, Payout, Order history
+  - UX flows (go online, accept, deliver, payout)
+  - Safety, battery, network, audio considerations
+- [x] Wrote `docs/ui-ux/restaurant-web/UI-SPEC.md` (1197 lines)
+  - 18 screens with wireframes
+  - Login, OTP, Dashboard, Schedule
+  - Active orders, Inbound order modal (90s timer), Order detail, Order history
+  - Menu overview, Item editor, Category editor, Bulk availability (86'ing)
+  - KDS (Kitchen Display System) — full-screen, color-coded
+  - Sales analytics, Reviews, Peak hours
+  - Promotions list, Create promotion
+  - UX flows (receive order, reject, 86'ing, create promo)
+  - Kitchen environment considerations
+- [x] Wrote `docs/ui-ux/support-web/UI-SPEC.md` (189 lines)
+  - Dashboard, Ticket queue, Chat view, Refund dialog (biometric)
+  - Knowledge base, Customer 360
+  - UX flows (refund with biometric, dual approval)
+- [x] Wrote `docs/ui-ux/command-center/UI-SPEC.md` (284 lines)
+  - Main dashboard (KPIs + live map + alerts)
+  - Live map (5 layers), Zone detail, Surge control
+  - Incident list, Incident detail
+  - Manual dispatch, Restaurant/driver control
+  - UX flows (surge activation, incident response)
+- [x] Wrote `docs/ui-ux/employee-portal/UI-SPEC.md` (310 lines)
+  - Login (password + TOTP), WebAuthn enrollment
+  - Sensitive action verification (biometric)
+  - Dashboard, Pending approvals
+  - Refund action, Restaurant/Driver/Payout approve
+  - Audit log viewer, Anomaly alerts (UEBA), Access review
+  - UX flows (sensitive action, dual approval)
+- [x] Wrote `docs/ui-ux/field-supervisor-web/UI-SPEC.md` (475 lines)
+  - Task list, Restaurant verification (50+ checklist), Driver verification
+  - Complaint investigation
+  - Route planner (TSP), Navigation
+  - Daily report, Performance
+  - Driver training
+  - UX flows (verification, investigation)
+  - GPS verification, photo capture, offline support, anti-cheating
+
+**Key Decisions**:
+- Brand color: Tandoor Orange (#FF5722) — warm, energetic, Egyptian, appetite-stimulating
+- Secondary: Nile Teal (#00897B) — trust, differentiates from competitors
+- Typography: Cairo (Arabic) + Inter (English) + JetBrains Mono (numbers)
+- All 7 apps default to RTL Arabic
+- Customer/Driver/Restaurant apps: light theme, mobile-first
+- Command Center: dark theme (24/7 ops room)
+- Employee Portal: light theme (professional), WebAuthn biometric
+- Field Supervisor: mobile-first, offline-tolerant
+- 99 total screens specified with wireframes
+
+**Files Created**:
+- `/home/z/my-project/food-platform/docs/ui-ux/DESIGN-SYSTEM.md`
+- `/home/z/my-project/food-platform/docs/ui-ux/SCREEN-INVENTORY.md`
+- `/home/z/my-project/food-platform/docs/ui-ux/customer-web/UI-SPEC.md`
+- `/home/z/my-project/food-platform/docs/ui-ux/driver-web/UI-SPEC.md`
+- `/home/z/my-project/food-platform/docs/ui-ux/restaurant-web/UI-SPEC.md`
+- `/home/z/my-project/food-platform/docs/ui-ux/support-web/UI-SPEC.md`
+- `/home/z/my-project/food-platform/docs/ui-ux/command-center/UI-SPEC.md`
+- `/home/z/my-project/food-platform/docs/ui-ux/employee-portal/UI-SPEC.md`
+- `/home/z/my-project/food-platform/docs/ui-ux/field-supervisor-web/UI-SPEC.md`
+
+**Statistics**:
+- Total documentation: 16 files, 12,944 lines
+- UI/UX specs: 9 files, 6,765 lines
+- Architecture docs: 7 files, 6,179 lines
+
 **Next Session (Session 2)**:
 - Initialize monorepo (package.json, turbo.json, pnpm-workspace.yaml)
 - Initialize Go modules for 12 services
@@ -68,6 +188,9 @@
 - READ `docs/ARCHITECTURE.md` first
 - READ `docs/REPO-STRUCTURE.md` for monorepo layout
 - READ `docs/PATTERNS.md` for code conventions
+- READ `docs/ui-ux/DESIGN-SYSTEM.md` for design tokens
+- READ `docs/ui-ux/SCREEN-INVENTORY.md` for screen list
+- READ per-app `UI-SPEC.md` before building each app
 - Follow `docs/ROADMAP.md` Session 2 tasks
 
 ---
