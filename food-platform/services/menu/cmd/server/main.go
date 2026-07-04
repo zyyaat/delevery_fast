@@ -1,118 +1,98 @@
 package main
 
 import (
-    "context"
-    "fmt"
-    "log"
-    "log/slog"
-    "net/http"
-    "os"
-    "os/signal"
-    "syscall"
-    "time"
+	"context"
+	"database/sql"
+	"fmt"
+	"log/slog"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/food-platform/services/menu/internal/application"
+	"github.com/food-platform/services/menu/internal/infrastructure/postgres"
+	httpinterfaces "github.com/food-platform/services/menu/internal/interfaces/http"
+	"github.com/food-platform/shared/config"
+	"github.com/food-platform/shared/logging"
+	"github.com/food-platform/shared/server"
+
+	_ "github.com/lib/pq"
 )
 
-// Config holds service configuration
-type Config struct {
-    HTTPPort        int           `env:"HTTP_PORT" default:"8083"`
-    DatabaseURL     string        `env:"DATABASE_URL" required:"true"`
-    RedisURL        string        `env:"REDIS_URL" required:"true"`
-    KafkaBrokers    string        `env:"KAFKA_BROKERS" required:"true"`
-    LogLevel        string        `env:"LOG_LEVEL" default:"info"`
-    ShutdownTimeout time.Duration `env:"SHUTDOWN_TIMEOUT" default:"30s"`
-}
-
 func main() {
-    cfg := &Config{
-        HTTPPort:        8083,
-        DatabaseURL:     getEnvOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/menu_db?sslmode=disable"),
-        RedisURL:        getEnvOrDefault("REDIS_URL", "localhost:6379"),
-        KafkaBrokers:    getEnvOrDefault("KAFKA_BROKERS", "localhost:9092"),
-        LogLevel:        getEnvOrDefault("LOG_LEVEL", "info"),
-        ShutdownTimeout: 30 * time.Second,
-    }
+	cfg := loadConfig()
+	logging.Setup(cfg.LogLevel)
+	slog.Info("starting_menu_service", "port", cfg.HTTPPort)
 
-    // Setup structured logger
-    setupLogger(cfg.LogLevel)
-    slog.Info("starting Menu Service",
-        "port", cfg.HTTPPort,
-        "service", "menu",
-    )
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-    // Create HTTP server
-    mux := http.NewServeMux()
-    mux.HandleFunc("/health", healthHandler)
-    mux.HandleFunc("/ready", readyHandler)
+	db, err := connectDB(ctx, cfg.DatabaseURL)
+	if err != nil {
+		slog.Error("failed_to_connect_db", "error", err)
+		os.Exit(1)
+	}
+	defer db.Close()
 
-    srv := &http.Server{
-        Addr:         fmt.Sprintf(":%d", cfg.HTTPPort),
-        Handler:      mux,
-        ReadTimeout:  10 * time.Second,
-        WriteTimeout: 30 * time.Second,
-        IdleTimeout:  120 * time.Second,
-    }
+	itemRepo := postgres.NewMenuItemRepository(db)
+	catRepo := postgres.NewCategoryRepository(db)
 
-    // Start server in goroutine
-    go func() {
-        slog.Info("HTTP server listening", "addr", srv.Addr)
-        if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-            slog.Error("server failed", "error", err)
-            os.Exit(1)
-        }
-    }()
+	createItemUC := application.NewCreateMenuItemUseCase(itemRepo)
+	getMenuUC := application.NewGetMenuUseCase(itemRepo, catRepo)
+	toggleUC := application.NewToggleAvailabilityUseCase(itemRepo)
+	createCatUC := application.NewCreateCategoryUseCase(catRepo)
 
-    // Wait for interrupt signal
-    quit := make(chan os.Signal, 1)
-    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-    <-quit
-    slog.Info("shutting down menu service...")
+	handler := httpinterfaces.SetupRouter(createItemUC, getMenuUC, toggleUC, createCatUC)
+	srv := server.New(handler, server.DefaultConfig(cfg.HTTPPort))
 
-    // Graceful shutdown
-    ctx, cancel := context.WithTimeout(context.Background(), cfg.ShutdownTimeout)
-    defer cancel()
+	go func() {
+		if err := srv.Start(); err != nil {
+			slog.Error("server_failed", "error", err)
+			os.Exit(1)
+		}
+	}()
 
-    if err := srv.Shutdown(ctx); err != nil {
-        slog.Error("server forced to shutdown", "error", err)
-        os.Exit(1)
-    }
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	slog.Info("shutting_down_menu_service")
 
-    slog.Info("menu service stopped")
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer shutdownCancel()
+
+	if err := srv.Stop(shutdownCtx); err != nil {
+		slog.Error("server_forced_to_shutdown", "error", err)
+		os.Exit(1)
+	}
+
+	slog.Info("menu_service_stopped")
 }
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    _, _ = w.Write([]byte(`{"status":"ok","service":"menu","version":"1.0.0"}`))
+type Config struct {
+	HTTPPort    int
+	DatabaseURL string
+	LogLevel    string
 }
 
-func readyHandler(w http.ResponseWriter, r *http.Request) {
-    // TODO: Check dependencies (DB, Redis, Kafka)
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    _, _ = w.Write([]byte(`{"status":"ready"}`))
+func loadConfig() Config {
+	return Config{
+		HTTPPort:    config.GetEnvInt("HTTP_PORT", 8083),
+		DatabaseURL: config.GetEnv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/menus_db?sslmode=disable"),
+		LogLevel:    config.GetEnv("LOG_LEVEL", "info"),
+	}
 }
 
-func setupLogger(level string) {
-    var lvl slog.Level
-    switch level {
-    case "debug":
-        lvl = slog.LevelDebug
-    case "info":
-        lvl = slog.LevelInfo
-    case "warn":
-        lvl = slog.LevelWarn
-    case "error":
-        lvl = slog.LevelError
-    default:
-        lvl = slog.LevelInfo
-    }
-    handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: lvl})
-    slog.SetDefault(slog.New(handler))
-}
-
-func getEnvOrDefault(key, defaultVal string) string {
-    if val := os.Getenv(key); val != "" {
-        return val
-    }
-    return defaultVal
+func connectDB(ctx context.Context, databaseURL string) (*sql.DB, error) {
+	db, err := sql.Open("postgres", databaseURL)
+	if err != nil {
+		return nil, fmt.Errorf("sql.Open: %w", err)
+	}
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(5)
+	db.SetConnMaxLifetime(5 * time.Minute)
+	if err := db.PingContext(ctx); err != nil {
+		return nil, fmt.Errorf("db.Ping: %w", err)
+	}
+	return db, nil
 }
