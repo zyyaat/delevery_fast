@@ -1,118 +1,95 @@
 package main
 
 import (
-    "context"
-    "fmt"
-    "log"
-    "log/slog"
-    "net/http"
-    "os"
-    "os/signal"
-    "syscall"
-    "time"
+	"context"
+	"log/slog"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/food-platform/services/notification/internal/application"
+	"github.com/food-platform/shared/config"
+	"github.com/food-platform/shared/logging"
+	"github.com/food-platform/shared/server"
+	"net/http"
+
+	"github.com/food-platform/shared/middleware"
+	"github.com/go-chi/chi/v5"
 )
 
-// Config holds service configuration
-type Config struct {
-    HTTPPort        int           `env:"HTTP_PORT" default:"8089"`
-    DatabaseURL     string        `env:"DATABASE_URL" required:"true"`
-    RedisURL        string        `env:"REDIS_URL" required:"true"`
-    KafkaBrokers    string        `env:"KAFKA_BROKERS" required:"true"`
-    LogLevel        string        `env:"LOG_LEVEL" default:"info"`
-    ShutdownTimeout time.Duration `env:"SHUTDOWN_TIMEOUT" default:"30s"`
-}
-
 func main() {
-    cfg := &Config{
-        HTTPPort:        8089,
-        DatabaseURL:     getEnvOrDefault("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/notification_db?sslmode=disable"),
-        RedisURL:        getEnvOrDefault("REDIS_URL", "localhost:6379"),
-        KafkaBrokers:    getEnvOrDefault("KAFKA_BROKERS", "localhost:9092"),
-        LogLevel:        getEnvOrDefault("LOG_LEVEL", "info"),
-        ShutdownTimeout: 30 * time.Second,
-    }
+	cfg := loadConfig()
+	logging.Setup(cfg.LogLevel)
+	slog.Info("starting_notification_service", "port", cfg.HTTPPort)
 
-    // Setup structured logger
-    setupLogger(cfg.LogLevel)
-    slog.Info("starting Notification Service",
-        "port", cfg.HTTPPort,
-        "service", "notification",
-    )
+	// Initialize use cases (with mock implementations for now)
+	// In production, wire up real repositories, push senders, SMS, WebSocket
+	var sendNotifUC *application.SendNotificationUseCase // = application.NewSendNotificationUseCase(...)
+	var getNotifsUC *application.GetNotificationsUseCase // = application.NewGetNotificationsUseCase(...)
 
-    // Create HTTP server
-    mux := http.NewServeMux()
-    mux.HandleFunc("/health", healthHandler)
-    mux.HandleFunc("/ready", readyHandler)
+	// Setup HTTP router
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
+	r.Use(middleware.Logging)
+	r.Use(middleware.Recovery)
+	r.Use(middleware.CORS([]string{"*"}))
 
-    srv := &http.Server{
-        Addr:         fmt.Sprintf(":%d", cfg.HTTPPort),
-        Handler:      mux,
-        ReadTimeout:  10 * time.Second,
-        WriteTimeout: 30 * time.Second,
-        IdleTimeout:  120 * time.Second,
-    }
+	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{"status":"ok","service":"notification","version":"1.0.0"}`))
+	})
 
-    // Start server in goroutine
-    go func() {
-        slog.Info("HTTP server listening", "addr", srv.Addr)
-        if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-            slog.Error("server failed", "error", err)
-            os.Exit(1)
-        }
-    }()
+	// TODO: Add notification routes when repository is implemented
+	_ = sendNotifUC
+	_ = getNotifsUC
 
-    // Wait for interrupt signal
-    quit := make(chan os.Signal, 1)
-    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-    <-quit
-    slog.Info("shutting down notification service...")
+	srv := server.New(r, server.DefaultConfig(cfg.HTTPPort))
 
-    // Graceful shutdown
-    ctx, cancel := context.WithTimeout(context.Background(), cfg.ShutdownTimeout)
-    defer cancel()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-    if err := srv.Shutdown(ctx); err != nil {
-        slog.Error("server forced to shutdown", "error", err)
-        os.Exit(1)
-    }
+	go func() {
+		// TODO: Start Kafka consumers for order + payment events
+		slog.Info("kafka_consumers_starting")
+		_ = ctx // Will be used for graceful shutdown of consumers
+	}()
 
-    slog.Info("notification service stopped")
+	go func() {
+		if err := srv.Start(); err != nil {
+			slog.Error("server_failed", "error", err)
+			os.Exit(1)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	slog.Info("shutting_down_notification_service")
+
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer shutdownCancel()
+
+	if err := srv.Stop(shutdownCtx); err != nil {
+		slog.Error("server_forced_to_shutdown", "error", err)
+		os.Exit(1)
+	}
+
+	slog.Info("notification_service_stopped")
 }
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    _, _ = w.Write([]byte(`{"status":"ok","service":"notification","version":"1.0.0"}`))
+type Config struct {
+	HTTPPort     int
+	DatabaseURL  string
+	KafkaBrokers string
+	LogLevel     string
 }
 
-func readyHandler(w http.ResponseWriter, r *http.Request) {
-    // TODO: Check dependencies (DB, Redis, Kafka)
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusOK)
-    _, _ = w.Write([]byte(`{"status":"ready"}`))
-}
-
-func setupLogger(level string) {
-    var lvl slog.Level
-    switch level {
-    case "debug":
-        lvl = slog.LevelDebug
-    case "info":
-        lvl = slog.LevelInfo
-    case "warn":
-        lvl = slog.LevelWarn
-    case "error":
-        lvl = slog.LevelError
-    default:
-        lvl = slog.LevelInfo
-    }
-    handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: lvl})
-    slog.SetDefault(slog.New(handler))
-}
-
-func getEnvOrDefault(key, defaultVal string) string {
-    if val := os.Getenv(key); val != "" {
-        return val
-    }
-    return defaultVal
+func loadConfig() Config {
+	return Config{
+		HTTPPort:     config.GetEnvInt("HTTP_PORT", 8089),
+		DatabaseURL:  config.GetEnv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/notifications_db?sslmode=disable"),
+		KafkaBrokers: config.GetEnv("KAFKA_BROKERS", "localhost:9092"),
+		LogLevel:     config.GetEnv("LOG_LEVEL", "info"),
+	}
 }
