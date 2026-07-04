@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/food-platform/services/order/internal/domain"
+	"github.com/food-platform/order/internal/domain"
 	"github.com/google/uuid"
 )
 

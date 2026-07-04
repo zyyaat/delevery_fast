@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/food-platform/services/notification/internal/application"
+	"github.com/food-platform/notification/internal/application"
 	"github.com/food-platform/shared/config"
 	"github.com/food-platform/shared/logging"
 	"github.com/food-platform/shared/server"

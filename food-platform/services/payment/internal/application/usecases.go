@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/food-platform/services/payment/internal/domain"
+	"github.com/food-platform/payment/internal/domain"
 	"github.com/google/uuid"
 )
 

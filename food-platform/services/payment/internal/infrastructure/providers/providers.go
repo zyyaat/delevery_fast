@@ -8,7 +8,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/food-platform/services/payment/internal/domain"
+	"github.com/food-platform/payment/internal/domain"
 )
 
 // ============ Vodafone Cash Provider ============

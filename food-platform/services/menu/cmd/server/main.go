@@ -10,9 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/food-platform/services/menu/internal/application"
-	"github.com/food-platform/services/menu/internal/infrastructure/postgres"
-	httpinterfaces "github.com/food-platform/services/menu/internal/interfaces/http"
+	"github.com/food-platform/menu/internal/application"
+	"github.com/food-platform/menu/internal/infrastructure/postgres"
+	httpinterfaces "github.com/food-platform/menu/internal/interfaces/http"
 	"github.com/food-platform/shared/config"
 	"github.com/food-platform/shared/logging"
 	"github.com/food-platform/shared/server"

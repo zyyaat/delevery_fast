@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/food-platform/services/auth/internal/domain"
+	"github.com/food-platform/auth/internal/domain"
 	"github.com/google/uuid"
 )
 

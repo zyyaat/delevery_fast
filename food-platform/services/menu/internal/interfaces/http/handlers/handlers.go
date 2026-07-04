@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/food-platform/services/menu/internal/application"
+	"github.com/food-platform/menu/internal/application"
 	"github.com/food-platform/shared/errors"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"

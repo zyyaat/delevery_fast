@@ -3,8 +3,8 @@ package http
 import (
 	"net/http"
 
-	"github.com/food-platform/services/order/internal/application"
-	"github.com/food-platform/services/order/internal/interfaces/http/handlers"
+	"github.com/food-platform/order/internal/application"
+	"github.com/food-platform/order/internal/interfaces/http/handlers"
 	"github.com/food-platform/shared/middleware"
 	"github.com/go-chi/chi/v5"
 )

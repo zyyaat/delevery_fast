@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/food-platform/services/order/internal/application"
-	"github.com/food-platform/services/order/internal/domain"
+	"github.com/food-platform/order/internal/application"
+	"github.com/food-platform/order/internal/domain"
 	"github.com/food-platform/shared/errors"
 	"github.com/food-platform/shared/logging"
 	"github.com/go-chi/chi/v5"

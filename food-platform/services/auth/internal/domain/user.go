@@ -3,28 +3,28 @@
 package domain
 
 import (
-	"errors"
-	"regexp"
-	"time"
+        "errors"
+        "regexp"
+        "time"
 
-	"github.com/google/uuid"
+        "github.com/google/uuid"
 )
 
 // ============ Errors ============
 
 var (
-	ErrUserNotFound       = errors.New("user not found")
-	ErrUserExists         = errors.New("user already exists")
-	ErrUserInactive       = errors.New("user is inactive")
-	ErrInvalidPhone       = errors.New("invalid phone number")
-	ErrInvalidOTP         = errors.New("invalid or expired OTP")
-	ErrOTPExpired         = errors.New("OTP has expired")
-	ErrOTPAttemptsExceeded = errors.New("OTP attempts exceeded")
-	ErrSessionNotFound    = errors.New("session not found")
-	ErrSessionExpired     = errors.New("session has expired")
-	ErrRefreshTokenInvalid = errors.New("refresh token is invalid")
-	ErrRefreshTokenUsed   = errors.New("refresh token has already been used")
-	ErrInvalidTransition  = errors.New("invalid state transition")
+        ErrUserNotFound       = errors.New("user not found")
+        ErrUserExists         = errors.New("user already exists")
+        ErrUserInactive       = errors.New("user is inactive")
+        ErrInvalidPhone       = errors.New("invalid phone number")
+        ErrInvalidOTP         = errors.New("invalid or expired OTP")
+        ErrOTPExpired         = errors.New("OTP has expired")
+        ErrOTPAttemptsExceeded = errors.New("OTP attempts exceeded")
+        ErrSessionNotFound    = errors.New("session not found")
+        ErrSessionExpired     = errors.New("session has expired")
+        ErrRefreshTokenInvalid = errors.New("refresh token is invalid")
+        ErrRefreshTokenUsed   = errors.New("refresh token has already been used")
+        ErrInvalidTransition  = errors.New("invalid state transition")
 )
 
 // ============ Enums ============
@@ -33,36 +33,36 @@ var (
 type UserRole string
 
 const (
-	RoleCustomer         UserRole = "customer"
-	RoleDriver           UserRole = "driver"
-	RoleRestaurant       UserRole = "restaurant"
-	RoleSupportL1        UserRole = "support_l1"
-	RoleSupportL2        UserRole = "support_l2"
-	RoleOpsManager       UserRole = "ops_manager"
-	RoleFinance          UserRole = "finance"
-	RoleSuperAdmin       UserRole = "super_admin"
-	RoleFieldSupervisor  UserRole = "field_supervisor"
-	RoleHR               UserRole = "hr"
-	RoleReadOnlyAnalyst  UserRole = "read_only_analyst"
+        RoleCustomer         UserRole = "customer"
+        RoleDriver           UserRole = "driver"
+        RoleRestaurant       UserRole = "restaurant"
+        RoleSupportL1        UserRole = "support_l1"
+        RoleSupportL2        UserRole = "support_l2"
+        RoleOpsManager       UserRole = "ops_manager"
+        RoleFinance          UserRole = "finance"
+        RoleSuperAdmin       UserRole = "super_admin"
+        RoleFieldSupervisor  UserRole = "field_supervisor"
+        RoleHR               UserRole = "hr"
+        RoleReadOnlyAnalyst  UserRole = "read_only_analyst"
 )
 
 // UserStatus represents the account status of a user.
 type UserStatus string
 
 const (
-	UserStatusActive    UserStatus = "active"
-	UserStatusSuspended UserStatus = "suspended"
-	UserStatusDeleted   UserStatus = "deleted"
+        UserStatusActive    UserStatus = "active"
+        UserStatusSuspended UserStatus = "suspended"
+        UserStatusDeleted   UserStatus = "deleted"
 )
 
 // OTPStatus represents the state of an OTP code.
 type OTPStatus string
 
 const (
-	OTPStatusPending  OTPStatus = "pending"
-	OTPStatusVerified OTPStatus = "verified"
-	OTPStatusExpired  OTPStatus = "expired"
-	OTPStatusUsed     OTPStatus = "used"
+        OTPStatusPending  OTPStatus = "pending"
+        OTPStatusVerified OTPStatus = "verified"
+        OTPStatusExpired  OTPStatus = "expired"
+        OTPStatusUsed     OTPStatus = "used"
 )
 
 // ============ Validation ============
@@ -73,10 +73,10 @@ var egyptianPhoneRegex = regexp.MustCompile(`^01[0-2,5][0-9]{8}$`)
 
 // ValidatePhone validates an Egyptian phone number.
 func ValidatePhone(phone string) error {
-	if !egyptianPhoneRegex.MatchString(phone) {
-		return ErrInvalidPhone
-	}
-	return nil
+        if !egyptianPhoneRegex.MatchString(phone) {
+                return ErrInvalidPhone
+        }
+        return nil
 }
 
 // NormalizePhone removes the country code and returns the 11-digit number.
@@ -85,69 +85,71 @@ func ValidatePhone(phone string) error {
 //   "201012345678"  → "01012345678"
 //   "01012345678"   → "01012345678"
 func NormalizePhone(phone string) string {
-	// Remove all non-digits
-	digits := make([]byte, 0, len(phone))
-	for _, c := range phone {
-		if c >= '0' && c <= '9' {
-			digits = append(digits, byte(c))
-		}
-	}
+        // Remove all non-digits
+        digits := make([]byte, 0, len(phone))
+        for _, c := range phone {
+                if c >= '0' && c <= '9' {
+                        digits = append(digits, byte(c))
+                }
+        }
 
-	s := string(digits)
+        s := string(digits)
 
-	// Handle "+20" or "20" prefix
-	if len(s) == 13 && s[:3] == "201" {
-		return s[2:] // Remove "20", keep "1..."
-	}
-	if len(s) == 12 && s[:2] == "20" {
-		return s[2:] // Remove "20"
-	}
+        // Handle "+20" or "20" prefix
+        // "+201012345678" → digits "201012345678" (12) → "0" + "1012345678" = "01012345678"
+        if len(s) == 12 && s[:2] == "20" {
+                return "0" + s[2:]
+        }
+        // "+2010123456789" (extra digit) → 13 digits, also handle
+        if len(s) == 13 && s[:3] == "201" {
+                return "0" + s[3:]
+        }
 
-	return s
+        return s
 }
 
 // ============ Entities ============
 
 // User represents an authenticated user in the system.
 type User struct {
-	id          uuid.UUID
-	phone       string
-	email       string
-	name        string
-	role        UserRole
-	status      UserStatus
-	trustScore  int
-	createdAt   time.Time
-	updatedAt   time.Time
+        id          uuid.UUID
+        phone       string
+        email       string
+        name        string
+        role        UserRole
+        status      UserStatus
+        trustScore  int
+        createdAt   time.Time
+        updatedAt   time.Time
 }
 
 // NewUser creates a new User with the given parameters.
 // Validates the phone number and applies defaults.
 func NewUser(phone, name string, role UserRole) (*User, error) {
-	normalized := NormalizePhone(phone)
-	if err := ValidatePhone(normalized); err != nil {
-		return nil, err
-	}
+        normalized := NormalizePhone(phone)
+        if err := ValidatePhone(normalized); err != nil {
+                return nil, err
+        }
 
-	if name == "" {
-		return nil, errors.New("name is required")
-	}
+        if name == "" {
+                return nil, errors.New("name is required")
+        }
 
-	if role == "" {
-		return nil, errors.New("role is required")
-	}
+        if role == "" {
+                return nil, errors.New("role is required")
+        }
 
-	now := time.Now().UTC()
-	return &User{
-		id:         uuid.New(),
-		phone:      normalized,
-		name:       name,
-		role:       role,
-		status:     UserStatusActive,
-		trustScore: 50, // Default trust score for new users
-		createdAt:  now,
-		updatedAt:  now,
-	}, nil
+        now := time.Now().UTC()
+        return &User{
+                id:         uuid.New(),
+                phone:      normalized,
+                name:       name,
+                role:       role,
+                status:     UserStatusActive,
+                trustScore: 50, // Default trust score for new users
+                createdAt:  now,
+                updatedAt:  now,
+        }, nil
 }
 
 // ID returns the user's ID.
@@ -161,8 +163,8 @@ func (u *User) Email() string { return u.email }
 
 // SetEmail sets the user's email address.
 func (u *User) SetEmail(email string) {
-	u.email = email
-	u.updatedAt = time.Now().UTC()
+        u.email = email
+        u.updatedAt = time.Now().UTC()
 }
 
 // Name returns the user's name.
@@ -170,8 +172,8 @@ func (u *User) Name() string { return u.name }
 
 // SetName sets the user's name.
 func (u *User) SetName(name string) {
-	u.name = name
-	u.updatedAt = time.Now().UTC()
+        u.name = name
+        u.updatedAt = time.Now().UTC()
 }
 
 // Role returns the user's role.
@@ -179,8 +181,8 @@ func (u *User) Role() UserRole { return u.role }
 
 // SetRole sets the user's role.
 func (u *User) SetRole(role UserRole) {
-	u.role = role
-	u.updatedAt = time.Now().UTC()
+        u.role = role
+        u.updatedAt = time.Now().UTC()
 }
 
 // Status returns the user's account status.
@@ -191,32 +193,32 @@ func (u *User) IsActive() bool { return u.status == UserStatusActive }
 
 // Suspend sets the user's status to suspended.
 func (u *User) Suspend() error {
-	if u.status == UserStatusDeleted {
-		return ErrInvalidTransition
-	}
-	u.status = UserStatusSuspended
-	u.updatedAt = time.Now().UTC()
-	return nil
+        if u.status == UserStatusDeleted {
+                return ErrInvalidTransition
+        }
+        u.status = UserStatusSuspended
+        u.updatedAt = time.Now().UTC()
+        return nil
 }
 
 // Reactivate sets the user's status to active.
 func (u *User) Reactivate() error {
-	if u.status == UserStatusDeleted {
-		return ErrInvalidTransition
-	}
-	u.status = UserStatusActive
-	u.updatedAt = time.Now().UTC()
-	return nil
+        if u.status == UserStatusDeleted {
+                return ErrInvalidTransition
+        }
+        u.status = UserStatusActive
+        u.updatedAt = time.Now().UTC()
+        return nil
 }
 
 // Delete sets the user's status to deleted (soft delete).
 func (u *User) Delete() error {
-	if u.status == UserStatusDeleted {
-		return ErrInvalidTransition
-	}
-	u.status = UserStatusDeleted
-	u.updatedAt = time.Now().UTC()
-	return nil
+        if u.status == UserStatusDeleted {
+                return ErrInvalidTransition
+        }
+        u.status = UserStatusDeleted
+        u.updatedAt = time.Now().UTC()
+        return nil
 }
 
 // TrustScore returns the user's trust score (0-100).
@@ -224,13 +226,13 @@ func (u *User) TrustScore() int { return u.trustScore }
 
 // SetTrustScore sets the user's trust score (0-100).
 func (u *User) SetTrustScore(score int) {
-	if score < 0 {
-		score = 0
-	} else if score > 100 {
-		score = 100
-	}
-	u.trustScore = score
-	u.updatedAt = time.Now().UTC()
+        if score < 0 {
+                score = 0
+        } else if score > 100 {
+                score = 100
+        }
+        u.trustScore = score
+        u.updatedAt = time.Now().UTC()
 }
 
 // CreatedAt returns the user's creation timestamp.
@@ -243,30 +245,30 @@ func (u *User) UpdatedAt() time.Time { return u.updatedAt }
 
 // OTP represents a one-time password sent to a user's phone.
 type OTP struct {
-	id              uuid.UUID
-	phone           string
-	code            string
-	status          OTPStatus
-	attemptsUsed    int
-	maxAttempts     int
-	expiresAt       time.Time
-	createdAt       time.Time
+        id              uuid.UUID
+        phone           string
+        code            string
+        status          OTPStatus
+        attemptsUsed    int
+        maxAttempts     int
+        expiresAt       time.Time
+        createdAt       time.Time
 }
 
 // NewOTP creates a new OTP with the given phone number and code.
 // The OTP expires after 2 minutes and allows 3 attempts.
 func NewOTP(phone, code string) *OTP {
-	now := time.Now().UTC()
-	return &OTP{
-		id:          uuid.New(),
-		phone:       phone,
-		code:        code,
-		status:      OTPStatusPending,
-		attemptsUsed: 0,
-		maxAttempts: 3,
-		expiresAt:   now.Add(2 * time.Minute),
-		createdAt:   now,
-	}
+        now := time.Now().UTC()
+        return &OTP{
+                id:          uuid.New(),
+                phone:       phone,
+                code:        code,
+                status:      OTPStatusPending,
+                attemptsUsed: 0,
+                maxAttempts: 3,
+                expiresAt:   now.Add(2 * time.Minute),
+                createdAt:   now,
+        }
 }
 
 // ID returns the OTP's ID.
@@ -295,85 +297,85 @@ func (o *OTP) CreatedAt() time.Time { return o.createdAt }
 
 // IsExpired returns true if the OTP has expired.
 func (o *OTP) IsExpired() bool {
-	return time.Now().UTC().After(o.expiresAt)
+        return time.Now().UTC().After(o.expiresAt)
 }
 
 // CanVerify returns true if the OTP can still be verified (not expired, not used, attempts remaining).
 func (o *OTP) CanVerify() bool {
-	if o.status != OTPStatusPending {
-		return false
-	}
-	if o.IsExpired() {
-		o.status = OTPStatusExpired
-		return false
-	}
-	if o.attemptsUsed >= o.maxAttempts {
-		return false
-	}
-	return true
+        if o.status != OTPStatusPending {
+                return false
+        }
+        if o.IsExpired() {
+                o.status = OTPStatusExpired
+                return false
+        }
+        if o.attemptsUsed >= o.maxAttempts {
+                return false
+        }
+        return true
 }
 
 // Verify attempts to verify the OTP with the given code.
 // Returns nil on success, or an error if verification fails.
 func (o *OTP) Verify(code string) error {
-	if !o.CanVerify() {
-		if o.IsExpired() {
-			return ErrOTPExpired
-		}
-		if o.attemptsUsed >= o.maxAttempts {
-			return ErrOTPAttemptsExceeded
-		}
-		return ErrInvalidOTP
-	}
+        if !o.CanVerify() {
+                if o.IsExpired() {
+                        return ErrOTPExpired
+                }
+                if o.attemptsUsed >= o.maxAttempts {
+                        return ErrOTPAttemptsExceeded
+                }
+                return ErrInvalidOTP
+        }
 
-	o.attemptsUsed++
+        o.attemptsUsed++
 
-	if o.code != code {
-		if o.attemptsUsed >= o.maxAttempts {
-			o.status = OTPStatusExpired
-		}
-		return ErrInvalidOTP
-	}
+        if o.code != code {
+                if o.attemptsUsed >= o.maxAttempts {
+                        o.status = OTPStatusExpired
+                }
+                return ErrInvalidOTP
+        }
 
-	o.status = OTPStatusVerified
-	return nil
+        o.status = OTPStatusVerified
+        return nil
 }
 
 // ============ Session ============
 
 // Session represents an authenticated user session.
 type Session struct {
-	id           uuid.UUID
-	userID       uuid.UUID
-	refreshToken string
-	deviceFingerprint string
-	userAgent    string
-	ipAddress    string
-	expiresAt    time.Time
-	createdAt    time.Time
-	revokedAt    *time.Time
+        id           uuid.UUID
+        userID       uuid.UUID
+        refreshToken string
+        deviceFingerprint string
+        userAgent    string
+        ipAddress    string
+        expiresAt    time.Time
+        createdAt    time.Time
+        revokedAt    *time.Time
 }
 
 // NewSession creates a new Session for the given user.
 func NewSession(
-	userID uuid.UUID,
-	refreshToken string,
-	deviceFingerprint string,
-	userAgent string,
-	ipAddress string,
-	ttl time.Duration,
+        userID uuid.UUID,
+        refreshToken string,
+        deviceFingerprint string,
+        userAgent string,
+        ipAddress string,
+        ttl time.Duration,
 ) *Session {
-	now := time.Now().UTC()
-	return &Session{
-		id:           uuid.New(),
-		userID:       userID,
-		refreshToken: refreshToken,
-		deviceFingerprint: deviceFingerprint,
-		userAgent:    userAgent,
-		ipAddress:    ipAddress,
-		expiresAt:    now.Add(ttl),
-		createdAt:    now,
-	}
+        now := time.Now().UTC()
+        return &Session{
+                id:           uuid.New(),
+                userID:       userID,
+                refreshToken: refreshToken,
+                deviceFingerprint: deviceFingerprint,
+                userAgent:    userAgent,
+                ipAddress:    ipAddress,
+                expiresAt:    now.Add(ttl),
+                createdAt:    now,
+        }
 }
 
 // ID returns the session's ID.
@@ -405,49 +407,49 @@ func (s *Session) RevokedAt() *time.Time { return s.revokedAt }
 
 // IsExpired returns true if the session has expired.
 func (s *Session) IsExpired() bool {
-	return time.Now().UTC().After(s.expiresAt)
+        return time.Now().UTC().After(s.expiresAt)
 }
 
 // IsRevoked returns true if the session has been revoked.
 func (s *Session) IsRevoked() bool {
-	return s.revokedAt != nil
+        return s.revokedAt != nil
 }
 
 // IsActive returns true if the session is active (not expired, not revoked).
 func (s *Session) IsActive() bool {
-	return !s.IsExpired() && !s.IsRevoked()
+        return !s.IsExpired() && !s.IsRevoked()
 }
 
 // Revoke marks the session as revoked.
 func (s *Session) Revoke() {
-	now := time.Now().UTC()
-	s.revokedAt = &now
+        now := time.Now().UTC()
+        s.revokedAt = &now
 }
 
 // ============ Refresh Token ============
 
 // RefreshToken represents a refresh token used to obtain new access tokens.
 type RefreshToken struct {
-	id           uuid.UUID
-	userID       uuid.UUID
-	sessionID    uuid.UUID
-	token        string
-	expiresAt    time.Time
-	createdAt    time.Time
-	usedAt       *time.Time
+        id           uuid.UUID
+        userID       uuid.UUID
+        sessionID    uuid.UUID
+        token        string
+        expiresAt    time.Time
+        createdAt    time.Time
+        usedAt       *time.Time
 }
 
 // NewRefreshToken creates a new RefreshToken for the given user and session.
 func NewRefreshToken(userID, sessionID uuid.UUID, token string, ttl time.Duration) *RefreshToken {
-	now := time.Now().UTC()
-	return &RefreshToken{
-		id:        uuid.New(),
-		userID:    userID,
-		sessionID: sessionID,
-		token:     token,
-		expiresAt: now.Add(ttl),
-		createdAt: now,
-	}
+        now := time.Now().UTC()
+        return &RefreshToken{
+                id:        uuid.New(),
+                userID:    userID,
+                sessionID: sessionID,
+                token:     token,
+                expiresAt: now.Add(ttl),
+                createdAt: now,
+        }
 }
 
 // ID returns the refresh token's ID.
@@ -473,47 +475,47 @@ func (rt *RefreshToken) UsedAt() *time.Time { return rt.usedAt }
 
 // IsExpired returns true if the refresh token has expired.
 func (rt *RefreshToken) IsExpired() bool {
-	return time.Now().UTC().After(rt.expiresAt)
+        return time.Now().UTC().After(rt.expiresAt)
 }
 
 // IsUsed returns true if the refresh token has been used.
 func (rt *RefreshToken) IsUsed() bool {
-	return rt.usedAt != nil
+        return rt.usedAt != nil
 }
 
 // IsValid returns true if the refresh token is valid (not expired, not used).
 func (rt *RefreshToken) IsValid() bool {
-	return !rt.IsExpired() && !rt.IsUsed()
+        return !rt.IsExpired() && !rt.IsUsed()
 }
 
 // Use marks the refresh token as used.
 // Returns an error if the token has already been used or is expired.
 func (rt *RefreshToken) Use() error {
-	if rt.IsUsed() {
-		return ErrRefreshTokenUsed
-	}
-	if rt.IsExpired() {
-		return ErrSessionExpired
-	}
-	now := time.Now().UTC()
-	rt.usedAt = &now
-	return nil
+        if rt.IsUsed() {
+                return ErrRefreshTokenUsed
+        }
+        if rt.IsExpired() {
+                return ErrSessionExpired
+        }
+        now := time.Now().UTC()
+        rt.usedAt = &now
+        return nil
 }
 
 // ============ Access Token ============
 
 // AccessToken represents a JWT access token.
 type AccessToken struct {
-	token     string
-	expiresIn int // seconds
+        token     string
+        expiresIn int // seconds
 }
 
 // NewAccessToken creates a new AccessToken.
 func NewAccessToken(token string, expiresIn int) *AccessToken {
-	return &AccessToken{
-		token:     token,
-		expiresIn: expiresIn,
-	}
+        return &AccessToken{
+                token:     token,
+                expiresIn: expiresIn,
+        }
 }
 
 // Token returns the access token string.
@@ -526,18 +528,18 @@ func (at *AccessToken) ExpiresIn() int { return at.expiresIn }
 
 // AuthResult represents the result of a successful authentication.
 type AuthResult struct {
-	accessToken  *AccessToken
-	refreshToken string
-	user         *User
+        accessToken  *AccessToken
+        refreshToken string
+        user         *User
 }
 
 // NewAuthResult creates a new AuthResult.
 func NewAuthResult(accessToken *AccessToken, refreshToken string, user *User) *AuthResult {
-	return &AuthResult{
-		accessToken:  accessToken,
-		refreshToken: refreshToken,
-		user:         user,
-	}
+        return &AuthResult{
+                accessToken:  accessToken,
+                refreshToken: refreshToken,
+                user:         user,
+        }
 }
 
 // AccessToken returns the access token.
@@ -548,3 +550,85 @@ func (a *AuthResult) RefreshToken() string { return a.refreshToken }
 
 // User returns the authenticated user.
 func (a *AuthResult) User() *User { return a.user }
+
+// ============ Reconstructors (for DB hydration) ============
+
+// ReconstructOTP creates an OTP from persisted data (bypasses validation).
+func ReconstructOTP(
+        id uuid.UUID,
+        phone, code string,
+        status OTPStatus,
+        attemptsUsed, maxAttempts int,
+        expiresAt, createdAt time.Time,
+) *OTP {
+        return &OTP{
+                id:           id,
+                phone:        phone,
+                code:         code,
+                status:       status,
+                attemptsUsed: attemptsUsed,
+                maxAttempts:  maxAttempts,
+                expiresAt:    expiresAt,
+                createdAt:    createdAt,
+        }
+}
+
+// ReconstructSession creates a Session from persisted data.
+func ReconstructSession(
+        id, userID uuid.UUID,
+        refreshToken, deviceFingerprint, userAgent, ipAddress string,
+        expiresAt, createdAt time.Time,
+        revokedAt *time.Time,
+) *Session {
+        return &Session{
+                id:                id,
+                userID:            userID,
+                refreshToken:      refreshToken,
+                deviceFingerprint: deviceFingerprint,
+                userAgent:         userAgent,
+                ipAddress:         ipAddress,
+                expiresAt:         expiresAt,
+                createdAt:         createdAt,
+                revokedAt:         revokedAt,
+        }
+}
+
+// ReconstructRefreshToken creates a RefreshToken from persisted data.
+func ReconstructRefreshToken(
+        id, userID, sessionID uuid.UUID,
+        token string,
+        expiresAt, createdAt time.Time,
+        usedAt *time.Time,
+) *RefreshToken {
+        return &RefreshToken{
+                id:        id,
+                userID:    userID,
+                sessionID: sessionID,
+                token:     token,
+                expiresAt: expiresAt,
+                createdAt: createdAt,
+                usedAt:    usedAt,
+        }
+}
+
+// ReconstructUser creates a User from persisted data (bypasses validation).
+func ReconstructUser(
+        id uuid.UUID,
+        phone, email, name string,
+        role UserRole,
+        status UserStatus,
+        trustScore int,
+        createdAt, updatedAt time.Time,
+) *User {
+        return &User{
+                id:         id,
+                phone:      phone,
+                email:      email,
+                name:       name,
+                role:       role,
+                status:     status,
+                trustScore: trustScore,
+                createdAt:  createdAt,
+                updatedAt:  updatedAt,
+        }
+}

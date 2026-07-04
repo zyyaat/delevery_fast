@@ -7,8 +7,8 @@ import (
         "fmt"
         "log/slog"
 
-        "github.com/food-platform/services/notification/internal/application"
-        "github.com/food-platform/services/notification/internal/domain"
+        "github.com/food-platform/notification/internal/application"
+        "github.com/food-platform/notification/internal/domain"
         "github.com/google/uuid"
 )
 

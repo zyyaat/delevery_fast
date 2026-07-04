@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/food-platform/services/payment/internal/application"
-	"github.com/food-platform/services/payment/internal/domain"
+	"github.com/food-platform/payment/internal/application"
+	"github.com/food-platform/payment/internal/domain"
 	"github.com/food-platform/shared/errors"
 	"github.com/food-platform/shared/logging"
 	"github.com/go-chi/chi/v5"

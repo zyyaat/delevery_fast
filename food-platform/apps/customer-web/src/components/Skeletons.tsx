@@ -5,7 +5,7 @@ import { Skeleton } from '@food-platform/ui'
 export function RestaurantCardSkeleton() {
   return (
     <div className="w-72 flex-shrink-0 bg-surface rounded-lg border border-border overflow-hidden">
-      <Skeleton width="100%" height={144} rounded="none" />
+      <Skeleton width="100%" height={144} rounded="md" />
       <div className="p-3 space-y-2">
         <Skeleton width="60%" height={16} />
         <Skeleton width="40%" height={12} />

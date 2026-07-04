@@ -223,7 +223,7 @@ interface MenuItemCardProps {
     id: string
     name: string
     description?: string
-    price: number
+    price: string | number
     image_url?: string
     is_available: boolean
     prep_time_minutes: number
@@ -318,7 +318,7 @@ function MenuItemCard({ item, onClick }: MenuItemCardProps) {
 function RestaurantDetailSkeleton() {
   return (
     <div className="min-h-screen pb-24">
-      <Skeleton width="100%" height={200} rounded="none" />
+      <Skeleton width="100%" height={200} rounded="md" />
       <div className="max-w-4xl mx-auto px-4 -mt-8 relative">
         <div className="bg-surface rounded-xl shadow-lg p-5">
           <Skeleton width="60%" height={28} />

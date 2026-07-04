@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/food-platform/services/menu/internal/domain"
+	"github.com/food-platform/menu/internal/domain"
 	"github.com/google/uuid"
 )
 

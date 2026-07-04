@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getApiClient } from '@food-platform/api-client'
-import type { Order, CreateOrderRequest, CreateOrderResponse, CancelOrderRequest } from '@food-platform/types'
+import type { Order, CreateOrderRequest, CreateOrderResponse } from '@food-platform/types'
 
 const QUERY_KEYS = {
   order: (id: string) => ['order', id] as const,
@@ -49,9 +49,9 @@ export function useCreateOrder() {
 export function useCancelOrder() {
   const queryClient = useQueryClient()
 
-  return useMutation<void, Error, { orderId: string; reason: string }>({
+  return useMutation<unknown, Error, { orderId: string; reason: string }>({
     mutationFn: ({ orderId, reason }) =>
-      getApiClient().post<CancelOrderRequest>(`/orders/${orderId}/cancel`, { reason }),
+      getApiClient().post(`/orders/${orderId}/cancel`, { reason }),
     onSuccess: (_, { orderId }) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.order(orderId) })
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.activeOrders })

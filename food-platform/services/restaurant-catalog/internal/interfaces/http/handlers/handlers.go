@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/food-platform/services/restaurant-catalog/internal/application"
-	"github.com/food-platform/services/restaurant-catalog/internal/domain"
+	"github.com/food-platform/restaurant-catalog/internal/application"
+	"github.com/food-platform/restaurant-catalog/internal/domain"
 	"github.com/food-platform/shared/errors"
 	"github.com/food-platform/shared/logging"
 	"github.com/go-chi/chi/v5"

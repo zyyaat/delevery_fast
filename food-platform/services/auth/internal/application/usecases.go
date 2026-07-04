@@ -5,13 +5,14 @@ package application
 import (
         "context"
         "crypto/rand"
+        "errors"
         "fmt"
         "math/big"
         "time"
 
-        "github.com/food-platform/shared/errors"
+        stderrors "github.com/food-platform/shared/errors"
         "github.com/food-platform/shared/logging"
-        "github.com/food-platform/services/auth/internal/domain"
+        "github.com/food-platform/auth/internal/domain"
         "github.com/google/uuid"
 )
 
@@ -127,7 +128,7 @@ func (uc *SendOTPUseCase) Execute(ctx context.Context, cmd SendOTPCommand) (*Sen
         // Normalize and validate phone
         phone := domain.NormalizePhone(cmd.Phone)
         if err := domain.ValidatePhone(phone); err != nil {
-                return nil, errors.ErrInvalidPhone.WithDetails(map[string]interface{}{
+                return nil, stderrors.ErrInvalidPhone.WithDetails(map[string]interface{}{
                         "phone": cmd.Phone,
                 })
         }
@@ -144,10 +145,10 @@ func (uc *SendOTPUseCase) Execute(ctx context.Context, cmd SendOTPCommand) (*Sen
                                 }
                                 user, err = domain.NewUser(phone, name, cmd.Role)
                                 if err != nil {
-                                        return nil, errors.Wrap(err, "USER_CREATE_FAILED", "Failed to create user", 500)
+                                        return nil, stderrors.Wrap(err, "USER_CREATE_FAILED", "Failed to create user", 500)
                                 }
                                 if err := uc.userRepo.Create(ctx, user); err != nil {
-                                        return nil, errors.Wrap(err, "USER_CREATE_FAILED", "Failed to create user", 500)
+                                        return nil, stderrors.Wrap(err, "USER_CREATE_FAILED", "Failed to create user", 500)
                                 }
                                 logging.FromContext(ctx).Info("user_created",
                                         "user_id", user.ID(),
@@ -156,32 +157,32 @@ func (uc *SendOTPUseCase) Execute(ctx context.Context, cmd SendOTPCommand) (*Sen
                                 )
                         } else {
                                 // For employee roles, user must be pre-created by HR
-                                return nil, errors.ErrUserNotFound.WithDetails(map[string]interface{}{
+                                return nil, stderrors.ErrUserNotFound.WithDetails(map[string]interface{}{
                                         "phone": phone,
                                         "role":  cmd.Role,
                                         "hint":  "Employee accounts must be created by HR first",
                                 })
                         }
                 } else {
-                        return nil, errors.Wrap(err, "DATABASE_ERROR", "Failed to find user", 500)
+                        return nil, stderrors.Wrap(err, "DATABASE_ERROR", "Failed to find user", 500)
                 }
         }
 
         // Check if user is active
         if !user.IsActive() {
-                return nil, errors.New("USER_INACTIVE", "User account is not active", 403)
+                return nil, stderrors.New("USER_INACTIVE", "User account is not active", 403)
         }
 
         // Generate OTP code
         code, err := generateOTPCode()
         if err != nil {
-                return nil, errors.Wrap(err, "INTERNAL_ERROR", "Failed to generate OTP", 500)
+                return nil, stderrors.Wrap(err, "INTERNAL_ERROR", "Failed to generate OTP", 500)
         }
 
         // Create OTP entity
         otp := domain.NewOTP(phone, code)
         if err := uc.otpRepo.Save(ctx, otp); err != nil {
-                return nil, errors.Wrap(err, "DATABASE_ERROR", "Failed to save OTP", 500)
+                return nil, stderrors.Wrap(err, "DATABASE_ERROR", "Failed to save OTP", 500)
         }
 
         // Send OTP via SMS
@@ -237,13 +238,13 @@ func (uc *VerifyOTPUseCase) Execute(ctx context.Context, cmd VerifyOTPCommand) (
         // Parse request ID
         requestID, err := uuid.Parse(cmd.RequestID)
         if err != nil {
-                return nil, errors.New("INVALID_REQUEST", "Invalid request ID", 400)
+                return nil, stderrors.New("INVALID_REQUEST", "Invalid request ID", 400)
         }
 
         // Find OTP
         otp, err := uc.otpRepo.FindByID(ctx, requestID)
         if err != nil {
-                return nil, errors.ErrInvalidOTP.WithDetails(map[string]interface{}{
+                return nil, stderrors.ErrInvalidOTP.WithDetails(map[string]interface{}{
                         "request_id": cmd.RequestID,
                 })
         }
@@ -251,37 +252,36 @@ func (uc *VerifyOTPUseCase) Execute(ctx context.Context, cmd VerifyOTPCommand) (
         // Verify OTP code
         if err := otp.Verify(cmd.Code); err != nil {
                 if errors.Is(err, domain.ErrOTPExpired) || errors.Is(err, domain.ErrOTPAttemptsExceeded) {
-                        return nil, errors.ErrInvalidOTP.WithDetails(map[string]interface{}{
+                        return nil, stderrors.ErrInvalidOTP.WithDetails(map[string]interface{}{
                                 "reason":         err.Error(),
                                 "attempts_used":  otp.AttemptsUsed(),
                                 "max_attempts":   otp.MaxAttempts(),
                         })
                 }
-                return nil, errors.ErrInvalidOTP
+                return nil, stderrors.ErrInvalidOTP
         }
 
         // Find user by phone
         user, err := uc.userRepo.FindByPhone(ctx, otp.Phone())
         if err != nil {
-                return nil, errors.ErrUserNotFound
+                return nil, stderrors.ErrUserNotFound
         }
 
         // Check if user is active
         if !user.IsActive() {
-                return nil, errors.New("USER_INACTIVE", "User account is not active", 403)
+                return nil, stderrors.New("USER_INACTIVE", "User account is not active", 403)
         }
 
         // Generate access token (JWT)
-        accessTTL := 15 * time.Minute // 15 minutes
         accessToken, expiresIn, err := uc.jwtGenerator.Generate(ctx, user.ID(), user.Role(), uuid.New())
         if err != nil {
-                return nil, errors.Wrap(err, "INTERNAL_ERROR", "Failed to generate access token", 500)
+                return nil, stderrors.Wrap(err, "INTERNAL_ERROR", "Failed to generate access token", 500)
         }
 
         // Generate refresh token (random string)
         refreshTokenStr, err := generateRefreshToken()
         if err != nil {
-                return nil, errors.Wrap(err, "INTERNAL_ERROR", "Failed to generate refresh token", 500)
+                return nil, stderrors.Wrap(err, "INTERNAL_ERROR", "Failed to generate refresh token", 500)
         }
 
         // Create session
@@ -296,13 +296,13 @@ func (uc *VerifyOTPUseCase) Execute(ctx context.Context, cmd VerifyOTPCommand) (
 
         // Save session
         if err := uc.sessionRepo.Save(ctx, session); err != nil {
-                return nil, errors.Wrap(err, "DATABASE_ERROR", "Failed to save session", 500)
+                return nil, stderrors.Wrap(err, "DATABASE_ERROR", "Failed to save session", 500)
         }
 
         // Save refresh token
         refreshToken := domain.NewRefreshToken(user.ID(), session.ID(), refreshTokenStr, 30*24*time.Hour)
         if err := uc.refreshRepo.Save(ctx, refreshToken); err != nil {
-                return nil, errors.Wrap(err, "DATABASE_ERROR", "Failed to save refresh token", 500)
+                return nil, stderrors.Wrap(err, "DATABASE_ERROR", "Failed to save refresh token", 500)
         }
 
         logging.FromContext(ctx).Info("user_authenticated",
@@ -348,12 +348,12 @@ func (uc *RefreshTokenUseCase) Execute(ctx context.Context, cmd RefreshTokenComm
         // Find refresh token
         rt, err := uc.refreshRepo.FindByToken(ctx, cmd.RefreshToken)
         if err != nil {
-                return nil, errors.ErrRefreshTokenInvalid
+                return nil, stderrors.ErrRefreshTokenInvalid
         }
 
         // Validate refresh token
         if !rt.IsValid() {
-                return nil, errors.ErrRefreshTokenInvalid.WithDetails(map[string]interface{}{
+                return nil, stderrors.ErrRefreshTokenInvalid.WithDetails(map[string]interface{}{
                         "reason": "token expired or already used",
                 })
         }
@@ -361,46 +361,46 @@ func (uc *RefreshTokenUseCase) Execute(ctx context.Context, cmd RefreshTokenComm
         // Find session
         session, err := uc.sessionRepo.FindByID(ctx, rt.SessionID())
         if err != nil {
-                return nil, errors.ErrSessionNotFound
+                return nil, stderrors.ErrSessionNotFound
         }
 
         // Check session is active
         if !session.IsActive() {
-                return nil, errors.ErrSessionExpired
+                return nil, stderrors.ErrSessionExpired
         }
 
         // Find user
         user, err := uc.userRepo.FindByID(ctx, rt.UserID())
         if err != nil {
-                return nil, errors.ErrUserNotFound
+                return nil, stderrors.ErrUserNotFound
         }
 
         // Check user is active
         if !user.IsActive() {
-                return nil, errors.New("USER_INACTIVE", "User account is not active", 403)
+                return nil, stderrors.New("USER_INACTIVE", "User account is not active", 403)
         }
 
         // Mark old refresh token as used (rotation)
         if err := uc.refreshRepo.MarkUsed(ctx, rt.ID()); err != nil {
-                return nil, errors.Wrap(err, "DATABASE_ERROR", "Failed to mark refresh token as used", 500)
+                return nil, stderrors.Wrap(err, "DATABASE_ERROR", "Failed to mark refresh token as used", 500)
         }
 
         // Generate new access token
         accessToken, expiresIn, err := uc.jwtGenerator.Generate(ctx, user.ID(), user.Role(), session.ID())
         if err != nil {
-                return nil, errors.Wrap(err, "INTERNAL_ERROR", "Failed to generate access token", 500)
+                return nil, stderrors.Wrap(err, "INTERNAL_ERROR", "Failed to generate access token", 500)
         }
 
         // Generate new refresh token
         newRefreshTokenStr, err := generateRefreshToken()
         if err != nil {
-                return nil, errors.Wrap(err, "INTERNAL_ERROR", "Failed to generate refresh token", 500)
+                return nil, stderrors.Wrap(err, "INTERNAL_ERROR", "Failed to generate refresh token", 500)
         }
 
         // Save new refresh token
         newRT := domain.NewRefreshToken(user.ID(), session.ID(), newRefreshTokenStr, 30*24*time.Hour)
         if err := uc.refreshRepo.Save(ctx, newRT); err != nil {
-                return nil, errors.Wrap(err, "DATABASE_ERROR", "Failed to save refresh token", 500)
+                return nil, stderrors.Wrap(err, "DATABASE_ERROR", "Failed to save refresh token", 500)
         }
 
         logging.FromContext(ctx).Info("token_refreshed",
@@ -438,12 +438,12 @@ func (uc *LogoutUseCase) Execute(ctx context.Context, cmd LogoutCommand) error {
         if cmd.SessionID != nil {
                 // Revoke specific session
                 if err := uc.sessionRepo.Revoke(ctx, *cmd.SessionID); err != nil {
-                        return errors.Wrap(err, "DATABASE_ERROR", "Failed to revoke session", 500)
+                        return stderrors.Wrap(err, "DATABASE_ERROR", "Failed to revoke session", 500)
                 }
         } else {
                 // Revoke all sessions for the user
                 if err := uc.sessionRepo.RevokeAllForUser(ctx, cmd.UserID); err != nil {
-                        return errors.Wrap(err, "DATABASE_ERROR", "Failed to revoke sessions", 500)
+                        return stderrors.Wrap(err, "DATABASE_ERROR", "Failed to revoke sessions", 500)
                 }
         }
 

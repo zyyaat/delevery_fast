@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/food-platform/services/restaurant-catalog/internal/domain"
+	"github.com/food-platform/restaurant-catalog/internal/domain"
 	"github.com/google/uuid"
 )
 

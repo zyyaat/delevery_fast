@@ -16,8 +16,9 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@food-platform/types": "workspace:*",
     "@food-platform/api-client": "workspace:*",
+    "@food-platform/auth": "workspace:*",
+    "@food-platform/types": "workspace:*",
     "@tanstack/react-query": "^5.51.0"
   },
   "peerDependencies": {

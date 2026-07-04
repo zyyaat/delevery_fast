@@ -8,8 +8,8 @@ import (
 
 	"github.com/food-platform/shared/errors"
 	"github.com/food-platform/shared/logging"
-	"github.com/food-platform/services/auth/internal/application"
-	"github.com/food-platform/services/auth/internal/domain"
+	"github.com/food-platform/auth/internal/application"
+	"github.com/food-platform/auth/internal/domain"
 	"github.com/google/uuid"
 )
 

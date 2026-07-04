@@ -17,11 +17,11 @@ export function ItemDetailModal({ item, onClose, onAddToCart }: ItemDetailModalP
   const [selectedModifiers, setSelectedModifiers] = useState<Record<string, string[]>>({})
 
   // Calculate total price
-  const basePrice = item.price * quantity
+  const basePrice = parseFloat(item.price) * quantity
   const modifiersTotal = calculateModifiersTotal(item, selectedModifiers) * quantity
   const total = basePrice + modifiersTotal
 
-  const handleModifierToggle = (modifierId: string, optionId: string, required: boolean, multipleChoice: boolean) => {
+  const handleModifierToggle = (modifierId: string, optionId: string, _required: boolean, multipleChoice: boolean) => {
     setSelectedModifiers((prev) => {
       const current = prev[modifierId] ?? []
 

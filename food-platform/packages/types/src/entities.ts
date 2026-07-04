@@ -58,6 +58,7 @@ export interface Restaurant {
   price_range: 1 | 2 | 3 | 4
   commission_rate: number
   promo?: RestaurantPromo
+  distance_km?: number
 }
 
 export interface RestaurantPromo {
