@@ -214,3 +214,20 @@ type ProviderResult struct {
         Status        PaymentStatus
         ErrorMessage  string
 }
+
+// ReconstructPayment creates a Payment from persisted data.
+func ReconstructPayment(
+	id, orderID, customerID uuid.UUID, method PaymentMethod,
+	amount, refundedAmount float64, status PaymentStatus,
+	providerTxnID, providerName, idempotencyKey, redirectURL, failureReason, refundReason string,
+	createdAt, updatedAt time.Time, refundedAt *time.Time,
+) *Payment {
+	return &Payment{
+		id: id, orderID: orderID, customerID: customerID, method: method,
+		amount: amount, refundedAmount: refundedAmount, status: status,
+		providerTxnID: providerTxnID, providerName: providerName,
+		idempotencyKey: idempotencyKey, redirectURL: redirectURL,
+		failureReason: failureReason, refundReason: refundReason,
+		createdAt: createdAt, updatedAt: updatedAt, refundedAt: refundedAt,
+	}
+}

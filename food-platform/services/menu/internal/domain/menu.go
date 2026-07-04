@@ -226,3 +226,37 @@ func (m *MenuItem) CalculatePrice(quantity int, selectedOptions [][]uuid.UUID) f
 
 	return total
 }
+
+// Getters for Modifier (needed by application layer)
+func (m Modifier) GetID() uuid.UUID { return m.id }
+func (m Modifier) GetName() string { return m.name }
+func (m Modifier) GetRequired() bool { return m.required }
+func (m Modifier) GetMultipleChoice() bool { return m.multipleChoice }
+func (m Modifier) GetOptions() []ModifierOption { return m.options }
+
+// Getters for ModifierOption
+func (o ModifierOption) GetID() uuid.UUID { return o.id }
+func (o ModifierOption) GetName() string { return o.name }
+func (o ModifierOption) GetPriceDelta() float64 { return o.priceDelta }
+
+// ReconstructMenuItem creates a MenuItem from persisted data.
+func ReconstructMenuItem(
+	id, restaurantID, categoryID uuid.UUID, name, description string,
+	price float64, imageURL string, isAvailable bool, prepTimeMin int,
+	rating float64, ratingCount int, isMostOrdered bool, displayOrder int,
+	modifiers []Modifier, createdAt, updatedAt time.Time,
+) *MenuItem {
+	return &MenuItem{
+		id: id, restaurantID: restaurantID, categoryID: categoryID,
+		name: name, description: description, price: price,
+		imageURL: imageURL, isAvailable: isAvailable, prepTimeMin: prepTimeMin,
+		rating: rating, ratingCount: ratingCount, isMostOrdered: isMostOrdered,
+		displayOrder: displayOrder, modifiers: modifiers,
+		createdAt: createdAt, updatedAt: updatedAt,
+	}
+}
+
+// ReconstructCategory creates a Category from persisted data.
+func ReconstructCategory(id, restaurantID uuid.UUID, name string, displayOrder int) *Category {
+	return &Category{id: id, restaurantID: restaurantID, name: name, displayOrder: displayOrder}
+}

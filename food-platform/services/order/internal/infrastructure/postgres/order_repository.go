@@ -286,34 +286,16 @@ func scanOrder(s scanner) (*domain.Order, error) {
 		return nil, fmt.Errorf("scanOrder: %w", err)
 	}
 
-	return &domain.Order{
-		id:              id,
-		orderNumber:     orderNumber,
-		customerID:      customerID,
-		restaurantID:    restaurantID,
-		driverID:        driverID,
-		status:          domain.OrderStatus(status),
-		subtotal:        subtotal,
-		deliveryFee:     deliveryFee,
-		serviceFee:      serviceFee,
-		vat:             vat,
-		discount:        discount,
-		total:           total,
-		paymentMethod:   domain.PaymentMethod(paymentMethod),
-		paymentStatus:   domain.PaymentStatus(paymentStatus),
-		deliveryAddress: deliveryAddress,
-		latitude:        latitude,
-		longitude:       longitude,
-		etaMinutes:      etaMinutes,
-		prepStartedAt:   prepStartedAt,
-		pickedUpAt:      pickedUpAt,
-		deliveredAt:     deliveredAt,
-		cancelReason:    cancelReason,
-		notes:           notes,
-		cashbackEarned:  cashbackEarned,
-		createdAt:       createdAt,
-		updatedAt:       updatedAt,
-	}, nil
+	return domain.ReconstructOrder(
+		id, orderNumber, customerID, restaurantID, driverID,
+		domain.OrderStatus(status),
+		subtotal, deliveryFee, serviceFee, vat, discount, total,
+		domain.PaymentMethod(paymentMethod), domain.PaymentStatus(paymentStatus),
+		deliveryAddress, latitude, longitude, etaMinutes,
+		prepStartedAt, pickedUpAt, deliveredAt,
+		cancelReason, notes, cashbackEarned,
+		createdAt, updatedAt,
+	), nil
 }
 
 func scanOrders(rows *sql.Rows) ([]*domain.Order, error) {

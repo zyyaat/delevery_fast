@@ -437,3 +437,39 @@ func generateOrderNumber() string {
 	}
 	return string(b)
 }
+
+// ReconstructOrder creates an Order from persisted data.
+func ReconstructOrder(
+	id uuid.UUID, orderNumber string, customerID, restaurantID uuid.UUID, driverID *uuid.UUID,
+	status OrderStatus, subtotal, deliveryFee, serviceFee, vat, discount, total float64,
+	paymentMethod PaymentMethod, paymentStatus PaymentStatus,
+	deliveryAddress string, lat, lng float64, etaMinutes int,
+	prepStartedAt, pickedUpAt, deliveredAt *time.Time,
+	cancelReason, notes string, cashbackEarned float64,
+	createdAt, updatedAt time.Time,
+) *Order {
+	return &Order{
+		id: id, orderNumber: orderNumber, customerID: customerID, restaurantID: restaurantID,
+		driverID: driverID, status: status,
+		subtotal: subtotal, deliveryFee: deliveryFee, serviceFee: serviceFee,
+		vat: vat, discount: discount, total: total,
+		paymentMethod: paymentMethod, paymentStatus: paymentStatus,
+		deliveryAddress: deliveryAddress, latitude: lat, longitude: lng,
+		etaMinutes: etaMinutes, prepStartedAt: prepStartedAt,
+		pickedUpAt: pickedUpAt, deliveredAt: deliveredAt,
+		cancelReason: cancelReason, notes: notes, cashbackEarned: cashbackEarned,
+		createdAt: createdAt, updatedAt: updatedAt,
+	}
+}
+
+// ReconstructOrderItem creates an OrderItem from persisted data.
+func ReconstructOrderItem(
+	id, orderID, menuItemID uuid.UUID, name string, quantity int,
+	unitPrice float64, modifiers string, notes string, lineTotal float64,
+) *OrderItem {
+	return &OrderItem{
+		id: id, orderID: orderID, menuItemID: menuItemID,
+		name: name, quantity: quantity, unitPrice: unitPrice,
+		modifiers: modifiers, notes: notes, lineTotal: lineTotal,
+	}
+}

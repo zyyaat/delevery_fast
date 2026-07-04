@@ -322,3 +322,23 @@ func generateSlug(name string) string {
 
 	return string(result)
 }
+
+// ReconstructRestaurant creates a Restaurant from persisted data.
+func ReconstructRestaurant(
+	id uuid.UUID, name, slug string, cuisineTypes []CuisineType,
+	rating float64, ratingCount int, logoURL, coverURL string,
+	lat, lng float64, address, city string, isOpen bool, status RestaurantStatus,
+	etaMin, etaMax int, deliveryFee float64, priceRange int, commissionRate float64,
+	opensAt, closesAt string, createdAt, updatedAt time.Time,
+) *Restaurant {
+	return &Restaurant{
+		id: id, name: name, slug: slug, cuisineTypes: cuisineTypes,
+		rating: rating, ratingCount: ratingCount, logoURL: logoURL, coverURL: coverURL,
+		latitude: lat, longitude: lng, address: address, city: city,
+		isOpen: isOpen, status: status,
+		etaMinMinutes: etaMin, etaMaxMinutes: etaMax,
+		deliveryFee: deliveryFee, priceRange: priceRange, commissionRate: commissionRate,
+		opensAt: opensAt, closesAt: closesAt,
+		createdAt: createdAt, updatedAt: updatedAt,
+	}
+}

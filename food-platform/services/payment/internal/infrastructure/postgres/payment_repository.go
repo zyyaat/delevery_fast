@@ -142,22 +142,11 @@ func scanPayment(s scanner) (*domain.Payment, error) {
 		return nil, fmt.Errorf("scanPayment: %w", err)
 	}
 
-	return &domain.Payment{
-		id:             id,
-		orderID:        orderID,
-		customerID:     customerID,
-		method:         domain.PaymentMethod(method),
-		amount:         amount,
-		refundedAmount: refundedAmount,
-		status:         domain.PaymentStatus(status),
-		providerTxnID:  providerTxnID,
-		providerName:   providerName,
-		idempotencyKey: idempotencyKey,
-		redirectURL:    redirectURL,
-		failureReason:  failureReason,
-		refundReason:   refundReason,
-		createdAt:      createdAt,
-		updatedAt:      updatedAt,
-		refundedAt:     refundedAt,
-	}, nil
+	return domain.ReconstructPayment(
+		id, orderID, customerID, domain.PaymentMethod(method),
+		amount, refundedAmount, domain.PaymentStatus(status),
+		providerTxnID, providerName, idempotencyKey,
+		redirectURL, failureReason, refundReason,
+		createdAt, updatedAt, refundedAt,
+	), nil
 }

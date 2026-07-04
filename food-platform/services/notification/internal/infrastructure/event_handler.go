@@ -85,7 +85,7 @@ func (h *EventHandler) HandleOrderStatusChanged(ctx context.Context, data []byte
                 "cancelled":  "❌ تم إلغاء طلبك",
         }
 
-        body, ok := messages[event.NewStatus]
+        _, ok := messages[event.NewStatus]
         if !ok {
                 return nil
         }

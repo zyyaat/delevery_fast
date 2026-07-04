@@ -318,19 +318,19 @@ func toItemDTO(item *domain.MenuItem) *MenuItemDTO {
 	if len(item.Modifiers()) > 0 {
 		dto.Modifiers = make([]ModifierDTO, len(item.Modifiers()))
 		for i, m := range item.Modifiers() {
-			opts := make([]ModifierOptionDTO, len(m.Options()))
-			for j, o := range m.Options() {
+			opts := make([]ModifierOptionDTO, len(m.GetOptions()))
+			for j, o := range m.GetOptions() {
 				opts[j] = ModifierOptionDTO{
-					ID:         o.ID,
-					Name:       o.Name,
-					PriceDelta: o.PriceDelta,
+					ID:         o.GetID(),
+					Name:       o.GetName(),
+					PriceDelta: o.GetPriceDelta(),
 				}
 			}
 			dto.Modifiers[i] = ModifierDTO{
-				ID:             m.ID,
-				Name:           m.Name,
-				Required:       m.Required,
-				MultipleChoice: m.MultipleChoice,
+				ID:             m.GetID(),
+				Name:           m.GetName(),
+				Required:       m.GetRequired(),
+				MultipleChoice: m.GetMultipleChoice(),
 				Options:        opts,
 			}
 		}
