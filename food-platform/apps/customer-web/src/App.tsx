@@ -32,31 +32,14 @@ export default function App() {
         }
       />
 
-      {/* Protected routes */}
-      <Route
-        path="/"
-        element={
-          <RequireAuth>
-            <HomePage />
-          </RequireAuth>
-        }
-      />
-      <Route
-        path="/restaurants/:id"
-        element={
-          <RequireAuth>
-            <RestaurantDetailPage />
-          </RequireAuth>
-        }
-      />
-      <Route
-        path="/cart"
-        element={
-          <RequireAuth>
-            <CartPage />
-          </RequireAuth>
-        }
-      />
+      {/* ====== GUEST ROUTES (no auth required) ====== */}
+      {/* Guests can browse restaurants, view menus, and add to cart */}
+      <Route path="/" element={<HomePage />} />
+      <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
+      <Route path="/cart" element={<CartPage />} />
+
+      {/* ====== PROTECTED ROUTES (auth required) ====== */}
+      {/* Checkout, orders, and profile require login */}
       <Route
         path="/checkout"
         element={

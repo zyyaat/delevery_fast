@@ -1,8 +1,9 @@
 // App layout with header + bottom navigation
 
 import { type ReactNode } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '@food-platform/ui'
+import { useAuthStore } from '@food-platform/auth'
 
 interface AppLayoutProps {
   children: ReactNode
@@ -27,6 +28,9 @@ export function AppLayout({
 // ============ Header ============
 
 function Header() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const navigate = useNavigate()
+
   return (
     <header className="sticky top-0 z-sticky bg-surface border-b border-border h-14 flex items-center px-4 gap-3">
       {/* Address */}
@@ -49,14 +53,24 @@ function Header() {
         <span className="material-symbols-rounded text-text-secondary">search</span>
       </Link>
 
-      {/* Profile */}
-      <Link
-        to="/profile"
-        className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
-        aria-label="حسابي"
-      >
-        <span className="material-symbols-rounded text-primary">person</span>
-      </Link>
+      {/* Profile or Login */}
+      {isAuthenticated ? (
+        <Link
+          to="/profile"
+          className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
+          aria-label="حسابي"
+        >
+          <span className="material-symbols-rounded text-primary">person</span>
+        </Link>
+      ) : (
+        <button
+          onClick={() => navigate('/login')}
+          className="flex items-center gap-1 px-3 h-9 bg-primary text-white rounded-full text-caption font-semibold hover:bg-primary-dark transition-colors"
+        >
+          <span className="material-symbols-rounded text-sm">login</span>
+          دخول
+        </button>
+      )}
     </header>
   )
 }
@@ -65,6 +79,7 @@ function Header() {
 
 function BottomNav() {
   const location = useLocation()
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
 
   const navItems = [
     { path: '/', label: 'الرئيسية', icon: 'home' },
@@ -81,13 +96,16 @@ function BottomNav() {
             ? location.pathname === '/'
             : location.pathname.startsWith(item.path)
 
+        // For guest users, orders and profile redirect to login
+        const needsAuth = item.path === '/orders' || item.path === '/profile'
+
         return (
           <Link
             key={item.path}
-            to={item.path}
+            to={needsAuth && !isAuthenticated ? '/login' : item.path}
             className={cn(
               'flex flex-col items-center justify-center gap-1 flex-1 h-full transition-colors',
-              isActive ? 'text-primary' : 'text-text-tertiary',
+              isActive && isAuthenticated ? 'text-primary' : 'text-text-tertiary',
             )}
           >
             <span className="material-symbols-rounded text-xl">{item.icon}</span>

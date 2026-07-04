@@ -1,10 +1,11 @@
 // Cart page — review cart items before checkout
 
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { AppLayout } from '../../components/AppLayout'
 import { Button, Badge } from '@food-platform/ui'
 import { formatEGP } from '@food-platform/utils'
+import { useAuthStore } from '@food-platform/auth'
 
 interface CartItem {
   id: string
@@ -48,6 +49,8 @@ const DISCOUNT = 0
 
 export function CartPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const [cart, setCart] = useState(MOCK_CART)
   const [couponCode, setCouponCode] = useState('')
   const [couponApplied, setCouponApplied] = useState(false)
@@ -264,7 +267,14 @@ export function CartPage() {
             <Button
               fullWidth
               size="lg"
-              onClick={() => navigate('/checkout')}
+              onClick={() => {
+                // Guest users must login before checkout
+                if (!isAuthenticated) {
+                  navigate('/login', { state: { from: '/checkout', message: 'سجّل دخولك عشان تكمل الطلب' } })
+                } else {
+                  navigate('/checkout')
+                }
+              }}
             >
               🛒 اطلب الآن — {formatEGP(total)}
             </Button>
