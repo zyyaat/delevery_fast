@@ -24,21 +24,23 @@ export default function App() {
       const timer = setTimeout(() => {
         setOrderOffer({ ...mockOrderOffer })
       }, 5000)
-      return () => clearTimeout(timer)
+      return () => { clearTimeout(timer) }
     }
+    return undefined
   }, [isOnline, orderOffer, activeOrder, screen])
 
   // Simulate delivery step progression
   useEffect(() => {
     if (screen === 'pickup' && deliveryStep < 2) {
       const timer = setTimeout(() => setDeliveryStep(deliveryStep + 1), 3000)
-      return () => clearTimeout(timer)
+      return () => { clearTimeout(timer) }
     }
+    return undefined
   }, [screen, deliveryStep])
 
   const acceptOrder = () => {
     if (orderOffer) {
-      setActiveOrder({ ...mockActiveOrder, ...orderOffer })
+      setActiveOrder({ ...mockActiveOrder, id: orderOffer.id, number: orderOffer.number, restaurant: orderOffer.restaurant, eta: orderOffer.eta, earnings: orderOffer.earnings, pickupCode: orderOffer.pickupCode })
       setOrderOffer(null)
       setDeliveryStep(0)
       setScreen('pickup')
@@ -56,8 +58,8 @@ export default function App() {
     <div className="min-h-screen bg-bg-primary" dir="rtl">
       {screen === 'login' && <LoginScreen phone={phone} setPhone={setPhone} onNext={() => setScreen('otp')} />}
       {screen === 'otp' && <OTPScreen phone={phone} otp={otp} setOtp={setOtp} onNext={() => setScreen('kyc')} onBack={() => setScreen('login')} />}
-      {screen === 'kyc' && <KYCScreen onNext={() => setScreen('home')} />}
-      {screen === 'home' && <HomeScreen isOnline={isOnline} setIsOnline={setIsOnline} todayEarnings={todayEarnings} todayDeliveries={todayDeliveries} onNavigate={setScreen} />}
+      {screen === 'kyc' && <KYCScreen onNext={() => setScreen('home')} phone={phone} />}
+      {screen === 'home' && <HomeScreen isOnline={isOnline} setIsOnline={setIsOnline} todayEarnings={todayEarnings} todayDeliveries={todayDeliveries} onNavigate={setScreen} orderOffer={orderOffer} />}
       {screen === 'pickup' && activeOrder && <PickupScreen order={activeOrder} deliveryStep={deliveryStep} onArrived={() => setDeliveryStep(2)} onPickedUp={() => setScreen('dropoff')} />}
       {screen === 'dropoff' && activeOrder && <DropoffScreen order={activeOrder} onDelivered={completeDelivery} />}
       {screen === 'completed' && <CompletedScreen earnings={28.5} onContinue={() => setScreen('home')} />}
@@ -180,7 +182,7 @@ function OTPScreen({ phone, otp, setOtp, onNext, onBack }: { phone: string; otp:
 }
 
 // ============ KYC Screen ============
-function KYCScreen({ onNext }: { onNext: () => void }) {
+function KYCScreen({ onNext, phone }: { onNext: () => void; phone: string }) {
   const [step, setStep] = useState(1)
   const [name, setName] = useState('')
   const [vehicleType, setVehicleType] = useState('motorcycle')
@@ -268,7 +270,7 @@ function KYCScreen({ onNext }: { onNext: () => void }) {
 }
 
 // ============ Home Screen ============
-function HomeScreen({ isOnline, setIsOnline, todayEarnings, todayDeliveries, onNavigate }: { isOnline: boolean; setIsOnline: (v: boolean) => void; todayEarnings: number; todayDeliveries: number; onNavigate: (s: Screen) => void }) {
+function HomeScreen({ isOnline, setIsOnline, todayEarnings, todayDeliveries, onNavigate, orderOffer }: { isOnline: boolean; setIsOnline: (v: boolean) => void; todayEarnings: number; todayDeliveries: number; onNavigate: (s: Screen) => void; orderOffer: typeof mockOrderOffer | null }) {
   return (
     <div className="min-h-screen bg-gray-50 pb-20" dir="rtl">
       <header className="sticky top-0 z-40 bg-white border-b px-4 py-3 flex items-center gap-3">
@@ -358,7 +360,7 @@ function OrderOfferModal({ order, onAccept, onReject }: { order: typeof mockOrde
   useEffect(() => {
     if (seconds <= 0) { onReject(); return }
     const timer = setTimeout(() => setSeconds(seconds - 1), 1000)
-    return () => clearTimeout(timer)
+    return () => { clearTimeout(timer) }
   }, [seconds, onReject])
 
   const progress = (seconds / 15) * 100
