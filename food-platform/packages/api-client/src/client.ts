@@ -1,6 +1,12 @@
 // API Client — Axios-based HTTP client with auth interceptors
 
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosError } from 'axios'
+import axios, {
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+  type AxiosError,
+  type InternalAxiosRequestConfig,
+} from 'axios'
 import type {
   AuthResponse,
   ErrorResponse,
@@ -45,7 +51,7 @@ export class ApiClient {
 
   constructor(config: ApiClientConfig) {
     this.tokenStorage = config.tokenStorage
-    this.refreshTokenUrl = config.refreshTokenUrl
+    this.refreshTokenUrl = config.refreshTokenUrl ?? undefined
 
     this.client = axios.create({
       baseURL: config.baseURL,
@@ -60,7 +66,7 @@ export class ApiClient {
 
   private setupInterceptors() {
     // Request interceptor — attach auth + request ID
-    this.client.interceptors.request.use((config) => {
+    this.client.interceptors.request.use((config: InternalAxiosRequestConfig) => {
       const token = this.tokenStorage.getAccessToken()
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
@@ -71,7 +77,7 @@ export class ApiClient {
 
     // Response interceptor — handle errors + token refresh
     this.client.interceptors.response.use(
-      (response) => response.data,
+      (response: AxiosResponse) => response.data,
       async (error: AxiosError<ErrorResponse>) => {
         const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean }
 

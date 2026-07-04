@@ -1,7 +1,7 @@
 // WebSocket event types
 
 import type { Coordinates, Money } from './common'
-import type { OrderStatus, DriverStatus, IncidentSeverity, TicketPriority } from './enums'
+import type { OrderStatus, IncidentSeverity, TicketPriority } from './enums'
 
 export type WSMessageType =
   // Customer

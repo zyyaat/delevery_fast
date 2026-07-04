@@ -75,6 +75,7 @@ services:
       retries: 5
 
   # ============ Schema Registry ============
+  # Note: Uses port 8181 externally to avoid conflict with Auth Service (8081)
   schema-registry:
     image: confluentinc/cp-schema-registry:7.6.0
     container_name: food-platform-schema-registry
@@ -82,7 +83,7 @@ services:
     depends_on:
       - kafka
     ports:
-      - '8081:8081'
+      - '8181:8081'
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:29092
@@ -124,13 +125,15 @@ services:
       retries: 5
 
   # ============ ClickHouse ============
+  # Note: Uses ports 8123 (HTTP) and 9000 (TCP). 9000 conflicts with Kafka UI (mapped to 9000 host)
+  # So we map ClickHouse native TCP to 9003 instead.
   clickhouse:
     image: clickhouse/clickhouse-server:24.3
     container_name: food-platform-clickhouse
     restart: unless-stopped
     ports:
       - '8123:8123' # HTTP
-      - '9000:9000' # Native TCP
+      - '9003:9000' # Native TCP (changed from 9000 to avoid conflict with Kafka UI host port)
     volumes:
       - ch_data:/var/lib/clickhouse
     ulimits:

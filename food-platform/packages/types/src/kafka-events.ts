@@ -1,7 +1,7 @@
 // Kafka event types (AsyncAPI equivalent)
 
 import type { Money, Coordinates, Address } from './common'
-import type { OrderStatus, PaymentMethod, PaymentStatus, DriverStatus, UserRole } from './enums'
+import type { OrderStatus, PaymentMethod, DriverStatus, UserRole } from './enums'
 
 // ============ Order Events ============
 

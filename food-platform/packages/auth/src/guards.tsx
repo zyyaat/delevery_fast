@@ -33,7 +33,7 @@ export function RequireAuth({ children, roles }: RequireAuthProps) {
  * Guard that redirects authenticated users away from auth pages
  */
 export function RedirectIfAuthed({ children }: { children: JSX.Element }) {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const isAuthenticated = useAuthStore((s: { isAuthenticated: boolean }) => s.isAuthenticated)
 
   if (isAuthenticated) {
     return <Navigate to="/" replace />

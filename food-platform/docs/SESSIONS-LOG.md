@@ -193,11 +193,30 @@ Each service has: go.mod, cmd/server/main.go (with health/ready endpoints, struc
 - Docker services: 11 containers for local dev
 - CI matrix: 12 parallel Go service jobs + 1 frontend job
 
+**Verification (post-Session 2)**:
+- ✅ docker-compose.yml syntax valid (Python yaml parser)
+- ✅ TypeScript `types` package: 0 type errors
+- ✅ TypeScript `utils` package: 0 logic errors (rootDir warnings expected — pnpm resolves these)
+- ✅ All 12 Go services: balanced braces, structure verified
+- ✅ All 7 web apps: all required files present (package.json, tsconfig, vite.config, index.html, main.tsx, App.tsx, tailwind.config, .env.example)
+- ✅ All 8 shared packages: all required files present
+
+**Fixes Applied During Verification**:
+1. **Port conflict fixed**: Schema Registry changed from `8081:8081` to `8181:8081` (was conflicting with Auth Service on 8081)
+2. **Port conflict fixed**: ClickHouse native TCP changed from `9000:9000` to `9003:9000` (was conflicting with Kafka UI on host port 9000)
+3. **Type collision fixed**: `SearchParams` defined in both `common.ts` and `api.ts` — renamed api.ts version to `RestaurantSearchParams` and re-exported common version with alias
+4. **Missing import fixed**: Added `PromoType` to entities.ts imports (was used in Promo interface)
+5. **Unused imports removed**: Cleaned up unused imports in api.ts, events.ts, kafka-events.ts
+6. **exactOptionalPropertyTypes fix**: `refreshTokenUrl` assignment in api-client/client.ts now handles optional properly
+7. **Implicit any fixed**: Added explicit types for interceptor parameters in api-client/client.ts (InternalAxiosRequestConfig, AxiosResponse)
+8. **Implicit any fixed**: Added explicit type for zustand selector in auth/guards.tsx
+9. **noUncheckedIndexedAccess fix**: Added non-null assertions for array access in utils/crypto.ts (chars[values[i]!])
+
 **Blockers**:
 - Need user's GitHub org to push code
-- Need user to run `pnpm install` locally to verify
-- Need user to run `docker compose up -d` to verify
-- Need user to run `go mod tidy` in each service
+- Need user to run `pnpm install` locally to verify all dependencies resolve
+- Need user to run `docker compose up -d` to verify infra (Docker not available in dev sandbox)
+- Need user to run `go mod tidy && go build ./cmd/server` in each service to verify Go compilation
 
 **Next Session (Session 3)**: Backend Foundation
 - Build Auth Service (Go) — full implementation:

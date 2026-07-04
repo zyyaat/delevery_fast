@@ -12,6 +12,7 @@ import type {
   RestaurantStatus,
   VehicleType,
   CuisineType,
+  PromoType,
 } from './enums'
 
 // ============ User / Customer ============

@@ -1,22 +1,26 @@
 // API request/response types
 
-import type { Money, Address, Coordinates } from './common'
+import type { Money, Coordinates, SearchParams as CommonSearchParams } from './common'
 import type {
   OrderStatus,
   PaymentMethod,
   UserRole,
   DriverStatus,
   PromoType,
-  CuisineType,
-  VehicleType,
   TicketPriority,
-  TicketStatus,
   IncidentSeverity,
   IncidentStatus,
   FieldTaskType,
   FieldTaskPriority,
 } from './enums'
-import type { User, Customer, Restaurant, MenuItem, Cart, Order, Driver, Promo, LoyaltyAccount, DriverEarnings } from './entities'
+import type {
+  User,
+  Restaurant,
+  MenuItem,
+} from './entities'
+
+// Re-export with alias to avoid name collision
+export type { CommonSearchParams as SearchParams }
 
 // ============ Auth ============
 
@@ -89,7 +93,7 @@ export interface NearbyRestaurantsResponse {
   has_more: boolean
 }
 
-export interface SearchParams {
+export interface RestaurantSearchParams {
   q: string
   lat: number
   lng: number

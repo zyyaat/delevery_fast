@@ -11,12 +11,12 @@ export function randomString(length: number = 32): string {
     const values = new Uint32Array(length)
     cryptoObj.getRandomValues(values)
     for (let i = 0; i < length; i++) {
-      result += chars[values[i] % chars.length]
+      result += chars[values[i]! % chars.length]
     }
   } else {
     // Fallback (not cryptographically secure)
     for (let i = 0; i < length; i++) {
-      result += chars[Math.floor(Math.random() * chars.length)]
+      result += chars[Math.floor(Math.random() * chars.length)]!
     }
   }
   return result
