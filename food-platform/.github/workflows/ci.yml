@@ -1,0 +1,132 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ============ Frontend (TypeScript) ============
+  frontend:
+    name: Frontend (TypeScript)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type check
+        run: pnpm type-check
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+  # ============ Backend (Go) ============
+  backend:
+    name: Backend (${{ matrix.service }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - auth
+          - restaurant-catalog
+          - menu
+          - order
+          - payment
+          - delivery-matching
+          - driver-management
+          - geo
+          - notification
+          - fraud
+          - promo
+          - analytics
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache-dependency-path: services/${{ matrix.service }}/go.sum
+
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.59.1
+
+      - name: Lint
+        working-directory: services/${{ matrix.service }}
+        run: golangci-lint run ./...
+
+      - name: Test
+        working-directory: services/${{ matrix.service }}
+        run: go test -v -race -cover ./...
+
+      - name: Build
+        working-directory: services/${{ matrix.service }}
+        run: go build -o /tmp/server ./cmd/server
+
+  # ============ Docker Compose Validation ============
+  docker-compose-check:
+    name: Docker Compose Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate docker-compose.yml
+        run: docker compose -f infra/docker-compose.yml config > /dev/null
+
+  # ============ Documentation Check ============
+  docs-check:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check docs exist
+        run: |
+          for doc in ARCHITECTURE.md API-CONTRACTS.md PATTERNS.md REPO-STRUCTURE.md ROADMAP.md REFERENCES.md SESSIONS-LOG.md; do
+            if [ ! -f "docs/$doc" ]; then
+              echo "❌ Missing: docs/$doc"
+              exit 1
+            fi
+            echo "✅ Found: docs/$doc"
+          done
+
+      - name: Check UI specs exist
+        run: |
+          for app in customer-web driver-web restaurant-web support-web command-center employee-portal field-supervisor-web; do
+            if [ ! -f "docs/ui-ux/$app/UI-SPEC.md" ]; then
+              echo "❌ Missing: docs/ui-ux/$app/UI-SPEC.md"
+              exit 1
+            fi
+            echo "✅ Found: docs/ui-ux/$app/UI-SPEC.md"
+          done
+          if [ ! -f "docs/ui-ux/DESIGN-SYSTEM.md" ]; then
+            echo "❌ Missing: docs/ui-ux/DESIGN-SYSTEM.md"
+            exit 1
+          fi
+          echo "✅ Found: docs/ui-ux/DESIGN-SYSTEM.md"

@@ -1,0 +1,44 @@
+{
+  "name": "food-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Food Delivery Platform — 7 web apps + 12 Go microservices",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,yml,yaml,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,md,yml,yaml,json}\"",
+    "type-check": "turbo type-check",
+    "codegen": "turbo codegen",
+    "clean": "turbo clean && rm -rf node_modules",
+    "docker:up": "docker compose -f infra/docker-compose.yml up -d",
+    "docker:down": "docker compose -f infra/docker-compose.yml down",
+    "docker:logs": "docker compose -f infra/docker-compose.yml logs -f",
+    "setup": "pnpm install && pnpm docker:up && pnpm codegen"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "prettier": "^3.3.0",
+    "typescript": "^5.5.0",
+    "@food-platform/eslint-config": "workspace:*",
+    "eslint": "^8.57.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.2.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.5.0",
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{md,yml,yaml,json}": [
+      "prettier --write"
+    ]
+  }
+}

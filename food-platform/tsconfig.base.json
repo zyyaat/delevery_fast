@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@food-platform/api-client": ["./packages/api-client/src"],
+      "@food-platform/api-client/*": ["./packages/api-client/src/*"],
+      "@food-platform/types": ["./packages/types/src"],
+      "@food-platform/types/*": ["./packages/types/src/*"],
+      "@food-platform/hooks": ["./packages/hooks/src"],
+      "@food-platform/hooks/*": ["./packages/hooks/src/*"],
+      "@food-platform/utils": ["./packages/utils/src"],
+      "@food-platform/utils/*": ["./packages/utils/src/*"],
+      "@food-platform/theme": ["./packages/theme/src"],
+      "@food-platform/theme/*": ["./packages/theme/src/*"],
+      "@food-platform/ui": ["./packages/ui/src"],
+      "@food-platform/ui/*": ["./packages/ui/src/*"],
+      "@food-platform/auth": ["./packages/auth/src"],
+      "@food-platform/auth/*": ["./packages/auth/src/*"],
+      "@food-platform/eslint-config": ["./packages/eslint-config/src"]
+    }
+  }
+}
